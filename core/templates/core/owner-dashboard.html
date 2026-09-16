@@ -1,0 +1,197 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Owner Dashboard - BusinessHub</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar">
+
+        <div class="dashboard-logo">
+            <span>Business</span>Hub
+        </div>
+
+        <nav>
+            <a href="{% url 'owner_dashboard' %}" class="active">
+                🏠 Dashboard
+            </a>
+
+            <a href="{% url 'business_list' %}">
+                🔎 Browse Businesses
+            </a>
+
+            <a href="{% url 'list_business' %}">
+                ➕ Add Business
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="{% url 'login' %}">
+                🚪 Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main">
+
+        <div class="dashboard-top">
+
+            <div>
+                <h1>Owner Dashboard 👋</h1>
+
+                <p>
+                    Welcome back! Manage your businesses from here.
+                </p>
+            </div>
+
+            <a href="{% url 'list_business' %}" class="add-business-btn">
+                + Add New Business
+            </a>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+        <div class="dashboard-stats">
+
+            <div class="stat-card">
+                <div class="stat-icon">🏢</div>
+
+                <div>
+                    <span>Total Businesses</span>
+                    <strong>{{ businesses|length }}</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📍</div>
+
+                <div>
+                    <span>Your Listings</span>
+                    <strong>{{ businesses|length }}</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+
+                <div>
+                    <span>Status</span>
+                    <strong>Active</strong>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- BUSINESSES -->
+        <section class="business-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Your Businesses</h2>
+                    <p>Manage the businesses you have listed on BusinessHub.</p>
+                </div>
+            </div>
+
+
+            {% if businesses %}
+
+                <div class="owner-business-grid">
+
+                    {% for business in businesses %}
+
+                    <div class="owner-business-card">
+
+                        <div class="business-card-top">
+
+                            <div class="business-avatar">
+                                {{ business.name|first|upper }}
+                            </div>
+
+                            <div>
+                                <h3>{{ business.name }}</h3>
+
+                                <span class="business-category">
+                                    {{ business.get_category_display }}
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <p class="business-description">
+                            {{ business.description|truncatewords:20 }}
+                        </p>
+
+
+                        <div class="business-location">
+                            📍 {{ business.city }}, {{ business.region }}
+                        </div>
+
+
+                        <div class="owner-actions">
+
+                            <a href="{% url 'view_business' business.id %}"
+                               class="view-business">
+                                👁 View
+                            </a>
+
+                            <a href="{% url 'edit_business' business.id %}"
+                               class="edit-business">
+                                ✏️ Edit
+                            </a><a href="{% url 'delete_business' business.id %}"
+                               class="delete-business">
+                                🗑 Delete
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-business">
+
+                    <div class="empty-icon">🏢</div>
+
+                    <h3>No businesses yet</h3>
+
+                    <p>
+                        You haven't added any businesses to BusinessHub yet.
+                    </p>
+
+                    <a href="{% url 'list_business' %}" class="add-business-btn">
+                        + Add Your First Business
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

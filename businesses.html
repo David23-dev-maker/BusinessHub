@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BusinessHub - Businesses</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ◈
+        </div>
+
+        <span>BusinessHub</span>
+
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="tracking.html">
+            Track Package
+        </a>
+
+        <a href="businesses.html" class="active">
+            Businesses
+        </a>
+
+        <a href="categories.html">
+            Categories
+        </a>
+
+        <a href="list-business.html">
+            List Your Business
+        </a>
+
+    </nav>
+
+    <div class="profile-button">
+        👤
+    </div>
+
+</header>
+
+
+<!-- ================= BUSINESS HERO ================= -->
+
+<section class="businesses-hero">
+
+    <div class="businesses-hero-content">
+
+        <h1>
+            Discover Local Businesses
+        </h1>
+
+        <p>
+            Find trusted businesses, shops and services
+            around you.
+        </p>
+
+        <div class="business-search">
+
+            <span>🔍</span>
+
+            <input
+                type="text"
+                id="businessSearch"
+                placeholder="Search businesses, products or services..."
+            >
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= BUSINESS CONTENT ================= -->
+
+<section class="businesses-page">
+
+    <div class="businesses-heading">
+
+        <div>
+
+            <h2>
+                Featured Businesses
+            </h2>
+
+            <p>
+                Explore businesses available on BusinessHub.
+            </p>
+
+        </div>
+
+        <select id="businessCategory">
+
+            <option value="all">
+                All Categories
+            </option>
+
+            <option value="food">
+                Restaurants & Food
+            </option>
+
+            <option value="shopping">
+                Shopping & Retail
+            </option>
+
+            <option value="electronics">
+                Electronics
+            </option>
+
+            <option value="beauty">
+                Health & Beauty
+            </option>
+
+            <option value="services">
+                Business Services
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- ================= BUSINESS GRID ================= -->
+
+    <div class="businesses-grid" id="businessesGrid">
+
+
+        <!-- BUSINESS 1 -->
+
+        <div class="business-card"
+             data-category="food"
+             data-name="Delicious Kitchen">
+
+            <div class="business-image">
+                🍽️
+            </div>
+
+            <div class="business-card-content">
+
+                <span class="business-category">
+                    Restaurants & Food
+                </span>
+
+                <h3>
+                    Delicious Kitchen
+                </h3>
+
+                <p>
+                    Fresh local meals, snacks and drinks.
+                </p>
+
+                <div class="business-location">
+                    📍 Buea, Cameroon
+                </div>
+
+              <a href="business.html" class="business-button">
+    View Business →
+</a>
+            </div>
+
+        </div>
+
+
+        <!-- BUSINESS 2 -->
+
+        <div class="business-card"
+             data-category="shopping"
+             data-name="Fashion World">
+
+            <div class="business-image">
+                👕
+            </div>
+
+            <div class="business-card-content">
+
+                <span class="business-category">
+                    Shopping & Retail
+                </span>
+
+                <h3>
+                    Fashion World
+                </h3>
+
+                <p>
+                    Fashion, clothing and accessories.
+                </p>
+
+                <div class="business-location">
+                    📍 Bamenda, Cameroon
+                    </div>
+
+              <a href="business.html" class="business-button">
+    View Business →
+</a>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUSINESS 3 -->
+
+        <div class="business-card"
+             data-category="electronics"
+             data-name="TechZone">
+
+            <div class="business-image">
+                💻
+            </div>
+
+            <div class="business-card-content">
+
+                <span class="business-category">
+                    Electronics
+                </span>
+
+                <h3>
+                    TechZone
+                </h3>
+
+                <p>
+                    Phones, laptops and electronic accessories.
+                </p>
+
+                <div class="business-location">
+                    📍 Douala, Cameroon
+                </div>
+
+                <a href="business.html" class="business-button">
+    View Business →
+</a>
+            </div>
+
+        </div>
+
+
+        <!-- BUSINESS 4 -->
+
+        <div class="business-card"
+             data-category="beauty"
+             data-name="Glow Beauty Salon">
+
+            <div class="business-image">
+                💇
+            </div>
+
+            <div class="business-card-content">
+
+                <span class="business-category">
+                    Health & Beauty
+                </span>
+
+                <h3>
+                    Glow Beauty Salon
+                </h3>
+
+                <p>
+                    Hair styling, makeup and beauty services.
+                </p>
+
+                <div class="business-location">
+                    📍 Yaoundé, Cameroon
+                </div>
+
+               <a href="business.html" class="business-button">
+    View Business →
+</a>
+            </div>
+
+        </div>
+
+
+        <!-- BUSINESS 5 -->
+
+        <div class="business-card"
+             data-category="services"
+             data-name="Digital Solutions">
+
+            <div class="business-image">
+                💼
+            </div>
+
+            <div class="business-card-content">
+
+                <span class="business-category">
+                    Business Services
+                </span>
+
+                <h3>
+                    Digital Solutions
+                </h3>
+
+                <p>
+                    Websites, digital marketing and IT services.
+                </p>
+
+                <div class="business-location">
+                    📍 Limbe, Cameroon
+                </div>
+
+               <a href="business.html" class="business-button">
+    View Business →
+</a>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUSINESS 6 -->
+
+        <div class="business-card"
+             data-category="shopping"
+             data-name="Fresh Market">
+
+            <div class="business-image">
+                🛒
+            </div>
+
+            <div class="business-card-content">
+
+                <span class="business-category">
+                    Shopping & Retail
+                </span>
+
+                <h3>
+                    Fresh Market
+                </h3>
+
+                <p>
+                    Groceries, fruits, vegetables and household items.
+                </p>
+
+                <div class="business-location">
+                    📍 Bamenda, Cameroon
+                </div>
+
+               <a href="business.html" class="business-button">
+    View Business →
+</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+
+    <div class="footer-logo">
+
+        <div class="logo-icon">
+            ◈
+        </div>
+
+        <div>
+
+            <strong>
+                BusinessHub
+            </strong>
+
+            <small>
+                Connect. Buy. Grow.
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="footer-links">
+
+        <a href="index.html">Home</a>
+        <a href="tracking.html">Track Package</a>
+        <a href="businesses.html">Businesses</a>
+        <a href="categories.html">Categories</a>
+        <a href="list-business.html">List Your Business</a>
+
+    </div>
+
+    <div class="copyright">
+
+        © 2026 BusinessHub.
+        All rights reserved.
+
+    </div>
+
+</footer>
+
+
+<script src="js/script.js"></script>
+
+</body>
+
+</html>

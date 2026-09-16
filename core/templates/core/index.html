@@ -1,0 +1,422 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BusinessHub - Connect. Buy. Grow.</title>
+
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+
+<body>
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <div class="logo-icon">
+                ◈
+            </div>
+
+            <span>BusinessHub</span>
+        </div>
+
+
+        <nav class="nav-links">
+
+            <a href="index.html" class="active">
+                Home
+            </a>
+
+            <a href="{% url 'tracking' %}">
+                Track Package
+            </a>
+
+            <a  href="{% url 'business_list' %}">
+                Businesses
+            </a>
+
+            <a href="{% url 'categories' %}">
+                Categories
+            </a>
+
+            <a href="{% url 'list_business' %}">
+                List Your Business
+            </a>
+
+        </nav>
+
+
+        <div class="profile-button">
+            👤
+        </div>
+
+    </header>
+
+
+    <!-- ================= HERO SECTION ================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Connect.
+                <span>Buy.</span>
+                Grow.
+            </h1>
+
+            <p>
+                Discover local businesses, shop products,
+                order services and track your deliveries
+                all in one place.
+            </p>
+
+
+            <!-- SEARCH -->
+
+            <div class="home-search">
+
+                <input
+                    type="text"
+                    placeholder="Search businesses, products or services..."
+                >
+
+                <button>
+                    🔍 Search
+                </button>
+
+            </div>
+
+
+            <!-- HERO BUTTONS -->
+
+            <div class="hero-buttons">
+
+                <a href="{% url 'business_list' %}" class="primary-button">
+                    Explore Businesses
+                </a>
+
+                <a href="{% url 'list_business' %}" class="secondary-button">
+                    List Your Business
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- HERO VISUAL -->
+
+        <div class="hero-visual">
+
+            <div class="location-circle">
+                📍
+            </div>
+
+            <div class="floating-card card-one">
+                🛒
+                <span>Shopping</span>
+            </div>
+
+            <div class="floating-card card-two">
+                🍴
+                <span>Restaurants</span>
+            </div>
+
+            <div class="floating-card card-three">
+                🚚
+                <span>Delivery</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CATEGORIES ================= -->
+
+    <section class="categories-section">
+
+        <div class="section-heading">
+
+            <div>
+                <h2>
+                    Explore Categories
+                </h2>
+
+                <p>
+                    Find exactly what you're looking for.
+                </p>
+            </div>
+
+            <a href="{% url 'categories' %}">
+                View All →
+            </a>
+
+        </div>
+
+
+        <div class="category-grid">
+
+            <a href="{% url 'categories' %}" class="category-card">
+
+                <div class="category-icon blue">
+                    🍴
+                </div>
+
+                <h3>
+                    Restaurants & Food
+                </h3>
+
+                <p>
+                    Restaurants, cafés and food services.
+                </p>
+
+            </a>
+
+
+            <a href="{% url 'categories' %}" class="category-card">
+
+                <div class="category-icon green">
+                    🛒
+                </div>
+
+                <h3>
+                    Shopping & Retail
+                </h3>
+
+                <p>
+                    Shops, groceries, fashion and more.
+                </p>
+
+            </a>
+
+
+            <a href="{% url 'categories' %}" class="category-card">
+
+                <div class="category-icon purple">
+💻
+                </div>
+
+                <h3>
+                    Electronics
+                </h3>
+
+                <p>
+                    Phones, computers and accessories.
+                </p>
+
+            </a>
+
+
+            <a href="{% url 'categories' %}" class="category-card">
+
+                <div class="category-icon orange">
+                    🏠
+                </div>
+
+                <h3>
+                    Home & Living
+                </h3>
+
+                <p>
+                    Furniture, appliances and home services.
+                </p>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= HOW IT WORKS ================= -->
+
+    <section class="how-section">
+
+        <div class="section-title">
+
+            <h2>
+                How BusinessHub Works
+            </h2>
+
+            <p>
+                Everything you need to discover and connect
+                with businesses online.
+            </p>
+
+        </div>
+
+
+        <div class="how-grid">
+
+            <div class="how-card">
+
+                <div class="how-number">
+                    01
+                </div>
+
+                <h3>
+                    Find a Business
+                </h3>
+
+                <p>
+                    Search for businesses, products or
+                    services near you.
+                </p>
+
+            </div>
+
+
+            <div class="how-card">
+
+                <div class="how-number">
+                    02
+                </div>
+
+                <h3>
+                    Order Online
+                </h3>
+
+                <p>
+                    Choose what you want and place your
+                    order directly through BusinessHub.
+                </p>
+
+            </div>
+
+
+            <div class="how-card">
+
+                <div class="how-number">
+                    03
+                </div>
+
+                <h3>
+                    Pay Securely
+                </h3>
+
+                <p>
+                    Pay using supported online payment
+                    methods.
+                </p>
+
+            </div>
+
+
+            <div class="how-card">
+
+                <div class="how-number">
+                    04
+                </div>
+
+                <h3>
+                    Track Your Order
+                </h3>
+
+                <p>
+                    Follow your package from the business
+                    to your destination.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= BUSINESS ADVERTISEMENT ================= -->
+
+    <section class="business-banner">
+
+        <div>
+
+            <h2>
+                Grow Your Business With BusinessHub
+            </h2>
+
+            <p>
+                Advertise your business, reach more customers
+                and receive orders online.
+            </p>
+
+        </div>
+
+
+        <a href="{% url 'list_business' %}">
+            Start Advertising →
+        </a>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+        <div class="footer-logo">
+
+            <div class="logo-icon">
+                ◈
+            </div>
+
+            <div>
+                <strong>
+                    BusinessHub
+                </strong>
+
+                <small>
+                    Connect. Buy. Grow.
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="{% url 'tracking' %}">
+                Track Package
+            </a>
+
+            <a  href="{% url 'business_list' %}">
+                Businesses
+            </a>
+
+            <a href="{% url 'categories' %}">
+                Categories
+            </a>
+
+            <a href="{% url 'list_business' %}">
+                List Your Business
+            </a>
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 BusinessHub.
+            All rights reserved.
+
+        </div>
+
+    </footer>
+
+
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>                    

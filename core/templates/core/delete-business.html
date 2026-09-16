@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Business - BusinessHub</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="edit-business-container">
+
+    <h1>Delete Business</h1>
+
+    <p>
+        Are you sure you want to delete
+        <strong>{{ business.business_name }}</strong>?
+    </p>
+
+    <p>This action cannot be undone.</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button type="submit">
+            Yes, Delete Business
+        </button>
+    </form>
+
+    <a href="{% url 'owner_dashboard' %}">
+        Cancel
+    </a>
+
+</div>
+
+</body>
+</html>

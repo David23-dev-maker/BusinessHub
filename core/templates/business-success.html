@@ -1,0 +1,51 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BusinessHub | Success</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <div class="card" style="text-align: center; margin-top: 80px;">
+
+            <div style="font-size: 60px;">
+                ✅
+            </div>
+
+            <h1 style="margin-top: 20px;">
+                Business Added Successfully!
+            </h1>
+
+            <p style="color: #64748b; margin-top: 10px;">
+                Your business information has been saved to BusinessHub.
+            </p>
+
+            <a href="{% url 'list_business' %}"
+               style="
+               display: inline-block;
+               margin-top: 25px;
+               padding: 13px 25px;
+               background: #2563eb;
+               color: white;
+               text-decoration: none;
+               border-radius: 8px;
+               font-weight: 600;
+               ">
+                Add Another Business
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

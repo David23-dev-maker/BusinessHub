@@ -1,0 +1,1428 @@
+{% load static %}
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BusinessHub - Track Package</title>
+
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link
+    href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css"
+    rel="stylesheet"
+/>
+    <style>
+    #package-map {
+        width: 100%;
+        height: 350px;
+        border-radius: 15px;
+        margin-top: 15px;
+        overflow: hidden;
+    }
+
+    .package-map-section {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    .package-map-section h3 {
+        margin-bottom: 10px;
+    }
+    .map-marker {
+    width: 30px;
+    height: 30px;
+    background: red;
+    border: 4px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+#package-map {
+    position: relative;
+    z-index: 1;
+}
+
+#package-map .maplibregl-marker {
+    z-index: 999999 !important;
+}
+.maplibregl-marker {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    z-index: 999999 !important;
+    display: block !important;
+}
+.route-info {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+.route-info-item {
+    flex: 1;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.route-info-item span {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.route-info-item strong {
+    display: block;
+    font-size: 18px;
+}
+.package-status-panel {
+    margin-top: 20px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.package-status-panel h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.status-item {
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 12px;
+}
+
+.status-item span {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+}
+
+.status-item strong {
+    display: block;
+    font-size: 16px;
+}
+
+
+@media (max-width: 600px) {
+
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        <div class="logo-icon">◈</div>
+        <span>BusinessHub</span>
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+
+        <a href="{% url 'tracking' %}" class="active">
+            Track Package
+        </a>
+
+        <a href="{% url 'business_list' %}">
+            Businesses
+        </a>
+
+        <a href="{% url 'categories' %}">
+            Categories
+        </a>
+
+        <a href="{% url 'list_business' %}">
+            List Your Business
+        </a>
+
+    </nav>
+
+    <div class="profile-button">
+        👤
+    </div>
+
+</header>
+
+
+<section class="tracking-page">
+
+    <div class="tracking-container">
+
+        <div class="tracking-icon">
+            📦
+        </div>
+
+        <h1>
+            Track Your Package
+        </h1>
+
+        <p>
+            Enter your tracking number below to check the
+            current status and location of your package.
+        </p>
+
+        <form method="GET" class="tracking-form">
+
+    <div class="tracking-input-wrapper">
+
+        <span class="tracking-input-icon">🔎</span>
+
+        <input
+            type="text"
+            name="tracking_number"
+            value="{{ tracking_number }}"
+            placeholder="Enter your tracking number"
+            autocomplete="off"
+            required
+        >
+
+    </div>
+
+    <button type="submit">
+        Track Package
+    </button>
+
+</form>
+
+<p class="tracking-hint">
+    Enter the tracking number provided with your shipment.
+</p>
+
+
+        {% if tracking_number %}
+
+            {% if package %}
+
+            <div class="tracking-result">
+
+                <div class="result-header">
+
+    <div class="tracking-number-label">
+        📦 Shipment Tracking
+    </div>
+
+    <div class="tracking-number-row">
+
+    <div class="tracking-number">
+        {{ package.tracking_number }}
+    </div>
+
+    <button
+        type="button"
+        class="copy-tracking-button"
+        onclick="copyTrackingNumber()"
+    >
+        📋 Copy
+    </button>
+
+</div>
+
+    <div class="tracking-header-status">
+        <span class="status-badge status-{{ package.status }}">
+            {{ package.get_status_display }}
+        </span>
+    </div>
+<button
+    type="button"
+    class="share-tracking-button"
+    onclick="shareTracking()"
+>
+    🔗 Share Tracking
+</button>
+</div>
+
+
+                <div class="tracking-status">
+
+                    <div class="status-icon">
+                        📦
+                    </div>
+
+                    <div>
+
+                        <span>Current Status</span>
+
+                        <h2>
+                            {{ package.get_status_display }}
+                        </h2>
+
+                        <p>
+                            Your package is currently in
+                            <strong>{{ package.current_location }}</strong>.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="tracking-details">
+
+                    <p>
+                        <strong>Sender:</strong>
+                        {{ package.sender_name }}
+                    </p>
+
+                    <p>
+                        <strong>Receiver:</strong>
+                        {{ package.receiver_name }}
+                    </p>
+
+                    <p>
+                        <strong>Phone:</strong>
+                        {{ package.receiver_phone }}
+                    </p>
+
+                    <p>
+                        <strong>Origin:</strong>
+                        {{ package.origin }}
+                    </p>
+
+                    <p>
+                        <strong>Destination:</strong>
+                        {{ package.destination }}
+                    </p>
+
+                    <p>
+                        <strong>Current Location:</strong>
+                        {{ package.current_location }}
+                    </p>
+
+                </div>
+
+<!-- PACKAGE MAP -->
+
+<div class="package-map-section">
+
+    <div class="section-title">
+        <h3>📍 Live Package Location</h3>
+        <span class="live-indicator">● LIVE</span>
+    </div>
+
+    <p class="map-description">
+        Follow your package's current location and see its route to the destination.
+    </p>
+
+    <div id="package-map"></div>
+
+
+    <!-- ROUTE INFORMATION -->
+
+    <div class="route-info">
+
+        <div class="route-info-item">
+
+            <span>📏 Distance Remaining</span>
+
+            <strong id="route-distance">
+                Calculating...
+            </strong>
+
+        </div>
+
+
+        <div class="route-info-item">
+
+            <span>⏱️ Estimated Time</span>
+
+            <strong id="route-time">
+                Calculating...
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SHIPMENT STATUS -->
+
+<div class="package-status-panel">
+
+    <div class="section-title">
+
+        <h3>📦 Shipment Status</h3>
+
+    </div>
+
+
+    <div class="status-grid">
+
+        <div class="status-item">
+
+            <span>Current Status</span>
+
+            <strong>
+                {{ package.get_status_display }}
+            </strong>
+
+        </div>
+
+
+        <div class="status-item">
+
+            <span>📍 Current Location</span>
+
+            <strong>
+                {{ package.current_location|default:"Location updating..." }}
+            </strong>
+
+        </div>
+
+
+       <div class="journey-section">
+
+    <div class="journey-point">
+
+        <div class="journey-icon origin-icon">
+            🚚
+        </div>
+
+        <div class="journey-info">
+
+            <span>ORIGIN</span>
+
+            <strong>
+                {{ package.origin }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="journey-line"></div>
+
+
+    <div class="journey-point current-point">
+
+        <div class="journey-icon current-icon">
+            📍
+        </div>
+
+        <div class="journey-info">
+
+            <span>CURRENT LOCATION</span>
+
+            <strong>
+                {{ package.current_location|default:"Location updating..." }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="journey-line"></div>
+
+
+    <div class="journey-point">
+
+        <div class="journey-icon destination-icon">
+            🏁
+        </div>
+
+        <div class="journey-info">
+
+            <span>DESTINATION</span>
+
+            <strong>
+                {{ package.destination }}
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+        <div class="status-item">
+
+    <span>Current Status</span>
+
+    <strong class="status-badge status-{{ package.status }}">
+        {{ package.get_status_display }}
+    </strong>
+
+</div>
+<div class="status-item">
+
+    <span>🕐 Last Updated</span>
+
+    <strong id="last-updated">
+        Just now
+    </strong>
+
+</div>
+    </div>
+
+</div>
+
+<!-- SHIPMENT PROGRESS -->
+
+<div class="shipment-progress">
+
+    <div class="section-title">
+        <h3>🚚 Shipment Progress</h3>
+    </div>
+
+    <div class="progress-track">
+
+        <div class="progress-step {% if package.status == 'received' or package.status == 'transit' or package.status == 'delivery' or package.status == 'delivered' %}active{% endif %}">
+            <div class="progress-dot">✓</div>
+            <span>Package Received</span>
+        </div>
+
+        <div class="progress-line"></div>
+
+        <div class="progress-step {% if package.status == 'transit' or package.status == 'delivery' or package.status == 'delivered' %}active{% endif %}">
+            <div class="progress-dot">✓</div>
+            <span>In Transit</span>
+        </div>
+
+        <div class="progress-line"></div>
+
+        <div class="progress-step {% if package.status == 'delivery' or package.status == 'delivered' %}active{% endif %}">
+            <div class="progress-dot">✓</div>
+            <span>Out for Delivery</span>
+        </div>
+
+        <div class="progress-line"></div>
+
+        <div class="progress-step {% if package.status == 'delivered' %}active{% endif %}">
+            <div class="progress-dot">✓</div>
+            <span>Delivered</span>
+        </div>
+
+    </div>
+
+</div>
+<!-- TRACKING HISTORY -->
+
+<div class="tracking-timeline-section">
+
+    <div class="section-title">
+
+        <h3>📋 Tracking History</h3>
+
+    </div>
+
+
+    <div class="tracking-timeline">
+
+        {% for update in package.updates.all %}
+
+        <div class="timeline-item completed">
+
+            <div class="timeline-dot">
+                ✓
+            </div>
+
+
+            <div class="timeline-content">
+
+                <strong>
+                    {{ update.get_status_display }}
+                </strong>
+
+
+                <p>
+                    📍 {{ update.location }}
+                </p>
+
+
+                {% if update.description %}
+
+                <p>
+                    {{ update.description }}
+                </p>
+
+                {% endif %}
+
+
+                <small>
+                    {{ update.created_at|date:"M d, Y - H:i" }}
+                </small>
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+        <p>
+            No tracking updates available yet.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+       {% else %}
+   <div class="tracking-not-found">
+
+    <div class="not-found-icon">
+        🔍
+    </div>
+
+    <h2>Tracking Number Not Found</h2>
+
+    <p>
+        We couldn't find a package with the tracking number
+        <strong>{{ tracking_number }}</strong>.
+    </p>
+
+    <p>
+        Please check the tracking number and try again.
+    </p>
+
+    <a href="{% url 'tracking' %}" class="try-again-button">
+        🔄 Try Again
+    </a>
+
+</div>
+      {% endif %}
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<footer class="footer">
+
+    <div class="footer-logo">
+
+        <div class="logo-icon">
+            ◈
+        </div>
+
+        <div>
+
+            <strong>BusinessHub</strong>
+
+            <small>
+                Connect. Buy. Grow.
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-links">
+
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+
+        <a href="{% url 'tracking' %}">
+            Track Package
+        </a>
+
+        <a href="{% url 'business_list' %}">
+            Businesses
+        </a>
+
+        <a href="{% url 'categories' %}">
+            Categories
+        </a>
+
+        <a href="{% url 'list_business' %}">
+            List Your Business
+        </a>
+
+    </div>
+
+
+    <div class="copyright">
+        © 2026 BusinessHub. All rights reserved.
+    </div>
+
+</footer>
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+
+{% if package %}
+<script>
+
+    const latitude = Number("{{ package.latitude }}");
+    const longitude = Number("{{ package.longitude }}");
+
+    const destinationLatitude = Number("{{ package.destination_latitude }}");
+    const destinationLongitude = Number("{{ package.destination_longitude }}");
+
+
+    const map = new maplibregl.Map({
+        container: "package-map",
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center: [longitude, latitude],
+        zoom: 4
+    });
+
+
+    map.on("load", function () {
+        const bounds = new maplibregl.LngLatBounds();
+
+bounds.extend([longitude, latitude]);
+bounds.extend([destinationLongitude, destinationLatitude]);
+
+map.fitBounds(bounds, {
+    padding: 60,
+    maxZoom: 13,
+    duration: 1000
+});
+
+
+        /* CURRENT PACKAGE LOCATION */
+
+        map.addSource("package-location", {
+            type: "geojson",
+
+            data: {
+                type: "Feature",
+
+                geometry: {
+                    type: "Point",
+
+                    coordinates: [
+                        longitude,
+                        latitude
+                    ]
+                }
+            }
+        });
+
+
+        map.addLayer({
+            id: "package-location-point",
+
+            type: "circle",
+
+            source: "package-location",
+
+            paint: {
+                "circle-radius": 14,
+                "circle-color": "#ff0000",
+                "circle-stroke-width": 5,
+                "circle-stroke-color": "#ffffff"
+            }
+        });
+
+
+        /* CURRENT LOCATION POPUP */
+
+        const currentPopup = new maplibregl.Popup({
+            closeButton: true,
+            closeOnClick: false
+        })
+        .setLngLat([
+            longitude,
+            latitude
+        ])
+        .setHTML(
+            "<strong>📦 Package Location</strong><br>" +
+            "{{ package.current_location|default:'Current Location' }}<br>" +
+            "<strong>Status:</strong> {{ package.get_status_display }}"
+        );
+
+
+        map.on("click", "package-location-point", function() {
+            currentPopup.addTo(map);
+        });
+
+
+        map.on("mouseenter", "package-location-point", function() {
+            map.getCanvas().style.cursor = "pointer";
+        });
+
+
+        map.on("mouseleave", "package-location-point", function() {
+            map.getCanvas().style.cursor = "";
+        });
+
+
+
+        /* DESTINATION */
+
+        map.addSource("package-destination", {
+            type: "geojson",
+
+            data: {
+                type: "Feature",
+
+                geometry: {
+                    type: "Point",
+
+                    coordinates: [
+                        destinationLongitude,
+                        destinationLatitude
+                    ]
+                }
+            }
+        });
+
+
+        map.addLayer({
+            id: "package-destination-point",
+
+            type: "circle",
+
+            source: "package-destination",
+
+            paint: {
+                "circle-radius": 12,
+                "circle-color": "#00aa00",
+                "circle-stroke-width": 5,
+                "circle-stroke-color": "#ffffff"
+            }
+        });
+
+
+        /* DESTINATION POPUP */
+
+        const destinationPopup = new maplibregl.Popup({
+            closeButton: true,
+            closeOnClick: false
+        })
+        .setLngLat([
+            destinationLongitude,
+            destinationLatitude
+        ])
+        .setHTML(
+            "<strong>🏁 Destination</strong><br>" +
+            "{{ package.destination }}"
+        );
+
+
+        map.on("click", "package-destination-point", function() {
+            destinationPopup.addTo(map);
+        });
+
+
+        map.on("mouseenter", "package-destination-point", function() {
+            map.getCanvas().style.cursor = "pointer";
+        });
+
+
+        map.on("mouseleave", "package-destination-point", function() {
+            map.getCanvas().style.cursor = "";
+        });
+
+
+/* TRACKING HISTORY */
+
+        map.addSource("tracking-history", {
+            type: "geojson",
+
+            data: {
+                type: "FeatureCollection",
+
+                features: [
+                    {% for update in package.updates.all reversed %}
+                    {
+                        type: "Feature",
+
+                        geometry: {
+                            type: "Point",
+
+                            coordinates: [
+                                Number("{{ update.longitude }}"),
+                                Number("{{ update.latitude }}")
+                            ]
+                        },
+
+                        properties: {
+                            location: "{{ update.location|escapejs }}",
+                            status: "{{ update.get_status_display|escapejs }}",
+                            description: "{{ update.description|escapejs }}",
+                            time: "{{ update.created_at|date:'M d, Y H:i' }}"
+                        }
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            }
+        });
+
+
+        /* HISTORY DOTS */
+
+        map.addLayer({
+            id: "tracking-history-points",
+
+            type: "circle",
+
+            source: "tracking-history",
+
+            paint: {
+                "circle-radius": 8,
+                "circle-color": "#0066ff",
+                "circle-stroke-width": 3,
+                "circle-stroke-color": "#ffffff"
+            }
+        });
+
+
+        /* HISTORY POPUP */
+
+        map.on("click", "tracking-history-points", function(event) {
+
+            const properties = event.features[0].properties;
+
+            new maplibregl.Popup()
+                .setLngLat(event.lngLat)
+                .setHTML(
+                    "<strong>📍 Tracking Update</strong><br><br>" +
+                    "<strong>Location:</strong> " +
+                    properties.location +
+                    "<br>" +
+                    "<strong>Status:</strong> " +
+                    properties.status +
+                    "<br>" +
+                    "<strong>Time:</strong> " +
+                    properties.time +
+                    "<br><br>" +
+                    properties.description
+                )
+                .addTo(map);
+
+        });
+
+
+        map.on("mouseenter", "tracking-history-points", function() {
+            map.getCanvas().style.cursor = "pointer";
+        });
+
+
+        map.on("mouseleave", "tracking-history-points", function() {
+            map.getCanvas().style.cursor = "";
+        });
+
+
+        /* HISTORY LINE */
+
+        const historyCoordinates = [
+            {% for update in package.updates.all reversed %}
+            [
+                Number("{{ update.longitude }}"),
+                Number("{{ update.latitude }}")
+            ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+
+        if (historyCoordinates.length > 1) {
+
+            map.addSource("tracking-history-line", {
+
+                type: "geojson",
+
+                data: {
+                    type: "Feature",
+
+                    geometry: {
+                        type: "LineString",
+                        coordinates: historyCoordinates
+                    }
+                }
+
+            });
+
+
+            map.addLayer({
+
+                id: "tracking-history-line",
+
+                type: "line",
+
+                source: "tracking-history-line",
+
+                paint: {
+
+                    "line-color": "#555555",
+
+                    "line-width": 4,
+
+                    "line-dasharray": [2, 2],
+
+                    "line-opacity": 0.7
+
+                }
+
+            });
+
+        }
+        /* REAL ROAD ROUTE */
+
+        const routeUrl =
+            "https://router.project-osrm.org/route/v1/driving/" +
+            longitude + "," + latitude +
+            ";" +
+            destinationLongitude + "," + destinationLatitude +
+            "?overview=full&geometries=geojson";fetch(routeUrl)
+
+            .then(function(response) {
+                return response.json();
+            })
+
+            .then(function(data) {
+
+    if (data.code !== "Ok") {
+        console.log("Route error:", data);
+        return;
+    }
+
+    const route = data.routes[0];
+
+    const routeGeometry = route.geometry;
+
+
+    /* DISTANCE */
+
+    const distanceKm = route.distance / 1000;
+
+    document.getElementById("route-distance").textContent =
+        distanceKm.toFixed(1) + " km";
+
+
+    /* ESTIMATED TIME */
+
+    const totalMinutes = Math.round(route.duration / 60);
+
+    const hours = Math.floor(totalMinutes / 60);
+
+    const minutes = totalMinutes % 60;
+
+
+    let timeText = "";
+
+    if (hours > 0) {
+        timeText += hours + " hr";
+
+        if (hours !== 1) {
+            timeText += "s";
+        }
+    }
+
+    if (minutes > 0) {
+
+        if (timeText !== "") {
+            timeText += " ";
+        }
+
+        timeText += minutes + " min";
+    }
+
+    if (timeText === "") {
+        timeText = "Less than 1 min";
+    }
+
+
+    document.getElementById("route-time").textContent =
+        timeText;
+
+
+                map.addSource("package-route", {
+                    type: "geojson",
+
+                    data: {
+                        type: "Feature",
+
+                        geometry: routeGeometry
+                    }
+                });
+
+
+                map.addLayer({
+                    id: "package-route-line",
+
+                    type: "line",
+
+                    source: "package-route",
+
+                    paint: {
+                        "line-color": "#0066ff",
+                        "line-width": 6,
+                        "line-opacity": 0.85
+                    }
+                });
+
+            })
+
+            .catch(function(error) {
+
+                console.log("Routing error:", error);
+
+            });
+
+    });
+/* LIVE LOCATION UPDATES */
+
+function updatePackageLocation() {
+
+    fetch("/api/package-location/{{ package.tracking_number }}/")
+
+        .then(function(response) {
+            return response.json();
+        })
+
+        .then(function(data) {
+
+            const newLatitude = Number(data.latitude);
+            const newLongitude = Number(data.longitude);
+            const updateTime = new Date();
+
+document.getElementById("last-updated").textContent =
+    "Updated " +
+    updateTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+            if (
+                isNaN(newLatitude) ||
+                isNaN(newLongitude)
+            ) {
+                return;
+            }
+
+
+            /* MOVE RED PACKAGE DOT */
+
+            map.getSource("package-location").setData({
+
+                type: "Feature",
+
+                geometry: {
+                    type: "Point",
+
+                    coordinates: [
+                        newLongitude,
+                        newLatitude
+                    ]
+                }
+
+            });
+/* SAVE NEW LOCATION TO TRACKING HISTORY */
+
+fetch(
+    "/api/save-package-location/{{ package.tracking_number }}/",
+    {
+        method: "POST",
+
+        headers: {
+            "Content-Type":
+                "application/x-www-form-urlencoded",
+
+            "X-CSRFToken":
+                "{{ csrf_token }}"
+        },
+
+        body:
+            "latitude=" +
+            encodeURIComponent(newLatitude) +
+            "&longitude=" +
+            encodeURIComponent(newLongitude)
+    }
+)
+
+.then(function(response) {
+    return response.json();
+})
+
+.then(function(data) {
+
+    if (data.saved) {
+
+        console.log(
+            "📍 Tracking update saved:",
+            data.location
+        );
+
+    }
+
+})
+
+.catch(function(error) {
+
+    console.log(
+        "Tracking history error:",
+        error
+    );
+
+});
+
+            /* UPDATE MAP POSITION */
+
+            map.flyTo({
+
+                center: [
+                    newLongitude,
+                    newLatitude
+                ],
+
+                duration: 1000
+
+            });
+
+
+            /* RECALCULATE ROAD ROUTE */
+
+            const routeUrl =
+                "https://router.project-osrm.org/route/v1/driving/" +
+                newLongitude + "," + newLatitude +
+                ";" +
+                destinationLongitude + "," + destinationLongitude +
+                "?overview=full&geometries=geojson";
+
+
+            fetch(routeUrl)
+
+                .then(function(response) {
+                    return response.json();
+                })
+
+                .then(function(routeData) {
+
+                    if (routeData.code !== "Ok") {
+                        console.log(
+                            "Live route error:",
+                            routeData
+                        );
+                        return;
+                    }
+
+
+                    const route =
+                        routeData.routes[0];
+
+
+                    /* UPDATE DISTANCE */
+
+                    const distanceKm =
+                        route.distance / 1000;
+
+                    document.getElementById(
+                        "route-distance"
+                    ).textContent =
+                        distanceKm.toFixed(1) + " km";
+
+
+                    /* UPDATE ETA */
+
+                    const totalMinutes =
+                        Math.round(
+                            route.duration / 60
+                        );
+
+                    const hours =
+                        Math.floor(
+                            totalMinutes / 60
+                        );
+
+                    const minutes =
+                        totalMinutes % 60;
+
+
+                    let timeText = "";
+
+
+                    if (hours > 0) {
+
+                        timeText =
+                            hours + " hr";
+
+                        if (hours !== 1) {
+                            timeText += "s";
+                        }
+
+                    }
+
+
+                    if (minutes > 0) {
+
+                        if (timeText !== "") {
+                            timeText += " ";
+                        }
+
+                        timeText +=
+                            minutes + " min";
+
+                    }
+
+
+                    if (timeText === "") {
+                        timeText =
+                            "Less than 1 min";
+                    }
+
+
+                    document.getElementById(
+                        "route-time"
+                    ).textContent =
+                        timeText;
+
+
+                    /* UPDATE ROAD ROUTE */
+
+                    if (
+                        map.getSource(
+                            "package-route"
+                        )
+                    ) {
+
+                        map.getSource(
+                            "package-route"
+                        ).setData({
+
+                            type: "Feature",
+
+                            geometry:
+                                route.geometry
+
+                        });
+
+                    }
+
+                })
+
+                .catch(function(error) {
+
+                    console.log(
+                        "Live routing error:",
+                        error
+                    );
+
+                });
+
+        })
+
+        .catch(function(error) {
+
+            console.log(
+                "Live location update error:",
+                error
+            );
+
+        });
+
+}
+
+
+/* CHECK EVERY 10 SECONDS */
+
+setInterval(
+    updatePackageLocation,
+    10000
+);
+
+
+</script>
+{% endif %}
+<script>
+
+function shareTracking() {
+
+    const trackingUrl = window.location.href;
+
+    if (navigator.share) {
+
+        navigator.share({
+            title: "BusinessHub Package Tracking",
+            text: "Track my package on BusinessHub.",
+            url: trackingUrl
+        });
+
+    } else {
+
+        navigator.clipboard.writeText(trackingUrl);
+
+        alert("Tracking link copied!");
+
+    }
+
+}
+
+</script>
+<script>
+function copyTrackingLink() {
+
+    const trackingNumber =
+        "{{ package.tracking_number }}";
+
+    const trackingLink =
+        window.location.origin +
+        "/tracking/?tracking_number=" +
+        encodeURIComponent(trackingNumber);
+
+    navigator.clipboard.writeText(trackingLink)
+
+        .then(function() {
+
+            alert("Tracking link copied!");
+
+        })
+
+        .catch(function() {
+
+            alert("Unable to copy tracking link.");
+
+        });
+
+}
+function copyTrackingNumber() {
+
+    const trackingNumber =
+        "{{ package.tracking_number }}";
+
+    navigator.clipboard.writeText(trackingNumber)
+
+        .then(function() {
+
+            alert(
+                "Tracking number copied: " +
+                trackingNumber
+            );
+
+        })
+
+        .catch(function() {
+
+            alert(
+                "Unable to copy tracking number."
+            );
+
+        });
+
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BusinessHub | Businesses</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="header">
+
+        <div>
+            <h1>Discover Businesses</h1>
+            <p>Find businesses and services on BusinessHub</p>
+        </div>
+
+        <div class="brand">
+            Business<span>Hub</span>
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-section">
+
+        <form method="GET" action="{% url 'business_list' %}" class="business-search-form">
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search business, category, city or region..."
+            >
+
+            <button type="submit">
+                🔍 Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- SEARCH RESULT MESSAGE -->
+
+    {% if query %}
+
+        <div class="search-result-message">
+
+            <p>
+                Search results for:
+                <strong>"{{ query }}"</strong>
+            </p>
+
+            <a href="{% url 'business_list' %}">
+                Clear Search
+            </a>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- BUSINESSES -->
+
+    <div class="business-grid">
+
+        {% for business in businesses %}
+
+            <div class="business-card">
+
+                {% if business.logo %}
+
+                    <img
+                        src="{{ business.logo.url }}"
+                        alt="{{ business.name }}"
+                        class="business-logo"
+                    >
+
+                {% else %}
+
+                    <div class="business-logo-placeholder">
+                        🏢
+                    </div>
+
+                {% endif %}
+
+
+                <div class="business-content">
+
+                    <h2>{{ business.name }}</h2>
+
+                    <p class="category">
+                        {{ business.get_category_display }}
+                    </p>
+
+                    <p class="description">
+                        {{ business.description|truncatewords:20 }}
+                    </p>
+
+                    <p class="location">
+                        📍 {{ business.city }}, {{ business.region }}
+                    </p>
+
+                    <a
+                        href="tel:{{ business.phone }}"
+                        class="contact-btn"
+                    >
+                        Contact Business
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty-businesses">
+
+                <h2>No businesses found</h2>
+
+                {% if query %}
+
+                    <p>
+                        We couldn't find a business matching
+                        "<strong>{{ query }}</strong>".
+                    </p>
+
+                    <a href="{% url 'business_list' %}">
+                        View All Businesses
+                    </a>
+
+                {% else %}
+
+                    <p>
+                        Be the first business to join BusinessHub.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
