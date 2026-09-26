@@ -40,28 +40,28 @@
 
     <nav class="nav-links">
 
-        <a href="index.html">
-            Home
-        </a>
+    <a href="{% url 'home' %}">
+        Home
+    </a>
 
-        <a href="tracking.html">
-            Track Package
-        </a>
+    <a href="{% url 'tracking' %}">
+        Track Package
+    </a>
 
-        <a href="businesses.html">
-            Businesses
-        </a>
+    <a href="{% url 'business_list' %}">
+        Businesses
+    </a>
 
-        <a href="categories.html"
-           class="active">
-            Categories
-        </a>
+    <a href="{% url 'categories' %}"
+       class="active">
+        Categories
+    </a>
 
-        <a href="list-business.html">
-            List Your Business
-        </a>
+    <a href="{% url 'list_business' %}">
+        List Your Business
+    </a>
 
-    </nav>
+</nav>
 
 
     <div class="profile-button">
@@ -603,27 +603,27 @@
 
     <div class="footer-links">
 
-        <a href="index.html">
-            Home
-        </a>
+    <a href="{% url 'home' %}">
+        Home
+    </a>
 
-        <a href="tracking.html">
-            Track Package
-        </a>
+    <a href="{% url 'tracking' %}">
+        Track Package
+    </a>
 
-        <a href="businesses.html">
-            Businesses
-        </a>
+    <a href="{% url 'business_list' %}">
+        Businesses
+    </a>
 
-        <a href="categories.html">
-            Categories
-        </a>
+    <a href="{% url 'categories' %}">
+        Categories
+    </a>
 
-        <a href="list-business.html">
-            List Your Business
-        </a>
+    <a href="{% url 'list_business' %}">
+        List Your Business
+    </a>
 
-    </div>
+</div>
 
 
     <div class="copyright">
@@ -637,7 +637,7 @@
 
 
 
-<script src="js/script.js"></script>
+<script src="{% static 'js/script.js' %}"></script>
 
 </body>
 
