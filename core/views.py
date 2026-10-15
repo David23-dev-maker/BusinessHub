@@ -312,16 +312,11 @@ def business_success(request):
         "business-success.html"
     )
 
-
 def business_list(request):
     from datetime import date
 
     query = request.GET.get("q", "").strip()
     selected_category = request.GET.get("category", "").strip()
-
-    # ============================================================
-    # CHECK FREE-LAUNCH PERIOD
-    # ============================================================
 
     today = timezone.localdate()
 
@@ -331,12 +326,9 @@ def business_list(request):
         < date(2027, 10, 12)
     )
 
-    # ============================================================
-    # GET BUSINESSES
-    # ============================================================
-
     businesses = (
         Business.objects
+        .filter(is_hidden=False)
         .select_related("owner")
         .annotate(
             average_rating=Avg("reviews__rating"),
@@ -345,12 +337,7 @@ def business_list(request):
                 distinct=True,
             ),
         )
-        .all()
     )
-
-    # ============================================================
-    # SEARCH
-    # ============================================================
 
     if query:
         businesses = businesses.filter(
@@ -359,10 +346,6 @@ def business_list(request):
             | Q(city__icontains=query)
             | Q(region__icontains=query)
         )
-
-    # ============================================================
-    # CATEGORY FILTER
-    # ============================================================
 
     category_mapping = {
         "Restaurants & Food": ["food"],
@@ -392,10 +375,6 @@ def business_list(request):
         else:
             businesses = businesses.none()
 
-    # ============================================================
-    # GET ACTIVE SUBSCRIPTIONS
-    # ============================================================
-
     now = timezone.now()
 
     active_subscriptions = (
@@ -413,10 +392,6 @@ def business_list(request):
     }
 
     business_list_data = []
-
-    # ============================================================
-    # ASSIGN BUSINESS RANKINGS
-    # ============================================================
 
     for business in businesses:
         subscription = subscription_map.get(
@@ -455,10 +430,6 @@ def business_list(request):
 
         business_list_data.append(business)
 
-    # ============================================================
-    # SORT BUSINESSES
-    # ============================================================
-
     business_list_data.sort(
         key=lambda business: (
             business.plan_rank,
@@ -466,10 +437,6 @@ def business_list(request):
         ),
         reverse=True,
     )
-
-    # ============================================================
-    # DISPLAY
-    # ============================================================
 
     return render(
         request,
@@ -480,7 +447,6 @@ def business_list(request):
             "selected_category": selected_category,
         },
     )
-
 @login_required
 def owner_dashboard(request):
 
@@ -498,65 +464,83 @@ def owner_dashboard(request):
         }
     )
 
-
 def view_business(
-    request,
-    business_id
-):
+ request,
+ business_id
+ ):
+ business_queryset = Business.objects.all()
 
-    business = get_object_or_404(
-        Business,
-        id=business_id
-    )
 
-    # Record business view
-    BusinessView.objects.create(
-        business=business,
-        viewer=request.user if request.user.is_authenticated else None
-    )
+ # Hidden businesses are accessible only to their owner
+ # or an authenticated staff member.
+ if request.user.is_authenticated:
+     business_queryset = business_queryset.filter(
+         Q(is_hidden=False)
+         | Q(owner=request.user)
+         | Q(owner__isnull=True, is_hidden=False)
+     )
+ else:
+     business_queryset = business_queryset.filter(
+         is_hidden=False
+     )
 
-    # Get all reviews
-    reviews = (
-        BusinessReview.objects
-        .filter(business=business)
-        .select_related("reviewer")
-        .order_by("-created_at")
-    )
+ business = get_object_or_404(
+     business_queryset,
+     id=business_id
+ )
 
-    # Calculate rating statistics
-    review_stats = reviews.aggregate(
-        average_rating=Avg("rating")
-    )
+ # Record business view
+ BusinessView.objects.create(
+     business=business,
+     viewer=(
+         request.user
+         if request.user.is_authenticated
+         else None
+     )
+ )
 
-    average_rating = review_stats["average_rating"] or 0
-    review_count = reviews.count()
+ # Get all reviews
+ reviews = (
+     BusinessReview.objects
+     .filter(business=business)
+     .select_related("reviewer")
+     .order_by("-created_at")
+ )
 
-    # Prepare star display for each review
-    for review in reviews:
+ # Calculate rating statistics
+ review_stats = reviews.aggregate(
+     average_rating=Avg("rating")
+ )
 
-        review.star_range = range(1, 6)
+ average_rating = review_stats["average_rating"] or 0
+ review_count = reviews.count()
 
-    # Current user's review
-    user_review = None
+ # Prepare star display for each review
+ for review in reviews:
+     review.star_range = range(1, 6)
 
-    if request.user.is_authenticated:
+ # Current user's review
+ user_review = None
 
-        user_review = BusinessReview.objects.filter(
-            business=business,
-            reviewer=request.user
-        ).first()
+ if request.user.is_authenticated:
+     user_review = BusinessReview.objects.filter(
+         business=business,
+         reviewer=request.user
+     ).first()
 
-    return render(
-        request,
-        "core/view-business.html",
-        {
-            "business": business,
-            "reviews": reviews,
-            "average_rating": average_rating,
-            "review_count": review_count,
-            "user_review": user_review,
-        }
-    )
+ return render(
+     request,
+     "core/view-business.html",
+     {
+         "business": business,
+         "reviews": reviews,
+         "average_rating": average_rating,
+         "review_count": review_count,
+         "user_review": user_review,
+     }
+ )
+
+
 @login_required
 def edit_business_review(request, business_id):
 
@@ -1819,9 +1803,9 @@ def home(request):
     now = timezone.now()
 
     home_businesses_queryset = (
-        Business.objects
-        .select_related("owner")
-        .all()
+    Business.objects
+    .filter(is_hidden=False)
+    .select_related("owner")
     )
 
     active_subscriptions = (
@@ -1919,10 +1903,13 @@ def home(request):
     # ============================================================
 
     home_items = (
-        Item.objects
-        .filter(status="available")
-        .prefetch_related("images")
-        .order_by("-created_at")[:3]
+     Item.objects
+     .filter(
+        status="available",
+        is_hidden=False,
+     )
+     .prefetch_related("images")
+     .order_by("-created_at")[:3]
     )
 
     # ============================================================
@@ -1930,10 +1917,13 @@ def home(request):
     # ============================================================
 
     home_foods = (
-        Food.objects
-        .filter(status="available")
-        .prefetch_related("images")
-        .order_by("-created_at")[:3]
+      Food.objects
+      .filter(
+         status="available",
+         is_hidden=False,
+     )
+      .prefetch_related("images")
+     .order_by("-created_at")[:3]
     )
 
     # ============================================================
@@ -2900,34 +2890,28 @@ def check_payment_status(request, reference):
 # ITEMS MARKETPLACE
 # =====================================================
 def items_marketplace(request):
-
-    query = request.GET.get(
-        "q",
-        ""
-    ).strip()
-
+    query = request.GET.get("q", "").strip()
     selected_category = request.GET.get(
         "category",
-        ""
+        "",
     ).strip()
 
-    items = Item.objects.filter(
-        status="available"
-    ).select_related(
-        "seller"
-    ).prefetch_related(
-        "images"
+    items = (
+        Item.objects
+        .filter(
+            status="available",
+            is_hidden=False,
+        )
+        .select_related("seller")
+        .prefetch_related("images")
     )
 
     if query:
         items = items.filter(
             Q(title__icontains=query)
-            |
-            Q(description__icontains=query)
-            |
-            Q(location__icontains=query)
-            |
-            Q(category__icontains=query)
+            | Q(description__icontains=query)
+            | Q(location__icontains=query)
+            | Q(category__icontains=query)
         )
 
     if selected_category:
@@ -2935,21 +2919,14 @@ def items_marketplace(request):
             category=selected_category
         )
 
-    # ---------------------------------------------------------
-    # ACTIVE PROMOTIONS
-    # ---------------------------------------------------------
-
     items = list(
-        items.order_by(
-            "-created_at"
-        )
+        items.order_by("-created_at")
     )
 
     now = timezone.now()
 
     item_ids = [
-        item.id
-        for item in items
+        item.id for item in items
     ]
 
     active_promotions = list(
@@ -2967,65 +2944,46 @@ def items_marketplace(request):
     promotion_priority = {}
 
     for promotion in active_promotions:
-
         item_id = promotion["item_id"]
         service_type = promotion["service_type"]
 
         if service_type == "featured":
             priority = 2
-
         elif service_type == "boost":
             priority = 1
-
         else:
             priority = 0
 
         current_priority = promotion_priority.get(
             item_id,
-            0
+            0,
         )
 
         if priority > current_priority:
             promotion_priority[item_id] = priority
-
-    # ---------------------------------------------------------
-    # ATTACH ACTIVE PROMOTION INFORMATION
-    # ---------------------------------------------------------
 
     for item in items:
         item.active_boost = None
         item.active_featured = None
 
     for promotion in active_promotions:
-
         item_id = promotion["item_id"]
         service_type = promotion["service_type"]
 
         for item in items:
-
             if item.id == item_id:
-
                 if service_type == "boost":
                     item.active_boost = promotion
-
                 elif service_type == "featured":
                     item.active_featured = promotion
-
                 break
-
-    # ---------------------------------------------------------
-    # MARKETPLACE ORDER
-    # ---------------------------------------------------------
 
     items.sort(
         key=lambda item: (
-            promotion_priority.get(
-                item.id,
-                0
-            ),
+            promotion_priority.get(item.id, 0),
             item.created_at,
         ),
-        reverse=True
+        reverse=True,
     )
 
     return render(
@@ -3037,7 +2995,7 @@ def items_marketplace(request):
             "selected_category": selected_category,
             "categories": Item.CATEGORY_CHOICES,
             "free_launch": is_businesshub_free_launch(),
-        }
+        },
     )
 @login_required
 def boost_item(request, item_id):
@@ -3230,19 +3188,26 @@ def feature_item(request, item_id):
     messages.success(request, success_message)
     return redirect("item_detail", item_id=item.id)
 
-@login_required
-def item_detail(
-    request,
-    item_id
-):
+def item_detail(request, item_id):
+    item_queryset = (
+        Item.objects
+        .select_related("seller")
+        .prefetch_related("images")
+    )
+
+    if request.user.is_authenticated:
+        item_queryset = item_queryset.filter(
+            Q(is_hidden=False)
+            | Q(seller=request.user)
+        )
+    else:
+        item_queryset = item_queryset.filter(
+            is_hidden=False
+        )
 
     item = get_object_or_404(
-        Item.objects.select_related(
-            "seller"
-        ).prefetch_related(
-            "images"
-        ),
-        id=item_id
+        item_queryset,
+        id=item_id,
     )
 
     now = timezone.now()
@@ -3276,9 +3241,8 @@ def item_detail(
             "item": item,
             "active_boost": active_boost,
             "active_featured": active_featured,
-        }
+        },
     )
-
 @login_required
 def sell_item(request):
 
@@ -3798,34 +3762,28 @@ def mark_item_sold(
 # =====================================================
 
 def food_marketplace(request):
-
-    query = request.GET.get(
-        "q",
-        ""
-    ).strip()
-
+    query = request.GET.get("q", "").strip()
     selected_category = request.GET.get(
         "category",
-        ""
+        "",
     ).strip()
 
-    foods = Food.objects.filter(
-        status="available"
-    ).select_related(
-        "seller"
-    ).prefetch_related(
-        "images"
+    foods = (
+        Food.objects
+        .filter(
+            status="available",
+            is_hidden=False,
+        )
+        .select_related("seller")
+        .prefetch_related("images")
     )
 
     if query:
         foods = foods.filter(
             Q(title__icontains=query)
-            |
-            Q(description__icontains=query)
-            |
-            Q(location__icontains=query)
-            |
-            Q(category__icontains=query)
+            | Q(description__icontains=query)
+            | Q(location__icontains=query)
+            | Q(category__icontains=query)
         )
 
     if selected_category:
@@ -3834,16 +3792,13 @@ def food_marketplace(request):
         )
 
     foods = list(
-        foods.order_by(
-            "-created_at"
-        )
+        foods.order_by("-created_at")
     )
 
     now = timezone.now()
 
     food_ids = [
-        food.id
-        for food in foods
+        food.id for food in foods
     ]
 
     active_promotions = list(
@@ -3861,22 +3816,19 @@ def food_marketplace(request):
     promotion_priority = {}
 
     for promotion in active_promotions:
-
         food_id = promotion["food_id"]
         service_type = promotion["service_type"]
 
         if service_type == "featured":
             priority = 2
-
         elif service_type == "boost":
             priority = 1
-
         else:
             priority = 0
 
         current_priority = promotion_priority.get(
             food_id,
-            0
+            0,
         )
 
         if priority > current_priority:
@@ -3887,28 +3839,20 @@ def food_marketplace(request):
         food.active_featured = None
 
     for promotion in active_promotions:
-
         food_id = promotion["food_id"]
         service_type = promotion["service_type"]
 
         for food in foods:
-
             if food.id == food_id:
-
                 if service_type == "boost":
                     food.active_boost = promotion
-
                 elif service_type == "featured":
                     food.active_featured = promotion
-
                 break
 
     foods.sort(
         key=lambda food: (
-            promotion_priority.get(
-                food.id,
-                0
-            ),
+            promotion_priority.get(food.id, 0),
             food.created_at,
         ),
         reverse=True,
@@ -3923,20 +3867,28 @@ def food_marketplace(request):
             "selected_category": selected_category,
             "categories": Food.CATEGORY_CHOICES,
             "free_launch": is_businesshub_free_launch(),
-        }
+        },
     )
-def food_detail(
-    request,
-    food_id
-):
+def food_detail(request, food_id):
+    food_queryset = (
+        Food.objects
+        .select_related("seller")
+        .prefetch_related("images")
+    )
+
+    if request.user.is_authenticated:
+        food_queryset = food_queryset.filter(
+            Q(is_hidden=False)
+            | Q(seller=request.user)
+        )
+    else:
+        food_queryset = food_queryset.filter(
+            is_hidden=False
+        )
 
     food = get_object_or_404(
-        Food.objects.select_related(
-            "seller"
-        ).prefetch_related(
-            "images"
-        ),
-        id=food_id
+        food_queryset,
+        id=food_id,
     )
 
     now = timezone.now()
@@ -3944,7 +3896,7 @@ def food_detail(
     active_promotions = ListingPromotion.objects.filter(
         food=food,
         is_active=True,
-        expiry_date__gt=now
+        expiry_date__gt=now,
     )
 
     food.active_boost = active_promotions.filter(
@@ -3959,11 +3911,9 @@ def food_detail(
         request,
         "core/food-detail.html",
         {
-            "food": food
-        }
+            "food": food,
+        },
     )
-
-
 
 @login_required
 def sell_food(request):
@@ -5719,80 +5669,118 @@ def conversation_messages_api(request, conversation_id):
         },
         status=200,
     )
-# =====================================================
+# ============================================================
 # USER PRESENCE
-# =====================================================
+# ============================================================
 
 @login_required
 def update_presence(request):
+    """
+    Refresh the authenticated user's online heartbeat.
+    """
 
     if request.method != "POST":
-
         return JsonResponse(
             {
-                "error": "POST request required"
+                "success": False,
+                "error": "POST request required",
             },
-            status=405
+            status=405,
         )
+
+    now = timezone.now()
 
     UserPresence.objects.update_or_create(
         user=request.user,
         defaults={
             "is_online": True,
-            "last_seen": timezone.now(),
-        }
+            "last_seen": now,
+        },
     )
 
-    presence = UserPresence.objects.get(
-        user=request.user
+    return JsonResponse(
+        {
+            "success": True,
+            "online": True,
+            "is_online": True,
+            "status": "Online",
+            "last_seen": now.isoformat(),
+        },
+        status=200,
     )
-
-    return JsonResponse({
-        "online": True,
-        "last_seen": presence.last_seen.isoformat()
-    })
 
 
 @login_required
-def get_user_presence(
-    request,
-    user_id
-):
+def get_user_presence(request, user_id):
+    """
+    Return another user's current online status.
+
+    A user is online only if their online flag is enabled
+    and their last heartbeat is no more than 60 seconds old.
+    """
 
     presence = UserPresence.objects.filter(
         user_id=user_id
     ).first()
 
-    if not presence:
+    if not presence or not presence.last_seen:
+        return JsonResponse(
+            {
+                "online": False,
+                "is_online": False,
+                "status": "Offline",
+                "last_seen": None,
+            },
+            status=200,
+        )
 
-        return JsonResponse({
-            "online": False,
-            "last_seen": None
-        })
-
-    last_seen = presence.last_seen
-
-    if not last_seen:
-
-        return JsonResponse({
-            "online": False,
-            "last_seen": None
-        })
+    now = timezone.now()
 
     difference = (
-        timezone.now()
-        -
-        last_seen
+        now - presence.last_seen
     ).total_seconds()
 
     online = (
-        difference <= 60
+        presence.is_online
+        and 0 <= difference <= 60
     )
 
-    return JsonResponse({
-        "online": online,
-        "last_seen": last_seen.isoformat()
-    })
+    if online:
+        status = "Online"
+
+    elif difference < 0:
+        status = "Offline"
+
+    elif difference < 3600:
+        minutes = int(difference // 60)
+
+        status = (
+            f"Last seen {minutes} min ago"
+            if minutes > 0
+            else "Offline"
+        )
+
+    elif difference < 86400:
+        hours = int(difference // 3600)
+        status = f"Last seen {hours} hr ago"
+
+    else:
+        days = int(difference // 86400)
+
+        status = (
+            f"Last seen {days} "
+            f"day{'s' if days != 1 else ''} ago"
+        )
+
+    return JsonResponse(
+        {
+            "online": online,
+            "is_online": online,
+            "status": status,
+            "last_seen": presence.last_seen.isoformat(),
+        },
+        status=200,
+    )
 @login_required
 def boost_food(request, food_id):
     from datetime import date

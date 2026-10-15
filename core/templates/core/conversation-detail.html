@@ -1140,73 +1140,135 @@
 
 
 <script>
+const chatMessages = document.getElementById("chatMessages");
+const messageInput = document.getElementById("messageInput");
+const updatePresenceUrl = "{% url 'update_presence' %}";
+const getPresenceUrl = "{% url 'get_user_presence' other_user.id %}";
+const statusElement = document.querySelector(".chat-status");
 
-const chatMessages =
-    document.getElementById("chatMessages");
-
-const messageInput =
-    document.getElementById("messageInput");
-
-
-/* =========================================================
-   SCROLL TO LATEST MESSAGE
-========================================================= */
+let heartbeatInterval = null;
+let presenceInterval = null;
 
 if (chatMessages) {
-
-    chatMessages.scrollTop =
-        chatMessages.scrollHeight;
-
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
-
-/* =========================================================
-   AUTO-GROW TEXTAREA
-========================================================= */
 
 if (messageInput) {
+    messageInput.addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = Math.min(this.scrollHeight, 120) + "px";
+    });
 
-    messageInput.addEventListener(
-        "input",
-        function () {
-
-            this.style.height = "auto";
-
-            this.style.height =
-                Math.min(
-                    this.scrollHeight,
-                    120
-                ) + "px";
-
+    messageInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            this.form.submit();
         }
-    );
-
-
-    /* =====================================================
-       ENTER TO SEND
-    ===================================================== */
-
-    messageInput.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                this.form.submit();
-
-            }
-
-        }
-    );
-
+    });
 }
 
+function getCsrfToken() {
+    const cookie = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("csrftoken="));
+
+    if (cookie) {
+        return decodeURIComponent(cookie.split("=")[1]);
+    }
+
+    const csrfInput = document.querySelector(
+        'input[name="csrfmiddlewaretoken"]'
+    );
+
+    return csrfInput ? csrfInput.value : "";
+}
+
+async function sendPresenceHeartbeat() {
+    if (document.visibilityState === "hidden") return;
+
+    try {
+        const response = await fetch(updatePresenceUrl, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "X-CSRFToken": getCsrfToken(),
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            console.warn(
+                "BusinessHub presence heartbeat failed:",
+                response.status
+            );
+        }
+    } catch (error) {
+        console.warn("Unable to update user presence.", error);
+    }
+}
+
+async function updatePresenceDisplay() {
+    if (!statusElement) return;
+
+    try {
+        const response = await fetch(getPresenceUrl, {
+            credentials: "same-origin",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            cache: "no-store"
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        statusElement.textContent =
+            "● " + (
+                data.status ||
+                ((data.online || data.is_online) ? "Online" : "Offline")
+            );
+    } catch (error) {
+        // Keep the last known status visible.
+    }
+}
+
+function startPresenceUpdates() {
+    sendPresenceHeartbeat();
+    updatePresenceDisplay();
+
+    heartbeatInterval = window.setInterval(
+        sendPresenceHeartbeat,
+        20000
+    );
+
+    presenceInterval = window.setInterval(
+        updatePresenceDisplay,
+        15000
+    );
+}
+
+startPresenceUpdates();
+
+document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") {
+        sendPresenceHeartbeat();
+        updatePresenceDisplay();
+    }
+});
+
+window.addEventListener("pagehide", function () {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+    }
+
+    if (presenceInterval) {
+        clearInterval(presenceInterval);
+    }
+});
 </script>
+
 
 </body>
 </html>

@@ -78,11 +78,23 @@ class Business(models.Model):
         null=True
     )
 
+    # Moderation controls
+    is_hidden = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Hide this business from public listings."
+    )
+
+    moderation_note = models.TextField(
+        blank=True,
+        default="",
+        help_text="Internal explanation for hiding this business."
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
-
 
 # ============================================================
 # PACKAGE TRACKING
@@ -460,13 +472,24 @@ class Item(models.Model):
         default="available"
     )
 
+    # Moderation controls
+    is_hidden = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Hide this item from public listings."
+    )
+
+    moderation_note = models.TextField(
+        blank=True,
+        default="",
+        help_text="Internal explanation for hiding this item."
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
-
-
 class ItemImage(models.Model):
 
     item = models.ForeignKey(
@@ -546,12 +569,24 @@ class Food(models.Model):
         blank=True
     )
 
+    # Moderation controls
+    is_hidden = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Hide this food listing from public listings."
+    )
+
+    moderation_note = models.TextField(
+        blank=True,
+        default="",
+        help_text="Internal explanation for hiding this food listing."
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
-
 
 class FoodImage(models.Model):
 

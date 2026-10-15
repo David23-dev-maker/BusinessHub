@@ -1702,46 +1702,124 @@ display: none !important;
     messagesInterval = window.setInterval(function () {
         fetchMessages(false);
     }, 3000);
+    // =========================================================
+    // USER PRESENCE: HEARTBEAT AND LIVE STATUS
+    // =========================================================
 
     const presenceUrl = chat.dataset.presenceUrl;
     const statusElement = document.getElementById("chatUserStatus");
+    const updatePresenceUrl = "{% url 'update_presence' %}";
 
-    async function updatePresenceDisplay() {
-        if (!presenceUrl || !statusElement) return;
+    let presenceInterval = null;
+    let heartbeatInterval = null;
 
-        try {
-            const response = await fetch(presenceUrl, {
-                credentials: "same-origin",
-                headers: { "X-Requested-With": "XMLHttpRequest" },
-                cache: "no-store"
-            });
+    // Read Django's CSRF cookie for authenticated POST requests.
+    function getCsrfToken() {
+        const cookie = document.cookie
+           .split("; ")
+           .find(row => row.startsWith("csrftoken="));
 
-            if (!response.ok) return;
+       if (cookie) {
+          return decodeURIComponent(cookie.split("=")[1]);
+       }
 
-            const data = await response.json();
-            const status = data.status || (data.is_online ? "Online" : "Offline");
-            statusElement.textContent = status;
+       const csrfInput = document.querySelector(
+        'input[name="csrfmiddlewaretoken"]'
+       );
 
-        } catch (error) {
-            // Keep the last known status visible.
-        }
+          return csrfInput ? csrfInput.value : "";
     }
 
-    updatePresenceDisplay();
-    presenceInterval = window.setInterval(updatePresenceDisplay, 15000);
+      // Tell Django that the current user is active.
+      async function sendPresenceHeartbeat() {
+       if (document.visibilityState === "hidden") return;
 
-    window.addEventListener("pagehide", function () {
-        if (recordingInterval) clearInterval(recordingInterval);
-        if (messagesInterval) clearInterval(messagesInterval);
-        if (presenceInterval) clearInterval(presenceInterval);
+       try {
+         const response = await fetch(updatePresenceUrl, {
+             method: "POST",
+             credentials: "same-origin",
+             headers: {
+                 "X-CSRFToken": getCsrfToken(),
+                 "X-Requested-With": "XMLHttpRequest"
+             },
+             cache: "no-store"
+         });
 
-        releaseMicrophone();
+         if (!response.ok) {
+             console.warn(
+                 "BusinessHub presence heartbeat failed:",
+                 response.status
+             );
+         }
+     } catch (error) {
+         console.warn("Unable to update user presence.", error);
+      }
+ }
 
-        if (recordedVoiceUrl) {
-            URL.revokeObjectURL(recordedVoiceUrl);
-            recordedVoiceUrl = null;
-        }
-    });
+   // Fetch and display the other user's latest status.
+    async function updatePresenceDisplay() {
+       if (!presenceUrl || !statusElement) return;
+
+       try {
+          const response = await fetch(presenceUrl, {
+             credentials: "same-origin",
+             headers: {
+                 "X-Requested-With": "XMLHttpRequest"
+             },
+             cache: "no-store"
+         });
+
+         if (!response.ok) return;
+
+          const data = await response.json();
+
+          statusElement.textContent =
+             data.status ||
+             ((data.online || data.is_online) ? "Online" : "Offline");
+
+      } catch (error) {
+         // Keep the last known status visible.
+     }
+ }
+
+ // Start immediately.
+ sendPresenceHeartbeat();
+ updatePresenceDisplay();
+
+ // Keep the current user online while this page is active.
+ heartbeatInterval = window.setInterval(
+     sendPresenceHeartbeat,
+     20000
+ );
+
+ // Refresh the other user's status.
+ presenceInterval = window.setInterval(
+     updatePresenceDisplay,
+     15000
+ );
+
+ // Refresh promptly when the user returns to the page.
+ document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        sendPresenceHeartbeat();
+        updatePresenceDisplay();
+     }
+ });
+
+ window.addEventListener("pagehide", function () {
+     if (recordingInterval) clearInterval(recordingInterval);
+     if (messagesInterval) clearInterval(messagesInterval);
+     if (presenceInterval) clearInterval(presenceInterval);
+     if (heartbeatInterval) clearInterval(heartbeatInterval);
+
+     releaseMicrophone();
+
+     if (recordedVoiceUrl) {
+        URL.revokeObjectURL(recordedVoiceUrl);
+        recordedVoiceUrl = null;
+     }
+ });
+
 })();
 
 </script>
