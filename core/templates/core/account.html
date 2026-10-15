@@ -1,0 +1,782 @@
+
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}
+BusinessHub — My Account
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/account-premium.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<section class="account-page">
+
+    <div class="account-container">
+
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
+
+        <div class="account-page-header">
+
+            <div class="account-page-heading">
+
+                <div class="account-main-avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+                <div class="account-heading-text">
+
+                    <span class="account-eyebrow">
+                        My Account
+                    </span>
+
+                    <h1>
+                        {{ user.username }}
+                    </h1>
+
+                    <p>
+                        Manage your profile, businesses, marketplace
+                        listings and security.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'edit_account' %}"
+                class="account-main-button"
+            >
+                <span>✎</span>
+                Edit Profile
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             ACCOUNT STATS
+        ====================================================== -->
+
+        <div class="account-stats">
+
+            <div class="account-stat-card">
+
+                <div class="account-stat-icon">
+                    🏢
+                </div>
+
+                <div>
+                    <span>
+                        Businesses
+                    </span>
+
+                    <strong>
+                        {{ business_count }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="account-stat-card">
+
+                <div class="account-stat-icon">
+                    💬
+                </div>
+
+                <div>
+                    <span>
+                        Conversations
+                    </span>
+
+                    <strong>
+                        {{ conversation_count }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="account-stat-card">
+
+                <div class="account-stat-icon">
+                    📤
+                </div>
+
+                <div>
+                    <span>
+                        Sent Messages
+                    </span>
+
+                    <strong>
+                        {{ message_count }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="account-stat-card">
+
+                <div class="account-stat-icon">
+                    📥
+                </div>
+
+                <div>
+                    <span>
+                        Received
+                    </span>
+
+                    <strong>
+                        {{ received_message_count }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PROFILE
+        ====================================================== -->
+
+        <div class="account-card">
+
+            <div class="account-card-heading">
+
+                <div>
+                    <span class="account-card-label">
+                        Profile
+                    </span>
+
+                    <h2>
+                        Personal information
+                    </h2>
+
+                    <p class="account-card-description">
+                        Your basic BusinessHub account details.
+                    </p>
+                </div>
+
+                <a href="{% url 'edit_account' %}">
+                    Edit →
+                </a>
+
+            </div>
+
+
+            <div class="account-info-grid">
+
+                <div class="account-info-item">
+
+                    <span>
+                        Username
+                    </span>
+
+                    <strong>
+                        {{ user.username }}
+                    </strong>
+
+                </div>
+
+
+                <div class="account-info-item">
+
+                    <span>
+                        Email
+                    </span>
+
+                    <strong>
+                        {{ user.email|default:"Not provided" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="account-info-item">
+
+                    <span>
+                        First name
+                    </span>
+
+                    <strong>
+                        {{ user.first_name|default:"Not provided" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="account-info-item">
+
+                    <span>
+                        Last name
+                    </span>
+
+                    <strong>
+                        {{ user.last_name|default:"Not provided" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             BUSINESSHUB PLAN
+        ====================================================== -->
+
+        <div class="account-card">
+
+            <div class="account-card-heading">
+
+                <div>
+                    <span class="account-card-label">
+                        BusinessHub Services
+                    </span>
+
+                    <h2>
+                        Your plan
+                    </h2>
+
+                    <p class="account-card-description">
+                        View your current BusinessHub subscription.
+                    </p>
+                </div>
+
+            </div>
+
+
+            {% if active_subscription %}
+
+                <div class="account-security-row">
+
+                    <div class="account-security-symbol">
+                        ⭐
+                    </div>
+
+                    <div class="account-security-text">
+
+                        <strong>
+                            {{ active_subscription.get_plan_display }}
+                        </strong>
+
+                        <p>
+                            Your subscription is currently active.
+                        </p>
+
+                        <p>
+                            Active until
+                            <strong>
+                                {{ active_subscription.expiry_date|date:"F j, Y" }}
+                            </strong>
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="account-security-row">
+
+                    <div class="account-security-symbol">
+                        ○
+                    </div>
+
+                    <div class="account-security-text">
+
+                        <strong>
+                            No active subscription
+                        </strong>
+
+                        <p>
+                            You are currently using the standard
+                            BusinessHub account.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =====================================================
+             MY BUSINESSES
+        ====================================================== -->
+
+        <div class="account-card">
+
+            <div class="account-card-heading">
+
+                <div>
+                    <span class="account-card-label">
+                        BusinessHub
+                    </span>
+
+                    <h2>
+                        My businesses
+                    </h2>
+
+                    <p class="account-card-description">
+                        Manage the businesses you have listed.
+                    </p>
+                </div>
+
+                <a href="{% url 'list_business' %}">
+                    Add Business →
+                </a>
+
+            </div>
+
+
+            {% if businesses %}
+
+                <div class="account-businesses">
+
+                    {% for business in businesses %}
+
+                        <div class="account-business">
+
+                            <div class="account-business-logo">
+
+                                {% if business.logo %}
+
+                                    <img
+                                        src="{{ business.logo.url }}"
+                                        alt="{{ business.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <span>
+                                        {{ business.name|first|upper }}
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="account-business-details">
+
+                                <span>
+                                    {{ business.get_category_display }}
+                                </span>
+
+                                <h3>
+                                    {{ business.name }}
+                                </h3>
+
+                                <p>
+                                    {% if business.city %}
+                                        {{ business.city }}
+                                    {% endif %}
+
+                                    {% if business.city and business.region %}
+                                        ,
+                                    {% endif %}
+
+                                    {% if business.region %}
+                                        {{ business.region }}
+                                    {% endif %}
+                                </p>
+
+                            </div>
+
+
+                            <div class="account-business-actions">
+
+                                <a
+                                    href="{% url 'view_business' business.id %}"
+                                >
+                                    View
+                                </a>
+
+                                <a
+                                    href="{% url 'edit_business' business.id %}"
+                                >
+                                    Edit
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="account-no-businesses">
+
+                    <div class="account-empty-icon">
+                        🏢
+                    </div>
+
+                    <h3>
+                        No businesses yet
+                    </h3>
+
+                    <p>
+                        List your business on BusinessHub and
+                        start connecting with customers.
+                    </p>
+
+                    <a
+                        href="{% url 'list_business' %}"
+                        class="account-main-button"
+                    >
+                        List Your Business
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =====================================================
+             MARKETPLACE
+        ====================================================== -->
+
+        <div class="account-card">
+
+            <div class="account-card-heading">
+
+                <div>
+                    <span class="account-card-label">
+                        Marketplace
+                    </span>
+
+                    <h2>
+                        My listings
+                    </h2>
+
+                    <p class="account-card-description">
+                        Sell food and items or browse what is available.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="account-links marketplace-links">
+
+                <a href="{% url 'my_food' %}">
+
+                    <span class="account-link-icon food-icon">
+                        🍲
+                    </span>
+
+                    <div>
+                        <strong>
+                            My Food Listings
+                        </strong>
+
+                        <small>
+                            Manage the food you are selling
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <a href="{% url 'my_items' %}">
+
+                    <span class="account-link-icon item-icon">
+                        🛍️
+                    </span>
+
+                    <div>
+                        <strong>
+                            My Items
+                        </strong>
+
+                        <small>
+                            Manage items you are selling
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <a href="{% url 'food_marketplace' %}">
+
+                    <span class="account-link-icon browse-food-icon">
+                        🍽️
+                    </span>
+
+                    <div>
+                        <strong>
+                            Food Marketplace
+                        </strong>
+
+                        <small>
+                            Browse food listings
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <a href="{% url 'items_marketplace' %}">
+
+                    <span class="account-link-icon browse-item-icon">
+                        🛒
+                    </span>
+
+                    <div>
+                        <strong>
+                            Items Marketplace
+                        </strong>
+
+                        <small>
+                            Browse items for sale
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             SECURITY
+        ====================================================== -->
+
+        <div class="account-card">
+
+            <div class="account-card-heading">
+
+                <div>
+                    <span class="account-card-label">
+                        Security
+                    </span>
+
+                    <h2>
+                        Account security
+                    </h2>
+
+                    <p class="account-card-description">
+                        Keep your BusinessHub account secure.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="account-security-row">
+
+                <div class="account-security-symbol">
+                    🔒
+                </div>
+
+                <div class="account-security-text">
+
+                    <strong>
+                        Password
+                    </strong>
+
+                    <p>
+                        Change your BusinessHub password regularly
+                        to help keep your account secure.
+                    </p>
+
+                </div>
+
+                <a
+                    href="{% url 'change_password' %}"
+                    class="account-security-link"
+                >
+                    Change Password →
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             QUICK LINKS
+        ====================================================== -->
+
+        <div class="account-card">
+
+            <div class="account-card-heading">
+
+                <div>
+                    <span class="account-card-label">
+                        Quick Access
+                    </span>
+
+                    <h2>
+                        Manage your account
+                    </h2>
+
+                    <p class="account-card-description">
+                        Jump directly to the areas you use most.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="account-links">
+
+                <a href="{% url 'messages_inbox' %}">
+
+                    <span class="account-link-icon">
+                        💬
+                    </span>
+
+                    <div>
+                        <strong>
+                            Messages
+                        </strong>
+
+                        <small>
+                            View your conversations
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <a href="{% url 'owner_dashboard' %}">
+
+                    <span class="account-link-icon">
+                        🏢
+                    </span>
+
+                    <div>
+                        <strong>
+                            Business Dashboard
+                        </strong>
+
+                        <small>
+                            Manage your businesses
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <a href="{% url 'edit_account' %}">
+
+                    <span class="account-link-icon">
+                        👤
+                    </span>
+
+                    <div>
+                        <strong>
+                            Edit Profile
+                        </strong>
+
+                        <small>
+                            Update your account information
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <a href="{% url 'change_password' %}">
+
+                    <span class="account-link-icon">
+                        🔐
+                    </span>
+
+                    <div>
+                        <strong>
+                            Change Password
+                        </strong>
+
+                        <small>
+                            Update your password
+                        </small>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             LOGOUT
+        ====================================================== -->
+
+        <div class="account-logout">
+
+            <div>
+                <strong>
+                    Finished managing your account?
+                </strong>
+
+                <span>
+                    You can safely log out of BusinessHub.
+                </span>
+            </div>
+
+            <a href="{% url 'logout' %}">
+                Log Out
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

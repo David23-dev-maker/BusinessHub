@@ -1,644 +1,557 @@
+
+{% extends "core/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+{% block title %}
+    BusinessHub — Categories
+{% endblock %}
 
-    <meta charset="UTF-8">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/categories.css' %}">
+{% endblock %}
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>
-        BusinessHub - Categories
-    </title>
-
-    <link rel="stylesheet"
-      href="{% static 'css/home.css' %}">
-</head>
-
-
-<body>
-
-
-<!-- ================= NAVBAR ================= -->
-
-<header class="navbar">
-
-    <div class="logo">
-
-        <div class="logo-icon">
-            ◈
-        </div>
-
-        <span>
-            BusinessHub
-        </span>
-
-    </div>
-
-
-    <nav class="nav-links">
-
-    <a href="{% url 'home' %}">
-        Home
-    </a>
-
-    <a href="{% url 'tracking' %}">
-        Track Package
-    </a>
-
-    <a href="{% url 'business_list' %}">
-        Businesses
-    </a>
-
-    <a href="{% url 'categories' %}"
-       class="active">
-        Categories
-    </a>
-
-    <a href="{% url 'list_business' %}">
-        List Your Business
-    </a>
-
-</nav>
-
-
-    <div class="profile-button">
-        👤
-    </div>
-
-</header>
-
-
-
-<!-- ================= CATEGORY HERO ================= -->
-
-<section class="category-hero">
-
-    <div class="category-hero-content">
-
-        <h1>
-            ▦
-            Explore Categories
-        </h1>
-
-
-        <p>
-            Find businesses, services and shops near you.
-            Browse by category to discover what you need,
-            whenever you need it.
-        </p>
-
-
-        <div class="category-search">
-
-            <span>
-                🔍
-            </span>
-
-            <input
-                type="text"
-                id="categorySearch"
-                placeholder="Search categories..."
-            >
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- ================= CATEGORIES ================= -->
+{% block content %}
 
 <section class="categories-page">
 
-    <div class="categories-heading">
+    <div class="categories-container">
 
-        <div>
+        <!-- HERO -->
 
-            <h2>
-                All Categories
-            </h2>
+        <div class="categories-hero">
+
+            <div class="categories-hero-content">
+
+                <span class="page-eyebrow">
+                    BUSINESSHUB DIRECTORY
+                </span>
+
+                <h1>
+                    Explore <span>Categories.</span>
+                </h1>
+
+                <p>
+                    Discover businesses, services and shops across
+                    BusinessHub. Browse by category and find exactly
+                    what you need.
+                </p>
+
+                <div class="category-search">
+
+                    <span class="category-search-icon">
+                        🔍
+                    </span>
+
+                    <input
+                        type="text"
+                        id="categorySearch"
+                        placeholder="Search categories..."
+                        aria-label="Search categories"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="categories-hero-visual">
+
+                <div class="category-visual-main">
+                    ◈
+                </div>
+
+                <div class="category-floating floating-one">
+                    🛒
+                </div>
+
+                <div class="category-floating floating-two">
+                    🍴
+                </div>
+
+                <div class="category-floating floating-three">
+                    💻
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SECTION HEADER -->
+
+        <div class="categories-heading">
+
+            <div>
+
+                <span class="section-eyebrow">
+                    BROWSE DIRECTORY
+                </span>
+
+                <h2>
+                    All Categories
+                </h2>
+
+                <p>
+                    Choose a category to discover businesses
+                    and services on BusinessHub.
+                </p>
+
+            </div>
+
+            <div class="category-count">
+
+                <span>
+                    Total Categories
+                </span>
+
+                <strong>
+                    12
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- CATEGORY GRID -->
+
+        <div
+            class="categories-grid"
+            id="categoriesGrid"
+        >
+
+            <!-- 1: RESTAURANTS AND FOOD -->
+
+            <a
+                href="{% url 'business_list' %}?category=Restaurants%20%26%20Food"
+                class="business-category"
+                data-name="Restaurants Food"
+            >
+
+                <div class="category-circle blue">
+                    🍴
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Restaurants &amp; Food</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Find restaurants, cafés and food
+                        services near you.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 2: SHOPPING AND RETAIL -->
+
+            <a
+                href="{% url 'business_list' %}?category=Shopping%20%26%20Retail"
+                class="business-category"
+                data-name="Shopping Retail"
+            >
+
+                <div class="category-circle green">
+                    🛒
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Shopping &amp; Retail</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Shops, fashion, groceries,
+                        electronics and more.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 3: ELECTRONICS AND COMPUTERS -->
+
+            <a
+                href="{% url 'business_list' %}?category=Electronics%20%26%20Computers"
+                class="business-category"
+                data-name="Electronics Computers"
+            >
+
+                <div class="category-circle purple">
+                    💻
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Electronics &amp; Computers</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Phones, laptops, accessories
+                        and tech services.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 4: HOME AND LIVING -->
+
+            <a
+                href="{% url 'business_list' %}?category=Home%20%26%20Living"
+                class="business-category"
+                data-name="Home Living"
+            >
+
+                <div class="category-circle orange">
+                    🏠
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Home &amp; Living</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Furniture, appliances,
+                        home services and more.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 5: HEALTH AND BEAUTY -->
+
+            <a
+                href="{% url 'business_list' %}?category=Health%20%26%20Beauty"
+                class="business-category"
+                data-name="Health Beauty"
+            >
+
+                <div class="category-circle red">
+                    ❤️
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Health &amp; Beauty</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Pharmacies, clinics, salons,
+                        spas and wellness.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 6: TRANSPORT AND LOGISTICS -->
+
+            <a
+                href="{% url 'business_list' %}?category=Transport%20%26%20Logistics"
+                class="business-category"
+                data-name="Transport Logistics"
+            >
+
+                <div class="category-circle teal">
+                    🚚
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Transport &amp; Logistics</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Delivery services, car rentals,
+                        travel and logistics.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 7: EDUCATION AND TRAINING -->
+
+            <a
+                href="{% url 'business_list' %}?category=Education%20%26%20Training"
+                class="business-category"
+                data-name="Education Training"
+            >
+
+                <div class="category-circle indigo">
+                    🎓
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Education &amp; Training</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Schools, online courses,
+                        skill training and more.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 8: BUSINESS SERVICES -->
+
+            <a
+                href="{% url 'business_list' %}?category=Business%20Services"
+                class="business-category"
+                data-name="Business Services"
+            >
+
+                <div class="category-circle violet">
+                    💼
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Business Services</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Printing, marketing, IT services,
+                        consulting and more.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 9: SPORTS AND RECREATION -->
+
+            <a
+                href="{% url 'business_list' %}?category=Sports%20%26%20Recreation"
+                class="business-category"
+                data-name="Sports Recreation"
+            >
+
+                <div class="category-circle lime">
+                    ⚽
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Sports &amp; Recreation</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Gyms, sports gear, events
+                        and outdoor activities.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 10: PETS AND ANIMALS -->
+
+            <a
+                href="{% url 'business_list' %}?category=Pets%20%26%20Animals"
+                class="business-category"
+                data-name="Pets Animals"
+            >
+
+                <div class="category-circle pink">
+                    🐾
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Pets &amp; Animals</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Pet shops, veterinary care,
+                        grooming and more.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 11: OTHER SERVICES -->
+
+            <a
+                href="{% url 'business_list' %}?category=Other%20Services"
+                class="business-category"
+                data-name="Other Services"
+            >
+
+                <div class="category-circle gray">
+                    ⋯
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Other Services</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Various services not listed
+                        in other categories.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+
+            <!-- 12: TRAVEL AND TOURISM -->
+
+            <a
+                href="{% url 'business_list' %}?category=Travel%20%26%20Tourism"
+                class="business-category"
+                data-name="Travel Tourism"
+            >
+
+                <div class="category-circle sky">
+                    ✈️
+                </div>
+
+                <div class="category-info">
+
+                    <h3>Travel &amp; Tourism</h3>
+
+                    <span>Explore businesses</span>
+
+                    <p>
+                        Hotels, travel agencies,
+                        tours and tourism services.
+                    </p>
+
+                </div>
+
+                <div class="category-arrow">→</div>
+
+            </a>
+
+        </div>
+
+
+        <!-- NO RESULTS -->
+
+        <div
+            class="category-no-results"
+            id="categoryNoResults"
+            style="display: none;"
+        >
+
+            <div class="no-results-icon">
+                🔍
+            </div>
+
+            <h3>No category found</h3>
 
             <p>
-                Browse through our wide range of categories
-                and find exactly what you're looking for.
+                Try searching for another category.
             </p>
 
         </div>
 
-
-        <div class="category-count">
-
-            Total Categories
-
-            <strong>
-                12
-            </strong>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- CATEGORY GRID -->
-
-    <div
-        class="categories-grid"
-        id="categoriesGrid"
-    >
-
-
-        <!-- 1 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Restaurants Food">
-
-            <div class="category-circle blue">
-                🍴
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Restaurants & Food
-                </h3>
-
-                <span>
-                    24 businesses
-                </span>
-
-                <p>
-                    Find the best restaurants, cafés,
-                    and food services near you.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 2 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Shopping Retail">
-
-            <div class="category-circle green">
-                🛒
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Shopping & Retail
-                </h3>
-
-                <span>
-                    32 businesses
-                </span>
-
-                <p>
-                    Shops, fashion, groceries,
-                    electronics and more.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 3 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Electronics Computers">
-
-            <div class="category-circle purple">
-                💻
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Electronics & Computers
-                </h3>
-
-                <span>
-                    18 businesses
-                </span>
-<p>
-                    Phones, laptops, accessories
-                    and tech services.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 4 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Home Living">
-
-            <div class="category-circle orange">
-                🏠
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Home & Living
-                </h3>
-
-                <span>
-                    15 businesses
-                </span>
-
-                <p>
-                    Furniture, appliances,
-                    home services and more.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 5 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Health Beauty">
-
-            <div class="category-circle red">
-                ❤️
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Health & Beauty
-                </h3>
-
-                <span>
-                    12 businesses
-                </span>
-
-                <p>
-                    Pharmacies, clinics, salons,
-                    spas and wellness.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 6 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Transport Logistics">
-
-            <div class="category-circle teal">
-                🚚
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Transport & Logistics
-                </h3>
-
-                <span>
-                    9 businesses
-                </span>
-
-                <p>
-                    Delivery services, car rentals,
-                    travel and logistics.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 7 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Education Training">
-
-            <div class="category-circle indigo">
-                🎓
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Education & Training
-                </h3>
-
-                <span>
-                    8 businesses
-                </span>
-
-                <p>
-                    Schools, online courses,
-                    skill training and more.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 8 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Business Services">
-
-            <div class="category-circle violet">
-                💼
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Business Services
-                </h3>
-
-                <span>
-                    14 businesses
-                </span>
-
-                <p>
-                    Printing, marketing, IT services,
-                    consulting and more.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 9 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Sports Recreation">
-
-            <div class="category-circle lime">
-                ⚽
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Sports & Recreation
-                </h3>
-
-                <span>
-                    6 businesses
-                </span>
-
-                <p>
-                    Gyms, sports gear, events
-                    and outdoor activities.
-                </p>
-</div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 10 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Pets Animals">
-
-            <div class="category-circle pink">
-                🐾
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Pets & Animals
-                </h3>
-
-                <span>
-                    5 businesses
-                </span>
-
-                <p>
-                    Pet shops, veterinary care,
-                    grooming and more.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 11 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Other Services">
-
-            <div class="category-circle gray">
-                ⋯
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Other Services
-                </h3>
-
-                <span>
-                    10 businesses
-                </span>
-
-                <p>
-                    Various services not listed
-                    in other categories.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
-
-        <!-- 12 -->
-
-        <a href="#"
-           class="business-category"
-           data-name="Travel Tourism">
-
-            <div class="category-circle sky">
-                ✈️
-            </div>
-
-            <div class="category-info">
-
-                <h3>
-                    Travel & Tourism
-                </h3>
-
-                <span>
-                    7 businesses
-                </span>
-
-                <p>
-                    Hotels, travel agencies,
-                    tours and tourism services.
-                </p>
-
-            </div>
-
-            <div class="category-arrow">
-                →
-            </div>
-
-        </a>
-
-
     </div>
 
 </section>
 
+{% endblock %}
 
 
-<!-- ================= FOOTER ================= -->
+{% block extra_js %}
 
-<footer class="footer">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    <div class="footer-logo">
+    const searchInput = document.getElementById("categorySearch");
+    const categories = document.querySelectorAll(".business-category");
+    const noResults = document.getElementById("categoryNoResults");
 
-        <div class="logo-icon">
-            ◈
-        </div>
+    if (!searchInput || !noResults) {
+        return;
+    }
 
-        <div>
+    searchInput.addEventListener("input", function () {
 
-            <strong>
-                BusinessHub
-            </strong>
+        const searchTerm = this.value.toLowerCase().trim();
 
-            <small>
-                Connect. Buy. Grow.
-            </small>
+        let visibleCount = 0;
 
-        </div>
+        categories.forEach(function (category) {
 
-    </div>
+            const name = (category.dataset.name || "").toLowerCase();
 
+            if (name.includes(searchTerm)) {
 
-    <div class="footer-links">
+                category.style.display = "flex";
+                visibleCount++;
 
-    <a href="{% url 'home' %}">
-        Home
-    </a>
+            } else {
 
-    <a href="{% url 'tracking' %}">
-        Track Package
-    </a>
+                category.style.display = "none";
 
-    <a href="{% url 'business_list' %}">
-        Businesses
-    </a>
+            }
 
-    <a href="{% url 'categories' %}">
-        Categories
-    </a>
+        });
 
-    <a href="{% url 'list_business' %}">
-        List Your Business
-    </a>
+        noResults.style.display =
+            visibleCount === 0 && searchTerm !== ""
+                ? "block"
+                : "none";
 
-</div>
+    });
 
+});
+</script>
 
-    <div class="copyright">
-
-        © 2026 BusinessHub.
-        All rights reserved.
-
-    </div>
-
-</footer>
-
-
-
-<script src="{% static 'js/script.js' %}"></script>
-
-</body>
-
-</html>
+{% endblock %}

@@ -1,0 +1,1019 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Business Analytics | BusinessHub</title>
+
+    <link rel="stylesheet" href="{% static 'css/businesses-premium.css' %}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: #f8fafc;
+            color: #0f172a;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+                "Segoe UI", sans-serif;
+        }
+
+        /* =====================================================
+           RESPONSIVE NAVIGATION
+           ===================================================== */
+
+        .analytics-site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.97);
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 3px 15px rgba(15, 23, 42, 0.035);
+        }
+
+        .analytics-nav-shell {
+            width: 100%;
+            max-width: 1140px;
+            min-height: 76px;
+            margin: 0 auto;
+            padding: 12px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .analytics-brand {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+            gap: 9px;
+            color: #0f172a;
+            text-decoration: none;
+            font-size: 21px;
+            font-weight: 850;
+            letter-spacing: -0.7px;
+        }
+
+        .analytics-brand-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 11px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 25px;
+            line-height: 1;
+        }
+
+        .analytics-primary-nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 7px;
+        }
+
+        .analytics-primary-nav a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 13px;
+            border-radius: 10px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .analytics-primary-nav a:hover,
+        .analytics-primary-nav a:focus-visible {
+            background: #eff6ff;
+            color: #2563eb;
+            outline: none;
+        }
+
+        .analytics-primary-nav a:focus-visible,
+        .analytics-menu-toggle:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, 0.35);
+            outline-offset: 3px;
+        }
+
+        .analytics-menu-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 5px;
+            width: 44px;
+            height: 44px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .analytics-menu-toggle span {
+            display: block;
+            width: 21px;
+            height: 2px;
+            border-radius: 3px;
+            background: #0f172a;
+            transition:
+                transform 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+        .analytics-menu-toggle[aria-expanded="true"] span:first-child {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .analytics-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .analytics-menu-toggle[aria-expanded="true"] span:last-child {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* =====================================================
+           ANALYTICS PAGE
+           ===================================================== */
+
+        .analytics-page {
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 44px 22px 75px;
+        }
+
+        .analytics-header {
+            margin-bottom: 32px;
+        }
+
+        .analytics-header h1 {
+            margin: 0 0 10px;
+            font-size: clamp(27px, 4vw, 36px);
+            font-weight: 850;
+            letter-spacing: -0.8px;
+            overflow-wrap: anywhere;
+        }
+
+        .analytics-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* TOP STATISTICS */
+
+        .analytics-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-stat {
+            min-width: 0;
+            padding: 26px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+        }
+
+        .analytics-stat-label {
+            margin-bottom: 12px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+        }
+
+        .analytics-stat-value {
+            color: #0f172a;
+            font-size: clamp(27px, 3vw, 35px);
+            font-weight: 850;
+            overflow-wrap: anywhere;
+        }
+
+        /* MOST VIEWED BUSINESS */
+
+        .analytics-top-business {
+            margin-bottom: 42px;
+        }
+
+        .analytics-top-business-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+            padding: 25px 26px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+        }
+
+        .analytics-top-business-label {
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        .analytics-top-business-name {
+            margin: 0;
+            color: #0f172a;
+            font-size: 22px;
+            font-weight: 850;
+            overflow-wrap: anywhere;
+        }
+
+        .analytics-top-business-meta {
+            margin: 7px 0 0;
+            color: #64748b;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .analytics-top-business-views {
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .analytics-top-business-views strong {
+            display: block;
+            color: #2563eb;
+            font-size: 31px;
+            font-weight: 850;
+        }
+
+        .analytics-top-business-views span {
+            display: block;
+            margin-top: 3px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* SEVEN-DAY CHART */
+
+        .analytics-chart-section {
+            margin-bottom: 42px;
+        }
+
+        .analytics-chart-heading {
+            margin-bottom: 18px;
+        }
+
+        .analytics-chart-heading h2 {
+            margin: 0 0 7px;
+            font-size: 22px;
+            font-weight: 850;
+        }
+
+        .analytics-chart-heading p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .analytics-chart-card {
+            padding: 30px 25px 24px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+        }
+
+        .analytics-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 14px;
+            min-height: 260px;
+            padding: 20px 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .analytics-bar-column {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            min-width: 0;
+            max-width: 90px;
+            height: 220px;
+        }
+
+        .analytics-bar-value {
+            margin-bottom: 8px;
+            color: #0f172a;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .analytics-bar {
+            width: 100%;
+            max-width: 48px;
+            min-height: 6px;
+            border-radius: 9px 9px 3px 3px;
+            background: linear-gradient(to top, #2563eb, #60a5fa);
+            transition:
+                height 0.3s ease,
+                transform 0.2s ease;
+        }
+
+        .analytics-bar:hover {
+            transform: translateY(-4px);
+        }
+
+        .analytics-bar-label {
+            margin-top: 12px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* BUSINESS BREAKDOWN */
+
+        .analytics-section-title {
+            margin: 0 0 18px;
+            font-size: 22px;
+            font-weight: 850;
+        }
+
+        .analytics-businesses {
+            display: grid;
+            gap: 16px;
+        }
+
+        .analytics-business {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+            padding: 24px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+        }
+
+        .analytics-business-info {
+            min-width: 0;
+        }
+
+        .analytics-business-info h3 {
+            margin: 0 0 7px;
+            font-size: 19px;
+            font-weight: 850;
+            overflow-wrap: anywhere;
+        }
+
+        .analytics-business-info p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .analytics-business-stats {
+            display: flex;
+            flex-shrink: 0;
+            gap: 30px;
+        }
+
+        .analytics-business-stat {
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .analytics-business-stat strong {
+            display: block;
+            color: #0f172a;
+            font-size: 25px;
+            font-weight: 850;
+        }
+
+        .analytics-business-stat span {
+            display: block;
+            margin-top: 4px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .analytics-empty {
+            padding: 45px 25px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .analytics-empty p {
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        .analytics-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 28px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: #0f172a;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 750;
+            transition: background 0.2s ease;
+        }
+
+        .analytics-back:hover {
+            background: #1e293b;
+        }
+
+        /* FOOTER */
+
+        .analytics-site-footer {
+            margin-top: 20px;
+            padding: 30px 20px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* =====================================================
+           TABLETS
+           ===================================================== */
+
+        @media (max-width: 900px) {
+            .analytics-nav-shell {
+                gap: 12px;
+                padding-right: 18px;
+                padding-left: 18px;
+            }
+
+            .analytics-brand {
+                font-size: 19px;
+            }
+
+            .analytics-primary-nav {
+                gap: 2px;
+            }
+
+            .analytics-primary-nav a {
+                padding-right: 9px;
+                padding-left: 9px;
+                font-size: 12px;
+            }
+
+            .analytics-stats {
+                gap: 12px;
+            }
+
+            .analytics-stat {
+                padding: 22px;
+            }
+        }
+
+        /* =====================================================
+           MOBILE NAVIGATION AND PAGE LAYOUT
+           ===================================================== */
+
+        @media (max-width: 700px) {
+            .analytics-nav-shell {
+                position: relative;
+                min-height: 68px;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                gap: 0;
+                padding: 11px 16px;
+            }
+
+            .analytics-brand {
+                font-size: 19px;
+            }
+
+            .analytics-brand-mark {
+                width: 34px;
+                height: 34px;
+                font-size: 23px;
+            }
+
+            .analytics-menu-toggle {
+                display: flex;
+            }
+
+            .analytics-primary-nav {
+                display: none;
+                flex: 0 0 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+                width: 100%;
+                padding: 12px 0 5px;
+                margin-top: 10px;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            .analytics-primary-nav.is-open {
+                display: flex;
+            }
+
+            .analytics-primary-nav a {
+                display: flex;
+                justify-content: flex-start;
+                width: 100%;
+                min-height: 46px;
+                padding: 12px 14px;
+                border-radius: 10px;
+                font-size: 14px;
+            }
+
+            .analytics-page {
+                padding: 32px 16px 55px;
+            }
+
+            .analytics-header {
+                margin-bottom: 25px;
+            }
+
+            .analytics-header h1 {
+                font-size: 29px;
+            }
+
+            .analytics-header p {
+                font-size: 14px;
+            }
+
+            .analytics-stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 25px;
+            }
+
+            .analytics-stat {
+                padding: 21px;
+                border-radius: 16px;
+            }
+
+            .analytics-stat-label {
+                margin-bottom: 8px;
+            }
+
+            .analytics-stat-value {
+                font-size: 30px;
+            }
+
+            .analytics-top-business {
+                margin-bottom: 32px;
+            }
+
+            .analytics-top-business-card {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 20px;
+                padding: 22px;
+                border-radius: 16px;
+            }
+
+            .analytics-top-business-name {
+                font-size: 20px;
+            }
+
+            .analytics-top-business-views {
+                text-align: left;
+            }
+
+            .analytics-top-business-views strong {
+                font-size: 28px;
+            }
+
+            .analytics-chart-section {
+                margin-bottom: 32px;
+            }
+
+            .analytics-chart-heading h2,
+            .analytics-section-title {
+                font-size: 20px;
+            }
+
+            .analytics-chart-card {
+                padding: 20px 10px 18px;
+                border-radius: 16px;
+            }
+
+            .analytics-bars {
+                gap: 4px;
+                min-height: 225px;
+                padding: 18px 2px 0;
+            }
+
+            .analytics-bar-column {
+                height: 185px;
+            }
+
+            .analytics-bar {
+                max-width: 30px;
+            }
+
+            .analytics-bar-value {
+                font-size: 11px;
+            }
+
+            .analytics-bar-label {
+                margin-top: 10px;
+                font-size: 10px;
+            }
+
+            .analytics-business {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .analytics-business-info h3 {
+                font-size: 18px;
+            }
+
+            .analytics-business-stats {
+                justify-content: space-between;
+                width: 100%;
+                gap: 12px;
+            }
+
+            .analytics-business-stat {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .analytics-business-stat strong {
+                font-size: 23px;
+            }
+
+            .analytics-back {
+                width: 100%;
+                min-height: 46px;
+            }
+
+            .analytics-site-footer {
+                padding: 25px 16px;
+            }
+        }
+
+        /* SMALL PHONES */
+
+        @media (max-width: 360px) {
+            .analytics-brand {
+                gap: 7px;
+                font-size: 17px;
+            }
+
+            .analytics-brand-mark {
+                width: 31px;
+                height: 31px;
+                font-size: 21px;
+            }
+
+            .analytics-page {
+                padding-right: 12px;
+                padding-left: 12px;
+            }
+
+            .analytics-chart-card {
+                padding-right: 6px;
+                padding-left: 6px;
+            }
+
+            .analytics-bars {
+                gap: 2px;
+            }
+
+            .analytics-bar-label {
+                font-size: 9px;
+            }
+
+            .analytics-business-stats {
+                gap: 6px;
+            }
+        }
+
+        /* REDUCE ANIMATION WHEN REQUESTED */
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="analytics-site-header">
+    <div class="analytics-nav-shell">
+
+        <a href="{% url 'home' %}" class="analytics-brand">
+            <span class="analytics-brand-mark" aria-hidden="true">◈</span>
+            <span>BusinessHub</span>
+        </a>
+
+        <button
+            class="analytics-menu-toggle"
+            type="button"
+            aria-label="Open navigation menu"
+            aria-controls="analytics-primary-nav"
+            aria-expanded="false"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav
+            class="analytics-primary-nav"
+            id="analytics-primary-nav"
+            aria-label="Main navigation"
+        >
+            <a href="{% url 'business_list' %}">Businesses</a>
+            <a href="{% url 'items_marketplace' %}">Items</a>
+            <a href="{% url 'food_marketplace' %}">Food</a>
+            <a href="{% url 'account' %}">My Account</a>
+        </nav>
+
+    </div>
+</header>
+
+<main class="analytics-page">
+
+    <section class="analytics-header">
+        <h1>Business Analytics</h1>
+        <p>
+            See how many people are viewing your businesses
+            on BusinessHub.
+        </p>
+    </section>
+
+    <!-- TOP STATISTICS -->
+
+    <section class="analytics-stats">
+
+        <div class="analytics-stat">
+            <div class="analytics-stat-label">TOTAL VIEWS</div>
+            <div class="analytics-stat-value">{{ total_views }}</div>
+        </div>
+
+        <div class="analytics-stat">
+            <div class="analytics-stat-label">VIEWS TODAY</div>
+            <div class="analytics-stat-value">{{ views_today }}</div>
+        </div>
+
+        <div class="analytics-stat">
+            <div class="analytics-stat-label">LAST 7 DAYS</div>
+            <div class="analytics-stat-value">{{ views_this_week }}</div>
+        </div>
+
+    </section>
+
+    <!-- MOST VIEWED BUSINESS -->
+
+    {% if most_viewed_business %}
+        <section class="analytics-top-business">
+            <div class="analytics-top-business-card">
+
+                <div>
+                    <div class="analytics-top-business-label">
+                        🏆 MOST VIEWED BUSINESS
+                    </div>
+
+                    <h2 class="analytics-top-business-name">
+                        {{ most_viewed_business.business.name }}
+                    </h2>
+
+                    <p class="analytics-top-business-meta">
+                        {{ most_viewed_business.business.category }}
+
+                        {% if most_viewed_business.business.city %}
+                            · {{ most_viewed_business.business.city }}
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="analytics-top-business-views">
+                    <strong>{{ most_viewed_business.total_views }}</strong>
+                    <span>TOTAL VIEWS</span>
+                </div>
+
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- SEVEN-DAY VIEWS CHART -->
+
+    <section class="analytics-chart-section">
+
+        <div class="analytics-chart-heading">
+            <h2>Views Over the Last 7 Days</h2>
+            <p>
+                Track how much attention your businesses
+                are getting each day.
+            </p>
+        </div>
+
+        <div class="analytics-chart-card">
+            <div class="analytics-bars">
+
+                {% for day in weekly_views %}
+                    <div class="analytics-bar-column">
+
+                        <div class="analytics-bar-value">
+                            {{ day.count }}
+                        </div>
+
+                        <div
+                            class="analytics-bar"
+                            style="height: {% if day.count > 0 %}{{ day.count|add:'20' }}px{% else %}6px{% endif %};"
+                        ></div>
+
+                        <div class="analytics-bar-label">
+                            {{ day.label }}
+                        </div>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- BUSINESS BREAKDOWN -->
+
+    <section>
+
+        <h2 class="analytics-section-title">Your Businesses</h2>
+
+        {% if business_analytics %}
+
+            <div class="analytics-businesses">
+
+                {% for item in business_analytics %}
+                    <article class="analytics-business">
+
+                        <div class="analytics-business-info">
+                            <h3>{{ item.business.name }}</h3>
+
+                            <p>
+                                {{ item.business.category }}
+
+                                {% if item.business.city %}
+                                    · {{ item.business.city }}
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div class="analytics-business-stats">
+
+                            <div class="analytics-business-stat">
+                                <strong>{{ item.total_views }}</strong>
+                                <span>Total Views</span>
+                            </div>
+
+                            <div class="analytics-business-stat">
+                                <strong>{{ item.today_views }}</strong>
+                                <span>Today</span>
+                            </div>
+
+                        </div>
+
+                    </article>
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="analytics-empty">
+                <p>You don't have any businesses yet.</p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    <a href="{% url 'account' %}" class="analytics-back">
+        ← Back to My Account
+    </a>
+
+</main>
+
+<footer class="analytics-site-footer">
+    © 2026 BusinessHub
+</footer>
+
+<script>
+    (function () {
+        "use strict";
+
+        const menuButton = document.querySelector(".analytics-menu-toggle");
+        const navigation = document.getElementById("analytics-primary-nav");
+
+        if (!menuButton || !navigation) {
+            return;
+        }
+
+        function closeMenu() {
+            menuButton.setAttribute("aria-expanded", "false");
+            menuButton.setAttribute("aria-label", "Open navigation menu");
+            navigation.classList.remove("is-open");
+        }
+
+        function openMenu() {
+            menuButton.setAttribute("aria-expanded", "true");
+            menuButton.setAttribute("aria-label", "Close navigation menu");
+            navigation.classList.add("is-open");
+        }
+
+        menuButton.addEventListener("click", function () {
+            const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+
+            if (isOpen) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        });
+
+        navigation.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", closeMenu);
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeMenu();
+                menuButton.focus();
+            }
+        });
+
+        document.addEventListener("click", function (event) {
+            if (
+                !menuButton.contains(event.target) &&
+                !navigation.contains(event.target)
+            ) {
+                closeMenu();
+            }
+        });
+
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 700) {
+                closeMenu();
+            }
+        });
+    })();
+</script>
+
+</body>
+</html>

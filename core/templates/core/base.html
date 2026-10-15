@@ -1,0 +1,469 @@
+﻿
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}BusinessHub{% endblock %}</title>
+
+    <meta name="theme-color" content="#111827">
+    <meta name="description" content="Discover local businesses, food, items and services near you with BusinessHub.">
+
+    <!-- FAVICON: Force browsers to load the updated BusinessHub icon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}?v=3" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static 'pwa/icon-192.png' %}?v=2">
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}?v=7">
+    <link rel="manifest" href="{% static 'pwa/manifest.json' %}?v=2">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<header class="bh-navbar">
+    <div class="bh-navbar-inner">
+
+        <!-- BUSINESSHUB LOGO -->
+        <a href="{% url 'home' %}" class="bh-logo" aria-label="BusinessHub Home">
+            <span class="bh-logo-mark" aria-hidden="true">B</span>
+            <span class="bh-logo-text">Business<span>Hub</span></span>
+        </a>
+
+        <!-- DESKTOP NAVIGATION -->
+        <nav class="bh-nav-links" aria-label="Main navigation">
+            <a href="{% url 'home' %}" class="bh-nav-link">Home</a>
+            <a href="{% url 'business_list' %}" class="bh-nav-link">Businesses</a>
+            <a href="{% url 'items_marketplace' %}" class="bh-nav-link">Items</a>
+            <a href="{% url 'food_marketplace' %}" class="bh-nav-link">Food</a>
+            <a href="{% url 'categories' %}" class="bh-nav-link">Categories</a>
+            <a href="{% url 'tracking' %}" class="bh-nav-link">Track</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'messages_inbox' %}" class="bh-nav-link bh-messages-link">
+                    Messages
+                    {% if unread_messages_count %}
+                        <span class="bh-message-badge">{{ unread_messages_count }}</span>
+                    {% endif %}
+                </a>
+            {% endif %}
+
+            <a href="{% url 'list_business' %}" class="bh-nav-link bh-business-link">
+                List Your Business
+            </a>
+        </nav>
+
+        <!-- NAVIGATION ACTIONS -->
+        <div class="bh-nav-actions">
+
+            {% if user.is_authenticated %}
+
+                <!-- NOTIFICATIONS -->
+                <div class="bh-notifications" id="notificationContainer">
+                    <button
+                        type="button"
+                        class="bh-notification-button"
+                        id="notificationButton"
+                        aria-label="Notifications"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        <span class="bh-notification-icon" aria-hidden="true"></span>
+
+                        {% if unread_notifications_count %}
+                            <span class="bh-notification-badge" id="notificationBadge">
+                                {% if unread_notifications_count > 99 %}
+                                    99+
+                                {% else %}
+                                    {{ unread_notifications_count }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </button>
+
+                    <div class="bh-notification-menu" id="notificationMenu" role="menu">
+                        <div class="bh-notification-header">
+                            <div class="bh-notification-header-left">
+                                <span class="bh-notification-header-icon" aria-hidden="true">🔔</span>
+                                <div>
+                                    <strong>Notifications</strong>
+                                    <span>Your latest activity</span>
+                                </div>
+                            </div>
+
+                            <a href="{% url 'notifications' %}">View all</a>
+                        </div>
+
+                        <div class="bh-notification-divider"></div>
+
+                        <div class="bh-notification-list">
+                            {% if notifications %}
+                                {% for notification in notifications %}
+                                    <a
+                                        href="{% url 'notification_detail' notification.id %}"
+                                        class="bh-notification-item {% if not notification.is_read %}unread{% endif %}"
+                                        role="menuitem"
+                                    >
+                                        <div class="bh-notification-item-icon">
+                                            {% if notification.notification_type == "message" %}
+                                                💬
+                                            {% elif notification.notification_type == "tracking" %}
+                                                📦
+                                            {% elif notification.notification_type == "business" %}
+                                                🏪
+                                            {% else %}
+                                                🔔
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="bh-notification-item-content">
+                                            <div class="bh-notification-item-title">
+                                                {% if not notification.is_read %}
+                                                    <span class="bh-notification-unread-dot" aria-label="Unread"></span>
+                                                {% endif %}
+                                                {{ notification.title }}
+                                            </div>
+
+                                            <div class="bh-notification-item-message">
+                                                {{ notification.message }}
+                                            </div>
+
+                                            <div class="bh-notification-item-time">
+                                                {{ notification.created_at|timesince }} ago
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <div class="bh-notification-empty">
+                                    <div class="bh-notification-empty-icon">🔔</div>
+                                    <strong>You're all caught up</strong>
+                                    <span>New activity will appear here.</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="bh-notification-footer">
+                            <a href="{% url 'notifications' %}">View all notifications</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACCOUNT MENU -->
+                <div class="bh-account">
+                    <button
+                        type="button"
+                        class="bh-account-button"
+                        id="accountButton"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        <span class="bh-avatar">{{ user.username|first|upper }}</span>
+                        <span class="bh-account-name">{{ user.username }}</span>
+                        <span class="bh-account-arrow">▾</span>
+                    </button>
+
+                    <div class="bh-account-menu" id="accountMenu">
+                        <div class="bh-account-menu-header">
+                            <div class="bh-menu-avatar">{{ user.username|first|upper }}</div>
+                            <div>
+                                <strong>{{ user.username }}</strong>
+                                <span>{{ user.email|default:"BusinessHub account" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="bh-menu-divider"></div>
+
+                        <a href="{% url 'account' %}"><span>◉</span>My Account</a>
+                        <a href="{% url 'business_analytics' %}"><span>📊</span>Business Analytics</a>
+                        <a href="{% url 'owner_dashboard' %}"><span>▣</span>My Businesses</a>
+                        <a href="{% url 'items_marketplace' %}"><span>🛍</span>Items Marketplace</a>
+                        <a href="{% url 'my_items' %}"><span>📦</span>My Items</a>
+                        <a href="{% url 'food_marketplace' %}"><span>🍲</span>Food Marketplace</a>
+                        <a href="{% url 'my_food' %}"><span>🍽️</span>My Food Listings</a>
+                        <a href="{% url 'messages_inbox' %}"><span>✉</span>Messages</a>
+
+                        <a href="{% url 'notifications' %}">
+                            <span>🔔</span>
+                            Notifications
+                            {% if unread_notifications_count %}
+                                ({{ unread_notifications_count }})
+                            {% endif %}
+                        </a>
+
+                        <a href="{% url 'list_business' %}"><span>＋</span>List a Business</a>
+
+                        <div class="bh-menu-divider"></div>
+
+                        <a href="{% url 'logout' %}" class="bh-logout">
+                            <span>↪</span>Log out
+                        </a>
+                    </div>
+                </div>
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="bh-login-button">Log in</a>
+                <a href="{% url 'register' %}" class="bh-signup-button">Get Started</a>
+
+            {% endif %}
+
+            <!-- MOBILE MENU BUTTON -->
+            <button
+                type="button"
+                class="bh-mobile-menu-button"
+                id="mobileMenuButton"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="mobileMenu"
+            >☰</button>
+        </div>
+    </div>
+
+    <!-- MOBILE NAVIGATION -->
+    <div class="bh-mobile-menu" id="mobileMenu">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'business_list' %}">Businesses</a>
+        <a href="{% url 'items_marketplace' %}">Items</a>
+        <a href="{% url 'food_marketplace' %}">Food</a>
+        <a href="{% url 'categories' %}">Categories</a>
+        <a href="{% url 'tracking' %}">Track Package</a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'account' %}">My Account</a>
+            <a href="{% url 'business_analytics' %}">📊 Business Analytics</a>
+            <a href="{% url 'my_items' %}">My Items</a>
+            <a href="{% url 'food_marketplace' %}">Food Marketplace</a>
+            <a href="{% url 'my_food' %}">My Food Listings</a>
+            <a href="{% url 'messages_inbox' %}">Messages</a>
+
+            <a href="{% url 'notifications' %}">
+                Notifications
+                {% if unread_notifications_count %}
+                    ({{ unread_notifications_count }})
+                {% endif %}
+            </a>
+
+            <a href="{% url 'owner_dashboard' %}">My Businesses</a>
+        {% endif %}
+
+        <a href="{% url 'list_business' %}">List Your Business</a>
+
+        {% if user.is_authenticated %}
+            <div class="bh-mobile-divider"></div>
+            <a href="{% url 'logout' %}" class="bh-mobile-logout">Log out</a>
+        {% else %}
+            <div class="bh-mobile-divider"></div>
+            <a href="{% url 'login' %}">Log in</a>
+            <a href="{% url 'register' %}">Get Started</a>
+        {% endif %}
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="bh-main">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="bh-footer">
+    <div class="bh-footer-inner">
+
+        <div class="bh-footer-brand">
+            <a href="{% url 'home' %}" class="bh-footer-logo" aria-label="BusinessHub Home">
+                <span class="bh-logo-mark" aria-hidden="true">B</span>
+                <span>Business<span>Hub</span></span>
+            </a>
+
+            <p>Connect. Buy. Grow.</p>
+
+            <small>
+                Discover local businesses, connect with people
+                and manage your business online.
+            </small>
+        </div>
+
+        <div class="bh-footer-column">
+            <h4>Explore</h4>
+            <a href="{% url 'business_list' %}">Businesses</a>
+            <a href="{% url 'items_marketplace' %}">Items</a>
+            <a href="{% url 'food_marketplace' %}">Food</a>
+            <a href="{% url 'categories' %}">Categories</a>
+            <a href="{% url 'tracking' %}">Track Package</a>
+        </div>
+
+        <div class="bh-footer-column">
+            <h4>Business</h4>
+            <a href="{% url 'list_business' %}">List Your Business</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'owner_dashboard' %}">Business Dashboard</a>
+                <a href="{% url 'business_analytics' %}">Business Analytics</a>
+            {% endif %}
+        </div>
+
+        <div class="bh-footer-column">
+            <h4>Account</h4>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'account' %}">My Account</a>
+                <a href="{% url 'my_items' %}">My Items</a>
+                <a href="{% url 'food_marketplace' %}">Food Marketplace</a>
+                <a href="{% url 'my_food' %}">My Food Listings</a>
+                <a href="{% url 'messages_inbox' %}">Messages</a>
+                <a href="{% url 'notifications' %}">Notifications</a>
+                <a href="{% url 'logout' %}">Log out</a>
+            {% else %}
+                <a href="{% url 'login' %}">Log in</a>
+                <a href="{% url 'register' %}">Get Started</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="bh-footer-bottom">
+        <span>© {% now "Y" %} BusinessHub</span>
+        <span>Connect. Buy. Grow.</span>
+    </div>
+</footer>
+
+<!-- SHARED JAVASCRIPT -->
+<script src="{% static 'js/base.js' %}?v=3"></script>
+
+<!-- LIVE NOTIFICATION COUNT AND BROWSER NOTIFICATIONS -->
+{% if user.is_authenticated %}
+<script>
+(function () {
+    "use strict";
+
+    const notificationBadgeId = "notificationBadge";
+    const notificationStorageKey = "businesshub_last_notification_id";
+
+    async function updateNotificationCount() {
+        try {
+            const response = await fetch(
+                "{% url 'unread_notifications_count' %}",
+                {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    cache: "no-store"
+                }
+            );
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+            const count = Number(data.count || 0);
+            const button = document.getElementById("notificationButton");
+
+            if (!button) return;
+
+            let badge = document.getElementById(notificationBadgeId);
+
+            if (count > 0) {
+                if (!badge) {
+                    badge = document.createElement("span");
+                    badge.className = "bh-notification-badge";
+                    badge.id = notificationBadgeId;
+                    button.appendChild(badge);
+                }
+
+                badge.textContent = count > 99 ? "99+" : String(count);
+            } else if (badge) {
+                badge.remove();
+            }
+        } catch (error) {
+            console.debug("Notification count update failed.");
+        }
+    }
+
+    async function requestNotificationPermission() {
+        if (!("Notification" in window)) return false;
+        if (Notification.permission === "granted") return true;
+        if (Notification.permission === "denied") return false;
+
+        try {
+            return await Notification.requestPermission() === "granted";
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async function checkForNewNotification() {
+        try {
+            const response = await fetch(
+                "{% url 'latest_unread_notification' %}",
+                {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    cache: "no-store"
+                }
+            );
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+            const notification = data.notification;
+
+            if (!notification) return;
+
+            const lastNotificationId = localStorage.getItem(notificationStorageKey);
+
+            if (lastNotificationId === null) {
+                localStorage.setItem(
+                    notificationStorageKey,
+                    String(notification.id)
+                );
+                return;
+            }
+
+            if (String(notification.id) === String(lastNotificationId)) return;
+
+            localStorage.setItem(
+                notificationStorageKey,
+                String(notification.id)
+            );
+
+            const allowed = await requestNotificationPermission();
+            if (!allowed) return;
+
+            const browserNotification = new Notification(
+                notification.title || "BusinessHub",
+                {
+                    body: notification.message || "You have a new notification.",
+                    tag: "businesshub-" + notification.id
+                }
+            );
+
+            browserNotification.onclick = function () {
+                window.focus();
+
+                window.location.href = notification.link
+                    ? notification.link
+                    : "{% url 'notifications' %}";
+
+                browserNotification.close();
+            };
+        } catch (error) {
+            console.debug("Browser notification check failed.");
+        }
+    }
+
+    updateNotificationCount();
+    checkForNewNotification();
+
+    setInterval(updateNotificationCount, 10000);
+    setInterval(checkForNewNotification, 10000);
+})();
+</script>
+{% endif %}
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

@@ -1,37 +1,133 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Delete Business - BusinessHub</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+{% extends "core/base.html" %}
+{% load static %}
 
-<body>
+{% block title %}
+BusinessHub — Delete Business
+{% endblock %}
 
-<div class="edit-business-container">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/delete-business-premium.css' %}">
+{% endblock %}
 
-    <h1>Delete Business</h1>
+{% block content %}
 
-    <p>
-        Are you sure you want to delete
-        <strong>{{ business.business_name }}</strong>?
-    </p>
+<section class="delete-page">
 
-    <p>This action cannot be undone.</p>
+    <div class="delete-container">
 
-    <form method="POST">
-        {% csrf_token %}
+        <div class="delete-card">
 
-        <button type="submit">
-            Yes, Delete Business
-        </button>
-    </form>
+            <!-- Warning icon -->
+            <div class="delete-icon">
+                !
+            </div>
 
-    <a href="{% url 'owner_dashboard' %}">
-        Cancel
-    </a>
+            <span class="delete-eyebrow">
+                Business Management
+            </span>
 
-</div>
+            <h1>
+                Delete this business?
+            </h1>
 
-</body>
-</html>
+            <p class="delete-intro">
+                You're about to permanently delete
+                <strong>{{ business.business_name }}</strong>
+                from BusinessHub.
+            </p>
+
+            <div class="delete-warning">
+
+                <div class="warning-icon">
+                    ⚠
+                </div>
+
+                <div>
+                    <strong>This action cannot be undone.</strong>
+
+                    <p>
+                        Your business listing and its information will be
+                        permanently removed from your account.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="delete-business-preview">
+
+                {% if business.logo %}
+
+                    <img
+                        src="{{ business.logo.url }}"
+                        alt="{{ business.business_name }}"
+                    >
+
+                {% else %}
+
+                    <div class="delete-business-placeholder">
+                        {{ business.business_name|first|upper }}
+                    </div>
+
+                {% endif %}
+
+                <div class="delete-business-info">
+
+                    <strong>
+                        {{ business.business_name }}
+                    </strong>
+
+                    <span>
+                        {{ business.get_category_display }}
+                    </span>
+
+                    {% if business.city %}
+                        <span>
+                            📍 {{ business.city }}
+                            {% if business.region %}
+                                , {{ business.region }}
+                            {% endif %}
+                        </span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <form method="POST" class="delete-form">
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="delete-confirm-button"
+                >
+                    <span>Yes, Delete Business</span>
+                    <span>×</span>
+                </button>
+
+                <a
+                    href="{% url 'owner_dashboard' %}"
+                    class="delete-cancel-button"
+                >
+                    Keep My Business
+                </a>
+
+            </form>
+
+            <div class="delete-security">
+
+                <span>🔒</span>
+
+                <p>
+                    You can always create a new business listing later.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

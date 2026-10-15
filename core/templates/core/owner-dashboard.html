@@ -1,111 +1,161 @@
+{% extends "core/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}BusinessHub — Owner Dashboard{% endblock %}
 
-    <title>Owner Dashboard - BusinessHub</title>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/owner-dashboard-premium.css' %}">
+{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+{% block content %}
 
-<body>
+<section class="owner-dashboard-page">
 
-<div class="dashboard-wrapper">
+    <div class="owner-dashboard-container">
 
-    <!-- SIDEBAR -->
-    <aside class="dashboard-sidebar">
+        <!-- HEADER -->
 
-        <div class="dashboard-logo">
-            <span>Business</span>Hub
-        </div>
+        <div class="dashboard-header">
 
-        <nav>
-            <a href="{% url 'owner_dashboard' %}" class="active">
-                🏠 Dashboard
-            </a>
+            <div class="dashboard-welcome">
 
-            <a href="{% url 'business_list' %}">
-                🔎 Browse Businesses
-            </a>
+                <span class="dashboard-eyebrow">
+                    BUSINESS OWNER
+                </span>
 
-            <a href="{% url 'list_business' %}">
-                ➕ Add Business
-            </a>
-        </nav>
-
-        <div class="sidebar-bottom">
-            <a href="{% url 'login' %}">
-                🚪 Logout
-            </a>
-        </div>
-
-    </aside>
-
-
-    <!-- MAIN CONTENT -->
-    <main class="dashboard-main">
-
-        <div class="dashboard-top">
-
-            <div>
-                <h1>Owner Dashboard 👋</h1>
+                <h1>
+                    Owner Dashboard
+                    <span>👋</span>
+                </h1>
 
                 <p>
-                    Welcome back! Manage your businesses from here.
+                    Manage your businesses and keep your BusinessHub
+                    listings up to date.
                 </p>
+
             </div>
 
-            <a href="{% url 'list_business' %}" class="add-business-btn">
-                + Add New Business
+            <a
+                href="{% url 'list_business' %}"
+                class="add-business-btn"
+            >
+                <span>＋</span>
+                Add New Business
             </a>
 
         </div>
 
 
-        <!-- STATISTICS -->
+        <!-- QUICK STATS -->
+
         <div class="dashboard-stats">
 
             <div class="stat-card">
-                <div class="stat-icon">🏢</div>
 
-                <div>
+                <div class="stat-icon blue">
+                    🏢
+                </div>
+
+                <div class="stat-info">
+
                     <span>Total Businesses</span>
-                    <strong>{{ businesses|length }}</strong>
+
+                    <strong>
+                        {{ businesses|length }}
+                    </strong>
+
+                    <small>
+                        Your listed businesses
+                    </small>
+
                 </div>
+
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">📍</div>
 
-                <div>
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    📋
+                </div>
+
+                <div class="stat-info">
+
                     <span>Your Listings</span>
-                    <strong>{{ businesses|length }}</strong>
+
+                    <strong>
+                        {{ businesses|length }}
+                    </strong>
+
+                    <small>
+                        Active on BusinessHub
+                    </small>
+
                 </div>
+
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon">📈</div>
 
-                <div>
-                    <span>Status</span>
-                    <strong>Active</strong>
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    ✓
                 </div>
+
+                <div class="stat-info">
+
+                    <span>Account Status</span>
+
+                    <strong class="active-status">
+                        Active
+                    </strong>
+
+                    <small>
+                        Business owner account
+                    </small>
+
+                </div>
+
             </div>
 
         </div>
 
 
-        <!-- BUSINESSES -->
+        <!-- MAIN SECTION -->
+
         <section class="business-section">
 
             <div class="section-heading">
+
                 <div>
-                    <h2>Your Businesses</h2>
-                    <p>Manage the businesses you have listed on BusinessHub.</p>
+
+                    <span class="section-eyebrow">
+                        YOUR BUSINESS PORTFOLIO
+                    </span>
+
+                    <h2>
+                        Your Businesses
+                    </h2>
+
+                    <p>
+                        Manage the businesses you have listed on BusinessHub.
+                    </p>
+
                 </div>
+
+                {% if businesses %}
+
+                    <span class="listing-count">
+                        {{ businesses|length }}
+                        {% if businesses|length == 1 %}
+                            listing
+                        {% else %}
+                            listings
+                        {% endif %}
+                    </span>
+
+                {% endif %}
+
             </div>
 
 
@@ -115,72 +165,177 @@
 
                     {% for business in businesses %}
 
-                    <div class="owner-business-card">
+                        <article class="owner-business-card">
 
-                        <div class="business-card-top">
+                            <!-- CARD TOP -->
 
-                            <div class="business-avatar">
-                                {{ business.name|first|upper }}
+                            <div class="business-card-top">
+
+                                <div class="business-avatar">
+
+                                    {% if business.logo %}
+
+                                        <img
+                                            src="{{ business.logo.url }}"
+                                            alt="{{ business.name }}"
+                                        >
+
+                                    {% else %}
+
+                                        {{ business.name|first|upper }}
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="business-heading">
+
+                                    <h3>
+                                        {{ business.name }}
+                                    </h3>
+
+                                    <span class="business-category">
+                                        {{ business.get_category_display }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="business-status">
+                                    <span></span>
+                                    Active
+                                </div>
+
                             </div>
 
-                            <div>
-                                <h3>{{ business.name }}</h3>
 
-                                <span class="business-category">
-                                    {{ business.get_category_display }}
-                                </span>
+                            <!-- DESCRIPTION -->
+
+                            <p class="business-description">
+
+                                {{ business.description|truncatewords:22 }}
+
+                            </p>
+
+
+                            <!-- LOCATION -->
+
+                            <div class="business-location">
+
+                                <div class="location-icon">
+                                    📍
+                                </div>
+
+                                <div>
+
+                                    <small>
+                                        LOCATION
+                                    </small>
+
+                                    <strong>
+                                        {{ business.city }}, {{ business.region }}
+                                    </strong>
+
+                                </div>
+
                             </div>
 
-                        </div>
 
+                            <!-- ACTIONS -->
 
-                        <p class="business-description">
-                            {{ business.description|truncatewords:20 }}
-                        </p>
+                            <div class="owner-actions">
 
+                                <a
+                                    href="{% url 'view_business' business.id %}"
+                                    class="view-business"
+                                >
+                                    <span>👁</span>
+                                    View
+                                </a>
 
-                        <div class="business-location">
-                            📍 {{ business.city }}, {{ business.region }}
-                        </div>
+                                <a
+                                    href="{% url 'edit_business' business.id %}"
+                                    class="edit-business"
+                                >
+                                    <span>✏️</span>
+                                    Edit
+                                </a>
 
+                                <a
+                                    href="{% url 'delete_business' business.id %}"
+                                    class="delete-business"
+                                >
+                                    <span>🗑</span>
+                                    Delete
+                                </a>
 
-                        <div class="owner-actions">
+                            </div>
 
-                            <a href="{% url 'view_business' business.id %}"
-                               class="view-business">
-                                👁 View
-                            </a>
-
-                            <a href="{% url 'edit_business' business.id %}"
-                               class="edit-business">
-                                ✏️ Edit
-                            </a><a href="{% url 'delete_business' business.id %}"
-                               class="delete-business">
-                                🗑 Delete
-                            </a>
-
-                        </div>
-
-                    </div>
+                        </article>
 
                     {% endfor %}
 
                 </div>
 
+
+                <!-- ADD ANOTHER -->
+
+                <div class="add-another-business">
+
+                    <div class="add-another-icon">
+                        ＋
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Have another business?
+                        </strong>
+
+                        <span>
+                            Add another listing to your BusinessHub account.
+                        </span>
+
+                    </div>
+
+                    <a href="{% url 'list_business' %}">
+                        Add Business
+                        <span>→</span>
+                    </a>
+
+                </div>
+
+
             {% else %}
+
+                <!-- EMPTY STATE -->
 
                 <div class="empty-business">
 
-                    <div class="empty-icon">🏢</div>
+                    <div class="empty-icon">
+                        🏢
+                    </div>
 
-                    <h3>No businesses yet</h3>
+                    <span class="empty-eyebrow">
+                        GET STARTED
+                    </span>
+
+                    <h3>
+                        No businesses yet
+                    </h3>
 
                     <p>
                         You haven't added any businesses to BusinessHub yet.
+                        Create your first listing and start reaching customers.
                     </p>
 
-                    <a href="{% url 'list_business' %}" class="add-business-btn">
-                        + Add Your First Business
+                    <a
+                        href="{% url 'list_business' %}"
+                        class="empty-add-btn"
+                    >
+                        <span>＋</span>
+                        Add Your First Business
                     </a>
 
                 </div>
@@ -189,9 +344,32 @@
 
         </section>
 
-    </main>
 
-</div>
+        <!-- DASHBOARD FOOTER -->
 
-</body>
-</html>
+        <div class="dashboard-help">
+
+            <div class="help-icon">
+                💡
+            </div>
+
+            <div>
+
+                <strong>
+                    Keep your business information updated
+                </strong>
+
+                <p>
+                    Accurate contact details, descriptions and locations
+                    make it easier for customers to find you.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

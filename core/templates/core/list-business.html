@@ -1,176 +1,610 @@
+{% extends "core/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}List Your Business | BusinessHub{% endblock %}
 
-    <title>Business Information | BusinessHub</title>
+{% block extra_css %}
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+<link rel="stylesheet" href="{% static 'css/business-form-premium.css' %}">
+{% endblock %}
 
-<body>
+{% block content %}
 
-    <div class="page">
+<section class="business-form-page">
 
-        <div class="header">
-            <div>
-                <h1>Business Information</h1>
-                <p>Tell us about your business</p>
-            </div>
 
-            <div class="brand">
-                Business<span>Hub</span>
-            </div>
+<div class="business-form-container">
+
+    <!-- Page Header -->
+    <div class="form-page-header">
+
+        <div class="header-icon">
+            🏪
         </div>
 
-        <div class="card">
+        <div>
+            <span class="eyebrow">BUSINESSHUB FOR BUSINESSES</span>
 
-            <h2>Your Business</h2>
+            <h1>Tell us about your business</h1>
 
-            <form method="POST" enctype="multipart/form-data">
+            <p>
+                Create your business profile and help customers discover
+                what you offer.
+            </p>
+        </div>
 
-                {% csrf_token %}
+    </div>
 
-                <div class="logo-section">
 
-                    <div class="logo-placeholder">
-                        📷
-                    </div>
+    <!-- Current Plan / Business Limit -->
+    <div class="business-limit-card">
 
-                    <div>
-                        <h3>Your Business Logo</h3>
-                        <p>Upload a logo that represents your business.</p>
+        <div class="business-limit-icon">
+            {% if plan_name == "BusinessHub Pro" %}
+                👑
+            {% elif plan_name == "BusinessHub Plus" %}
+                ⭐
+            {% else %}
+                🆓
+            {% endif %}
+        </div>
 
-                        <input type="file" name="logo" accept="image/*">
-                    </div>
+        <div class="business-limit-content">
 
-                </div>
+            <strong>{{ plan_name }} Plan</strong>
 
-                <div class="form-grid">
-
-                    <div class="form-group">
-                        <label>Business Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Enter your business name"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Business Category</label>
-
-                        <select name="category" required>
-                            <option value="">Select a category</option>
-                            <option value="food">Restaurants & Food</option>
-                            <option value="shopping">Shopping & Retail</option>
-                            <option value="electronics">Electronics & Computers</option>
-                            <option value="home">Home & Living</option>
-                            <option value="beauty">Health & Beauty</option>
-                            <option value="transport">Transport & Logistics</option>
-                            <option value="education">Education & Training</option>
-                            <option value="services">Business Services</option>
-                            <option value="sports">Sports & Recreation</option>
-                            <option value="pets">Pets & Animals</option>
-                            <option value="travel">Travel & Tourism</option>
-                            <option value="other">Other Services</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full">
-                        <label>Business Description</label>
-
-                        <textarea
-                            name="description"
-                            rows="5"
-                            placeholder="Tell customers about your business"
-                            required
-                        ></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Phone Number</label>
-
-                        <input
-                            type="tel"
-                            name="phone"
-                            placeholder="Enter phone number"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Email Address</label>
-
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Enter email address"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group full">
-                        <label>Business Address</label><input
-                            type="text"
-                            name="city"
-                            placeholder="Enter your business address"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Region</label>
-
-                        <input
-                            type="text"
-                            name="region"
-                            placeholder="Enter your region"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Opening Time</label>
-
-                        <input
-                            type="time"
-                            name="opening_time"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Closing Time</label>
-
-                        <input
-                            type="time"
-                            name="closing_time"
-                        >
-                    </div>
-
-                </div>
-
-                <div class="actions">
-
-                    <button type="button" class="back-btn">
-                        Back
-                    </button>
-
-                    <button type="submit" class="continue-btn">
-                        Continue
-                    </button>
-
-                </div>
-
-            </form>
+            <span>
+                You can list up to {{ business_limit }} business{{ business_limit|pluralize }}.
+            </span>
 
         </div>
 
     </div>
 
-</body>
-</html>
+
+    {% if business_limit_reached %}
+
+    <!-- Limit Reached -->
+    <div class="business-limit-warning">
+
+        <div class="warning-icon">
+            🚀
+        </div>
+
+        <div class="warning-content">
+
+            <strong>Business listing limit reached</strong>
+
+            <p>
+                You have reached the maximum of
+                <strong>{{ business_limit }} business{{ business_limit|pluralize }}</strong>
+                allowed on your current {{ plan_name }} plan.
+            </p>
+
+            <p>
+                Upgrade your BusinessHub plan to list more businesses
+                and unlock additional visibility features.
+            </p>
+
+            <a href="{% url 'businesshub_services' %}" class="upgrade-btn">
+                View BusinessHub Plans →
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- Progress -->
+    <div class="form-progress">
+
+        <div class="progress-step active">
+            <span>1</span>
+            <div>
+                <strong>Business information</strong>
+                <small>Tell customers about your business</small>
+            </div>
+        </div>
+
+        <div class="progress-line"></div>
+
+        <div class="progress-step">
+            <span>2</span>
+            <div>
+                <strong>Profile created</strong>
+                <small>Your business goes live</small>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Main Card -->
+    <div class="business-form-card">
+
+        <div class="card-heading">
+
+            <div>
+                <h2>Your Business</h2>
+                <p>
+                    Provide accurate information so customers can find you.
+                </p>
+            </div>
+
+            <div class="required-note">
+                <span>*</span> Required fields
+            </div>
+
+        </div>
+
+
+        {% if not business_limit_reached %}
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+
+            <!-- Logo -->
+            <div class="logo-upload-section">
+
+                <div class="logo-preview" id="logoPreview">
+                    <span>🏪</span>
+                </div>
+
+                <div class="logo-content">
+
+                    <h3>Business Logo</h3>
+
+                    <p>
+                        Add a recognizable logo to make your business
+                        profile stand out.
+                    </p>
+
+                    <label for="logo" class="upload-btn">
+                        <span>＋</span>
+                        Upload Logo
+                    </label>
+
+                    <input
+                        type="file"
+                        id="logo"
+                        name="logo"
+                        accept="image/*"
+                        hidden
+                    >
+
+                    <small>
+                        PNG, JPG or WEBP · Recommended: square image
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Basic Information -->
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <span class="section-number">01</span>
+
+                    <div>
+                        <h3>Basic information</h3>
+                        <p>Introduce your business to customers.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Business Name <span>*</span>
+                        </label>
+
+                        <input
+                            id="name"
+                            type="text"
+                            name="name"
+                            placeholder="e.g. David's Electronics"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            Business Category <span>*</span>
+                        </label>
+
+                        <select
+                            id="category"
+                            name="category"
+                            required
+                        >
+
+                            <option value="">
+                                Select a category
+                            </option>
+
+                            <option value="food">
+                                Restaurants & Food
+                            </option>
+
+                            <option value="shopping">
+                                Shopping & Retail
+                            </option>
+
+                            <option value="electronics">
+                                Electronics & Computers
+                            </option>
+
+                            <option value="home">
+                                Home & Living
+                            </option>
+
+                            <option value="beauty">
+                                Health & Beauty
+                            </option>
+
+                            <option value="transport">
+                                Transport & Logistics
+                            </option>
+
+                            <option value="education">
+                                Education & Training
+                            </option>
+
+                            <option value="services">
+                                Business Services
+                            </option>
+
+                            <option value="sports">
+                                Sports & Recreation
+                            </option>
+
+                            <option value="pets">
+                                Pets & Animals
+                            </option>
+
+                            <option value="travel">
+                                Travel & Tourism
+                            </option>
+
+                            <option value="other">
+                                Other Services
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label for="description">
+                            Business Description <span>*</span>
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            placeholder="Describe what your business offers, your products or services, and what makes your business useful to customers..."
+                            required
+                        ></textarea>
+
+                        <small class="field-hint">
+                            A clear description helps customers understand
+                            your business.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Contact -->
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <span class="section-number">02</span>
+
+                    <div>
+                        <h3>Contact information</h3>
+                        <p>Give customers a way to reach you.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone Number <span>*</span>
+                        </label>
+
+                        <input
+                            id="phone"
+                            type="tel"
+                            name="phone"
+                            placeholder="+237 6XX XXX XXX"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address <span>*</span>
+                        </label>
+
+                        <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            placeholder="business@example.com"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Location -->
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <span class="section-number">03</span>
+
+                    <div>
+                        <h3>Business location</h3>
+                        <p>Help customers know where to find you.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+
+                        <label for="city">
+                            Business Address <span>*</span>
+                        </label>
+
+                        <input
+                            id="city"
+                            type="text"
+                            name="city"
+                            placeholder="Enter your business address"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="region">
+                            Region <span>*</span>
+                        </label>
+
+                        <input
+                            id="region"
+                            type="text"
+                            name="region"
+                            placeholder="e.g. Centre"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Opening Hours -->
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <span class="section-number">04</span>
+
+                    <div>
+                        <h3>Opening hours</h3>
+                        <p>Let customers know when you're available.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="hours-box">
+
+                    <div class="hours-icon">
+                        🕒
+                    </div>
+
+                    <div class="hours-content">
+
+                        <strong>Business hours</strong>
+
+                        <span>
+                            You can leave these blank if your business
+                            doesn't have fixed opening hours.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid hours-grid">
+
+                    <div class="form-group">
+
+                        <label for="opening_time">
+                            Opening Time
+                        </label>
+
+                        <input
+                            id="opening_time"
+                            type="time"
+                            name="opening_time"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="closing_time">
+                            Closing Time
+                        </label>
+
+                        <input
+                            id="closing_time"
+                            type="time"
+                            name="closing_time"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Actions -->
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="back-btn"
+                    onclick="history.back()"
+                >
+                    ← Back
+                </button>
+
+                <button
+                    type="submit"
+                    class="continue-btn"
+                >
+                    Create Business Profile
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </form>
+
+        {% else %}
+
+        <!-- Locked Form State -->
+        <div class="business-form-locked">
+
+            <div class="locked-icon">
+                🔒
+            </div>
+
+            <h2>Upgrade to add another business</h2>
+
+            <p>
+                Your current plan has reached its business listing limit.
+                Choose a higher BusinessHub plan to continue adding
+                businesses.
+            </p>
+
+            <a href="{% url 'businesshub_services' %}" class="continue-btn">
+                View Subscription Plans
+                <span>→</span>
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Trust note -->
+    <div class="form-trust">
+
+        <span>🔒</span>
+
+        <p>
+            Your business information is securely stored and can be
+            updated from your owner dashboard.
+        </p>
+
+    </div>
+
+</div>
+
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+
+const logoInput = document.getElementById("logo");
+const logoPreview = document.getElementById("logoPreview");
+
+if (logoInput && logoPreview) {
+
+    logoInput.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+        if (!file) {
+
+            logoPreview.innerHTML = "<span>🏪</span>";
+
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            logoPreview.innerHTML = `
+                <img
+                    src="${event.target.result}"
+                    alt="Business logo preview"
+                >
+            `;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+</script>
+
+{% endblock %}

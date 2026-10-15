@@ -1,0 +1,655 @@
+{% extends "core/base.html" %}
+
+{% block title %}My Food | BusinessHub{% endblock %}
+
+{% block content %}
+
+<style>
+    .my-food-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 42px 20px 70px;
+    }
+
+    /* Header */
+    .my-food-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+
+    .header-left {
+        min-width: 0;
+    }
+
+    .eyebrow {
+        margin-bottom: 8px;
+        color: #2563eb;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .my-food-header h1 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 34px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+    }
+
+    .my-food-header p {
+        margin: 9px 0 0;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .sell-food-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 0 18px;
+        border-radius: 10px;
+        background: #111827;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 750;
+        white-space: nowrap;
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .sell-food-button:hover {
+        background: #1f2937;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+    }
+
+    /* Summary */
+    .listing-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding: 15px 18px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+    }
+
+    .summary-label {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .summary-count {
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* Grid */
+    .food-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    /* Card */
+    .food-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .food-card:hover {
+        transform: translateY(-3px);
+        border-color: #dbe3ee;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
+    }
+
+    /* Image */
+    .food-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 215px;
+        overflow: hidden;
+        background: #f1f5f9;
+    }
+
+    .food-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .food-card:hover .food-image {
+        transform: scale(1.025);
+    }
+
+    .no-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+            linear-gradient(
+                135deg,
+                #f8fafc,
+                #eef2f7
+            );
+        color: #94a3b8;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* Status overlay */
+    .status-overlay {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1;
+        backdrop-filter: blur(8px);
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-available {
+        background: rgba(220, 252, 231, 0.94);
+        color: #166534;
+    }
+
+    .status-unavailable {
+        background: rgba(254, 226, 226, 0.94);
+        color: #991b1b;
+    }
+
+    /* Content */
+    .food-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 19px;
+    }
+
+    .food-category {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .food-content h2 {
+        margin: 0 0 8px;
+        color: #111827;
+        font-size: 20px;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        word-break: break-word;
+    }
+
+    .food-price {
+        margin-bottom: 12px;
+        color: #0f172a;
+        font-size: 21px;
+        font-weight: 850;
+    }
+
+    .food-info {
+        margin-bottom: 16px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.75;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+    }
+
+    .info-icon {
+        flex: 0 0 auto;
+    }
+
+    /* Actions */
+    .food-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 35px;
+        padding: 0 11px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        text-decoration: none;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 750;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .action-button:hover {
+        transform: translateY(-1px);
+    }
+
+    .view-button {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .view-button:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .edit-button {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .edit-button:hover {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .delete-button {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .delete-button:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .unavailable-button {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .unavailable-button:hover {
+        background: #ffedd5;
+        color: #9a3412;
+    }
+
+    /* Empty state */
+    .empty-state {
+        padding: 70px 25px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+    }
+
+    .empty-icon {
+        width: 68px;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        border-radius: 18px;
+        background: #f8fafc;
+        font-size: 34px;
+    }
+
+    .empty-state h2 {
+        margin: 0 0 10px;
+        color: #111827;
+        font-size: 24px;
+    }
+
+    .empty-state p {
+        max-width: 510px;
+        margin: 0 auto 24px;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* Responsive */
+    @media (max-width: 950px) {
+        .food-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 680px) {
+        .my-food-page {
+            padding: 30px 14px 55px;
+        }
+
+        .my-food-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 18px;
+        }
+
+        .my-food-header h1 {
+            font-size: 28px;
+        }
+
+        .sell-food-button {
+            width: 100%;
+        }
+
+        .listing-summary {
+            padding: 13px 15px;
+        }
+
+        .food-grid {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .food-image-wrapper {
+            height: 220px;
+        }
+
+        .food-actions {
+            gap: 7px;
+        }
+
+        .action-button {
+            flex: 1 1 auto;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .food-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .action-button {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="my-food-page">
+
+    <!-- Header -->
+    <div class="my-food-header">
+
+        <div class="header-left">
+
+            <div class="eyebrow">
+                Food Marketplace
+            </div>
+
+            <h1>
+                My Food Listings
+            </h1>
+
+            <p>
+                Manage the food you have listed on BusinessHub.
+            </p>
+
+        </div>
+
+        <a
+            href="{% url 'sell_food' %}"
+            class="sell-food-button"
+        >
+            <span>＋</span>
+            Sell Food
+        </a>
+
+    </div>
+
+
+    {% if foods %}
+
+        <!-- Listing Summary -->
+        <div class="listing-summary">
+
+            <span class="summary-label">
+                Your current food listings
+            </span>
+
+            <span class="summary-count">
+                {{ foods|length }} listing{{ foods|length|pluralize }}
+            </span>
+
+        </div>
+
+
+        <!-- Food Grid -->
+        <div class="food-grid">
+
+            {% for food in foods %}
+
+                <div class="food-card">
+
+                    <!-- Image -->
+                    <div class="food-image-wrapper">
+
+                        {% with image=food.images.all|first %}
+
+                            {% if image %}
+
+                                <img
+                                    src="{{ image.image.url }}"
+                                    alt="{{ food.title }}"
+                                    class="food-image"
+                                    loading="lazy"
+                                >
+
+                            {% else %}
+
+                                <div class="no-image">
+                                    No image available
+                                </div>
+
+                            {% endif %}
+
+                        {% endwith %}
+
+
+                        <!-- Status -->
+                        <div class="status-overlay">
+
+                            {% if food.status == "available" %}
+
+                                <span class="status status-available">
+                                    <span class="status-dot"></span>
+                                    Available
+                                </span>
+
+                            {% else %}
+
+                                <span class="status status-unavailable">
+                                    <span class="status-dot"></span>
+                                    Unavailable
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Content -->
+                    <div class="food-content">
+
+                        <span class="food-category">
+                            {{ food.get_category_display }}
+                        </span>
+
+                        <h2>
+                            {{ food.title }}
+                        </h2>
+
+                        <div class="food-price">
+                            {{ food.price }}
+                        </div>
+
+
+                        <div class="food-info">
+
+                            <div class="info-row">
+                                <span class="info-icon">📍</span>
+                                <span>{{ food.location }}</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="info-icon">📦</span>
+                                <span>Quantity: {{ food.quantity }}</span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Actions -->
+                        <div class="food-actions">
+
+                            <a
+                                href="{% url 'food_detail' food_id=food.id %}"
+                                class="action-button view-button"
+                            >
+                                View
+                            </a>
+
+                            <a
+                                href="{% url 'edit_food' food_id=food.id %}"
+                                class="action-button edit-button"
+                            >
+                                Edit
+                            </a>
+
+                            <a
+                                href="{% url 'delete_food' food_id=food.id %}"
+                                class="action-button delete-button"
+                            >
+                                Delete
+                            </a>
+
+
+                            {% if food.status == "available" %}
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'mark_food_unavailable' food_id=food.id %}"
+                                    style="display: contents;"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="action-button unavailable-button"
+                                    >
+                                        Mark Unavailable
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- Empty State -->
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                🍲
+            </div>
+
+            <h2>
+                You haven't listed any food yet
+            </h2>
+
+            <p>
+                Start selling your food on BusinessHub.
+                Create your first listing and let customers
+                discover what you're offering.
+            </p>
+
+            <a
+                href="{% url 'sell_food' %}"
+                class="sell-food-button"
+            >
+                <span>＋</span>
+                Create Food Listing
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

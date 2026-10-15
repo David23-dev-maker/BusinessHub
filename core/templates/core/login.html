@@ -1,71 +1,247 @@
+{% extends "core/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}
+BusinessHub — Login
+{% endblock %}
 
-    <title>Login - BusinessHub</title>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login-premium.css' %}">
+{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+{% block content %}
 
-<body>
+<section class="login-page">
 
-<div class="login-container">
+    <div class="login-container">
 
-    <div class="login-box">
+        <!-- Left side -->
+        <div class="login-intro">
 
-        <h1>BusinessHub</h1>
+            <div class="login-brand">
+                <div class="login-brand-icon">
+                    B
+                </div>
 
-        <h2>Owner Login</h2>
-
-        <p class="login-subtitle">
-            Login to manage your business
-        </p>
-
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="form-group">
-                <label>Username</label>
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Enter your username"
-                    required
-                >
+                <span>BusinessHub</span>
             </div>
 
-            <div class="form-group">
-                <label>Password</label>
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    required
-                >
+            <div class="login-intro-content">
+
+                <span class="login-eyebrow">
+                    Welcome back
+                </span>
+
+                <h1>
+                    Manage your business
+                    <span>with confidence.</span>
+                </h1>
+
+                <p>
+                    Sign in to manage your business listing, connect with
+                    customers, and keep everything in one place.
+                </p>
+
+                <div class="login-benefits">
+
+                    <div class="login-benefit">
+                        <div class="benefit-icon">✓</div>
+
+                        <div>
+                            <strong>Manage your listing</strong>
+                            <span>Keep your business information up to date.</span>
+                        </div>
+                    </div>
+
+                    <div class="login-benefit">
+                        <div class="benefit-icon">✓</div>
+
+                        <div>
+                            <strong>Connect with customers</strong>
+                            <span>Receive and respond to customer messages.</span>
+                        </div>
+                    </div>
+
+                    <div class="login-benefit">
+                        <div class="benefit-icon">✓</div>
+
+                        <div>
+                            <strong>Grow your presence</strong>
+                            <span>Make your business easier to discover.</span>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
-            {% if error %}
-                <p class="login-error">{{ error }}</p>
-            {% endif %}
+        </div>
 
-            <button type="submit" class="login-button">
-                Login
-            </button>
 
-        </form>
+        <!-- Login card -->
+        <div class="login-card">
 
-        <p class="login-footer">
-            Don't have an account?
-            <a href="#">Create one</a>
-        </p>
+            <div class="login-card-header">
+
+                <span class="login-mobile-brand">
+                    BusinessHub
+                </span>
+
+                <h2>Welcome back</h2>
+
+                <p>
+                    Login to continue to your business dashboard.
+                </p>
+
+            </div>
+
+
+            <form method="POST" class="login-form">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            👤
+                        </span>
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            🔒
+                        </span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Show password"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                {% if error %}
+                    <div class="login-error">
+                        <span>!</span>
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+
+                <button type="submit" class="login-button">
+                    <span>Login to BusinessHub</span>
+                    <span class="login-arrow">→</span>
+                </button>
+
+            </form>
+
+
+            <div class="login-divider">
+                <span>BusinessHub</span>
+            </div>
+
+
+            <p class="login-footer">
+
+                Don't have an account?
+
+                <a href="{% url 'register' %}">
+                    Create one
+                </a>
+
+            </p>
+
+            <p class="login-security">
+                🔐 Your account information is protected.
+            </p>
+
+        </div>
 
     </div>
 
-</div>
+</section>
 
-</body>
-</html>
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const passwordInput = document.getElementById("password");
+    const passwordToggle = document.getElementById("passwordToggle");
+
+    if (passwordInput && passwordToggle) {
+
+        passwordToggle.addEventListener("click", function () {
+
+            if (passwordInput.type === "password") {
+
+                passwordInput.type = "text";
+                passwordToggle.textContent = "Hide";
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+            } else {
+
+                passwordInput.type = "password";
+                passwordToggle.textContent = "Show";
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+
+            }
+
+        });
+
+    }
+
+});
+</script>
+
+{% endblock %}

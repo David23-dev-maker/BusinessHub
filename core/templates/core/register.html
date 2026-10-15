@@ -1,0 +1,369 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}
+BusinessHub — Create Account
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login-premium.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="login-page">
+
+    <div class="login-container">
+
+        <!-- Left side -->
+        <div class="login-intro">
+
+            <div class="login-brand">
+
+                <div class="login-brand-icon">
+                    B
+                </div>
+
+                <span>BusinessHub</span>
+
+            </div>
+
+
+            <div class="login-intro-content">
+
+                <span class="login-eyebrow">
+                    Join BusinessHub
+                </span>
+
+                <h1>
+                    Build your
+                    <span>business presence.</span>
+                </h1>
+
+                <p>
+                    Create your free BusinessHub account and start
+                    connecting with customers, managing your business,
+                    and growing your presence online.
+                </p>
+
+
+                <div class="login-benefits">
+
+                    <div class="login-benefit">
+
+                        <div class="benefit-icon">
+                            ✓
+                        </div>
+
+                        <div>
+                            <strong>Create your business profile</strong>
+
+                            <span>
+                                Put your business in front of potential customers.
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="login-benefit">
+
+                        <div class="benefit-icon">
+                            ✓
+                        </div>
+
+                        <div>
+                            <strong>Connect with customers</strong>
+
+                            <span>
+                                Receive messages and communicate directly.
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="login-benefit">
+
+                        <div class="benefit-icon">
+                            ✓
+                        </div>
+
+                        <div>
+                            <strong>Track your business activity</strong>
+
+                            <span>
+                                Manage everything from your BusinessHub dashboard.
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Registration card -->
+        <div class="login-card">
+
+            <div class="login-card-header">
+
+                <span class="login-mobile-brand">
+                    BusinessHub
+                </span>
+
+                <h2>
+                    Create your account
+                </h2>
+
+                <p>
+                    It only takes a moment to get started.
+                </p>
+
+            </div>
+
+
+            <form
+                method="POST"
+                class="login-form"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- Username -->
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            👤
+                        </span>
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Choose a username"
+                            value="{{ username|default:'' }}"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Email -->
+                <div class="form-group">
+
+                    <label for="email">
+                        Email address
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ✉️
+                        </span>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            value="{{ email|default:'' }}"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Password -->
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            🔒
+                        </span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="password"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Confirm password -->
+                <div class="form-group">
+
+                    <label for="password_confirm">
+                        Confirm password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            🔐
+                        </span>
+
+                        <input
+                            type="password"
+                            id="password_confirm"
+                            name="password_confirm"
+                            placeholder="Confirm your password"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="password_confirm"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                {% if error %}
+
+                    <div class="login-error">
+
+                        <span>!</span>
+
+                        {{ error }}
+
+                    </div>
+
+                {% endif %}
+
+
+                <button
+                    type="submit"
+                    class="login-button"
+                >
+
+                    <span>
+                        Create BusinessHub Account
+                    </span>
+
+                    <span class="login-arrow">
+                        →
+                    </span>
+
+                </button>
+
+            </form>
+
+
+            <div class="login-divider">
+                <span>BusinessHub</span>
+            </div>
+
+
+            <p class="login-footer">
+
+                Already have an account?
+
+                <a href="{% url 'login' %}">
+                    Login
+                </a>
+
+            </p>
+
+
+            <p class="login-security">
+                🔐 Your account information is protected.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggles = document.querySelectorAll(
+        ".password-toggle"
+    );
+
+    toggles.forEach(function (toggle) {
+
+        toggle.addEventListener("click", function () {
+
+            const targetId =
+                toggle.getAttribute("data-target");
+
+            const input =
+                document.getElementById(targetId);
+
+            if (!input) {
+                return;
+            }
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                toggle.textContent = "Hide";
+
+            } else {
+
+                input.type = "password";
+
+                toggle.textContent = "Show";
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

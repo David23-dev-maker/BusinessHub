@@ -1,0 +1,1212 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    {% if conversation.item %}
+        <title>{{ conversation.item.title }} - Messages</title>
+    {% elif conversation.food %}
+        <title>{{ conversation.food.title }} - Messages</title>
+    {% elif conversation.business %}
+        <title>{{ conversation.business.name }} - Messages</title>
+    {% else %}
+        <title>Messages - BusinessHub</title>
+    {% endif %}
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            background: #eef2f7;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #111827;
+        }
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .chat-page {
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 980px;
+            height: min(900px, 92vh);
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow:
+                0 20px 55px rgba(15, 23, 42, 0.12),
+                0 3px 12px rgba(15, 23, 42, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .chat-header {
+            min-height: 82px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 1px solid #e5e7eb;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+            text-decoration: none;
+
+            color: #334155;
+            background: #f8fafc;
+
+            font-size: 24px;
+            line-height: 1;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #eef2ff;
+            color: #2563eb;
+            transform: translateX(-2px);
+        }
+
+        /* =========================================================
+           AVATAR
+        ========================================================= */
+
+        .business-avatar-wrapper {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+        }
+
+        .business-avatar {
+            width: 50px;
+            height: 50px;
+
+            border-radius: 16px;
+
+            background: linear-gradient(
+                135deg,
+                #2563eb,
+                #4f46e5
+            );
+
+            color: #ffffff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 20px;
+            font-weight: 800;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 5px 14px rgba(37, 99, 235, 0.2);
+        }
+
+        .online-dot {
+            position: absolute;
+
+            width: 14px;
+            height: 14px;
+
+            right: -2px;
+            bottom: -1px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+            border: 3px solid #ffffff;
+
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        }
+
+        /* =========================================================
+           HEADER INFO
+        ========================================================= */
+
+        .chat-header-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .chat-header-info h2 {
+            margin: 0;
+
+            color: #0f172a;
+
+            font-size: 17px;
+            line-height: 1.3;
+            font-weight: 750;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-subtitle {
+            margin-top: 3px;
+
+            color: #64748b;
+
+            font-size: 12px;
+            line-height: 1.4;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-status {
+            margin-top: 3px;
+
+            color: #64748b;
+
+            font-size: 11px;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        .chat-status:first-letter {
+            color: #22c55e;
+        }
+
+        /* =========================================================
+           REFERENCE CARDS
+        ========================================================= */
+
+        .item-reference,
+        .food-reference,
+        .business-reference {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            min-height: 44px;
+            padding: 8px 20px;
+
+            font-size: 12px;
+            line-height: 1.4;
+
+            flex-shrink: 0;
+
+            border-bottom: 1px solid;
+        }
+
+        .item-reference {
+            background: #f8fbff;
+            color: #64748b;
+            border-color: #dbeafe;
+        }
+
+        .item-reference strong {
+            color: #1e40af;
+        }
+
+        .food-reference {
+            background: #fffaf5;
+            color: #9a3412;
+            border-color: #fed7aa;
+        }
+
+        .food-reference strong {
+            color: #7c2d12;
+        }
+
+        .business-reference {
+            background: #f8fafc;
+            color: #64748b;
+            border-color: #e2e8f0;
+        }
+
+        .business-reference strong {
+            color: #334155;
+        }
+
+        /* =========================================================
+           MESSAGE AREA
+        ========================================================= */
+
+        .chat-messages {
+            flex: 1;
+
+            min-height: 0;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            padding: 28px 30px;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(219, 234, 254, 0.35),
+                    transparent 28%
+                ),
+                #f5f7fa;
+
+            display: flex;
+            flex-direction: column;
+
+            scroll-behavior: smooth;
+        }
+
+        .chat-date {
+            align-self: center;
+
+            margin: 0 auto 22px;
+
+            padding: 6px 12px;
+
+            background: #e2e8f0;
+            color: #64748b;
+
+            border-radius: 999px;
+
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        /* =========================================================
+           MESSAGE ROW
+        ========================================================= */
+
+        .message-row {
+            width: 100%;
+
+            display: flex;
+
+            margin-bottom: 10px;
+
+            animation: messageAppear 0.22s ease;
+        }
+
+        .message-row.mine {
+            justify-content: flex-end;
+        }
+
+        .message-row.theirs {
+            justify-content: flex-start;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================================
+           MESSAGE BUBBLE
+        ========================================================= */
+
+        .message-bubble {
+            max-width: min(68%, 620px);
+
+            padding: 11px 14px;
+
+            border-radius: 18px;
+
+            font-size: 14px;
+            line-height: 1.5;
+
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05);
+        }
+
+        .message-row.mine .message-bubble {
+            color: #ffffff;
+
+            background: linear-gradient(
+                135deg,
+                #2563eb,
+                #4f46e5
+            );
+
+            border-bottom-right-radius: 5px;
+
+            box-shadow:
+                0 4px 12px rgba(37, 99, 235, 0.16);
+        }
+
+        .message-row.theirs .message-bubble {
+            color: #1e293b;
+
+            background: #ffffff;
+
+            border: 1px solid #e2e8f0;
+
+            border-bottom-left-radius: 5px;
+        }
+
+        /* =========================================================
+           SENDER
+        ========================================================= */
+
+        .message-sender {
+            margin-bottom: 4px;
+
+            color: #2563eb;
+
+            font-size: 10px;
+            line-height: 1.2;
+            font-weight: 800;
+        }
+
+        /* =========================================================
+           MESSAGE TIME
+        ========================================================= */
+
+        .message-time {
+            margin-top: 5px;
+
+            text-align: right;
+
+            font-size: 9px;
+            line-height: 1;
+
+            opacity: 0.62;
+        }
+
+        .message-row.mine .message-time {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .message-row.theirs .message-time {
+            color: #64748b;
+        }
+
+        /* =========================================================
+           EMPTY CHAT
+        ========================================================= */
+
+        .empty-chat {
+            margin: auto;
+
+            max-width: 320px;
+
+            padding: 30px 20px;
+
+            text-align: center;
+            color: #64748b;
+        }
+
+        .empty-chat-icon {
+            width: 72px;
+            height: 72px;
+
+            margin: 0 auto 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 22px;
+
+            background: #eff6ff;
+            color: #2563eb;
+
+            font-size: 30px;
+
+            box-shadow:
+                inset 0 0 0 1px #dbeafe;
+        }
+
+        .empty-chat h3 {
+            margin: 0 0 7px;
+
+            color: #0f172a;
+
+            font-size: 17px;
+        }
+
+        .empty-chat p {
+            margin: 0;
+
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           INPUT AREA
+        ========================================================= */
+
+        .chat-input-area {
+            padding: 13px 18px;
+
+            background: #ffffff;
+
+            border-top: 1px solid #e5e7eb;
+
+            flex-shrink: 0;
+        }
+
+        .chat-form {
+            width: 100%;
+
+            display: flex;
+            align-items: flex-end;
+
+            gap: 9px;
+        }
+
+        .textarea-wrapper {
+            flex: 1;
+            min-width: 0;
+
+            background: #f3f4f6;
+
+            border-radius: 18px;
+
+            border: 1px solid transparent;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .textarea-wrapper:focus-within {
+            background: #ffffff;
+
+            border-color: #93c5fd;
+
+            box-shadow:
+                0 0 0 3px rgba(37, 99, 235, 0.08);
+        }
+
+        .chat-form textarea {
+            width: 100%;
+
+            min-height: 44px;
+            max-height: 120px;
+
+            resize: none;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            padding: 12px 15px;
+
+            color: #111827;
+
+            font-size: 14px;
+            line-height: 1.4;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            display: block;
+        }
+
+        .chat-form textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        /* =========================================================
+           SEND BUTTON
+        ========================================================= */
+
+        .send-button {
+            width: 45px;
+            height: 45px;
+
+            flex-shrink: 0;
+
+            border: none;
+            border-radius: 14px;
+
+            background: linear-gradient(
+                135deg,
+                #2563eb,
+                #4f46e5
+            );
+
+            color: #ffffff;
+
+            font-size: 18px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            box-shadow:
+                0 5px 14px rgba(37, 99, 235, 0.22);
+
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .send-button:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 7px 18px rgba(37, 99, 235, 0.28);
+        }
+
+        .send-button:active {
+            transform: scale(0.94);
+        }
+
+        /* =========================================================
+           SCROLLBAR
+        ========================================================= */
+
+        .chat-messages::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            .chat-page {
+                padding: 0;
+                min-height: 100vh;
+            }
+
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                max-width: none;
+
+                border-radius: 0;
+                border: none;
+
+                box-shadow: none;
+            }
+
+            .chat-header {
+                min-height: 68px;
+
+                padding: 10px 12px;
+
+                gap: 9px;
+            }
+
+            .back-button {
+                width: 37px;
+                height: 37px;
+
+                border-radius: 11px;
+
+                font-size: 22px;
+            }
+
+            .business-avatar-wrapper {
+                width: 43px;
+                height: 43px;
+            }
+
+            .business-avatar {
+                width: 43px;
+                height: 43px;
+
+                border-radius: 13px;
+
+                font-size: 17px;
+            }
+
+            .online-dot {
+                width: 12px;
+                height: 12px;
+
+                border-width: 2px;
+            }
+
+            .chat-header-info h2 {
+                font-size: 15px;
+            }
+
+            .chat-subtitle {
+                font-size: 11px;
+            }
+
+            .chat-status {
+                font-size: 10px;
+            }
+
+            .item-reference,
+            .food-reference,
+            .business-reference {
+                min-height: 40px;
+
+                padding: 7px 13px;
+
+                font-size: 11px;
+            }
+
+            .chat-messages {
+                padding: 20px 12px;
+            }
+
+            .chat-date {
+                margin-bottom: 18px;
+            }
+
+            .message-row {
+                margin-bottom: 8px;
+            }
+
+            .message-bubble {
+                max-width: 84%;
+
+                padding: 10px 12px;
+
+                font-size: 14px;
+                line-height: 1.45;
+
+                border-radius: 16px;
+            }
+
+            .message-sender {
+                font-size: 9px;
+            }
+
+            .message-time {
+                font-size: 8px;
+            }
+
+            .chat-input-area {
+                padding: 9px 10px;
+            }
+
+            .chat-form {
+                gap: 7px;
+            }
+
+            .textarea-wrapper {
+                border-radius: 17px;
+            }
+
+            .chat-form textarea {
+                min-height: 43px;
+
+                padding: 11px 13px;
+
+                font-size: 14px;
+            }
+
+            .send-button {
+                width: 43px;
+                height: 43px;
+
+                border-radius: 13px;
+
+                font-size: 17px;
+            }
+        }
+
+        @media (max-width: 380px) {
+
+            .chat-header {
+                padding-left: 9px;
+                padding-right: 9px;
+            }
+
+            .chat-messages {
+                padding-left: 9px;
+                padding-right: 9px;
+            }
+
+            .message-bubble {
+                max-width: 88%;
+            }
+
+            .chat-input-area {
+                padding-left: 7px;
+                padding-right: 7px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-page">
+
+    <div class="chat-container">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <div class="chat-header">
+
+            <a
+                href="{% url 'messages_inbox' %}"
+                class="back-button"
+                aria-label="Back to messages"
+                title="Back to messages"
+            >
+                ←
+            </a>
+
+            <div class="business-avatar-wrapper">
+
+                <div class="business-avatar">
+
+                    {% if conversation.item %}
+
+                        {{ other_user.username|first|upper }}
+
+                    {% elif conversation.food %}
+
+                        {{ other_user.username|first|upper }}
+
+                    {% elif conversation.business %}
+
+                        {{ conversation.business.name|first|upper }}
+
+                    {% else %}
+
+                        ?
+
+                    {% endif %}
+
+                </div>
+
+                <div class="online-dot"></div>
+
+            </div>
+
+            <div class="chat-header-info">
+
+                <h2>
+
+                    {% if conversation.item %}
+
+                        {{ other_user.username }}
+
+                    {% elif conversation.food %}
+
+                        {{ other_user.username }}
+
+                    {% elif conversation.business %}
+
+                        {{ conversation.business.name }}
+
+                    {% else %}
+
+                        Conversation
+
+                    {% endif %}
+
+                </h2>
+
+                {% if conversation.item %}
+
+                    <div class="chat-subtitle">
+                        Item · {{ conversation.item.title }}
+                    </div>
+
+                {% elif conversation.food %}
+
+                    <div class="chat-subtitle">
+                        Food · {{ conversation.food.title }}
+                    </div>
+
+                {% elif conversation.business %}
+
+                    <div class="chat-subtitle">
+                        Business · {{ conversation.business.name }}
+                    </div>
+
+                {% endif %}
+
+                <div class="chat-status">
+
+                    {% if other_user_status == "Online" %}
+
+                        ● Online
+
+                    {% else %}
+
+                        ● {{ other_user_status }}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             ITEM REFERENCE
+        ====================================================== -->
+
+        {% if conversation.item %}
+
+            <div class="item-reference">
+
+                <span>🛍️</span>
+
+                <strong>
+                    {{ conversation.item.title }}
+                </strong>
+
+                <span>·</span>
+
+                <span>
+                    {{ conversation.item.price|floatformat:0 }} FCFA
+                </span>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             FOOD REFERENCE
+        ====================================================== -->
+
+        {% if conversation.food %}
+
+            <div class="food-reference">
+
+                <span>🍽️</span>
+
+                <strong>
+                    {{ conversation.food.title }}
+                </strong>
+
+                <span>·</span>
+
+                <span>
+                    {{ conversation.food.price|floatformat:0 }} FCFA
+                </span>
+
+                {% if conversation.food.location %}
+
+                    <span>·</span>
+
+                    <span>
+                        {{ conversation.food.location }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             BUSINESS REFERENCE
+        ====================================================== -->
+
+        {% if conversation.business %}
+
+            <div class="business-reference">
+
+                <span>🏪</span>
+
+                <strong>
+                    {{ conversation.business.name }}
+                </strong>
+
+                {% if conversation.business.city %}
+
+                    <span>·</span>
+
+                    <span>
+                        {{ conversation.business.city }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             MESSAGES
+        ====================================================== -->
+
+        <div
+            class="chat-messages"
+            id="chatMessages"
+        >
+
+            {% if messages %}
+
+                <div class="chat-date">
+                    Conversation
+                </div>
+
+            {% endif %}
+
+
+            {% for msg in messages %}
+
+                {% if msg.sender_id == current_user_id %}
+
+                    <!-- MY MESSAGE -->
+
+                    <div class="message-row mine">
+
+                        <div class="message-bubble">
+
+                            {{ msg.text|linebreaksbr }}
+
+                            <div class="message-time">
+
+                                {{ msg.created_at|date:"H:i" }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <!-- OTHER USER MESSAGE -->
+
+                    <div class="message-row theirs">
+
+                        <div class="message-bubble">
+
+                            <div class="message-sender">
+
+                                {{ msg.sender.username }}
+
+                            </div>
+
+                            {{ msg.text|linebreaksbr }}
+
+                            <div class="message-time">
+
+                                {{ msg.created_at|date:"H:i" }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% empty %}
+
+                <div class="empty-chat">
+
+                    <div class="empty-chat-icon">
+                        💬
+                    </div>
+
+                    <h3>
+                        Start the conversation
+                    </h3>
+
+                    <p>
+                        Send a message to get things started.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- =====================================================
+             MESSAGE INPUT
+        ====================================================== -->
+
+        <div class="chat-input-area">
+
+            <form
+                method="POST"
+                class="chat-form"
+            >
+
+                {% csrf_token %}
+
+                <div class="textarea-wrapper">
+
+                    <textarea
+                        name="message"
+                        id="messageInput"
+                        placeholder="Write a message..."
+                        required
+                        rows="1"
+                        maxlength="5000"
+                        aria-label="Message"
+                    ></textarea>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="send-button"
+                    title="Send message"
+                    aria-label="Send message"
+                >
+                    ➤
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const chatMessages =
+    document.getElementById("chatMessages");
+
+const messageInput =
+    document.getElementById("messageInput");
+
+
+/* =========================================================
+   SCROLL TO LATEST MESSAGE
+========================================================= */
+
+if (chatMessages) {
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+/* =========================================================
+   AUTO-GROW TEXTAREA
+========================================================= */
+
+if (messageInput) {
+
+    messageInput.addEventListener(
+        "input",
+        function () {
+
+            this.style.height = "auto";
+
+            this.style.height =
+                Math.min(
+                    this.scrollHeight,
+                    120
+                ) + "px";
+
+        }
+    );
+
+
+    /* =====================================================
+       ENTER TO SEND
+    ===================================================== */
+
+    messageInput.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+
+                event.preventDefault();
+
+                this.form.submit();
+
+            }
+
+        }
+    );
+
+}
+
+</script>
+
+</body>
+</html>

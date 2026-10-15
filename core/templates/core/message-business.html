@@ -1,0 +1,120 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message {{ business.name }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        .message-container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .message-container h1 {
+            margin-bottom: 10px;
+        }
+
+        .message-container p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .message-container label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .message-container input,
+        .message-container textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .message-container textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        .send-button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .send-button:hover {
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="message-container">
+
+    <h1>Message {{ business.name }}</h1>
+
+    <p>
+        Send a message to the owner of this business.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label for="subject">Subject</label>
+
+        <input
+            type="text"
+            id="subject"
+            name="subject"
+            placeholder="What is your message about?"
+            required
+        >
+
+        <label for="message">Message</label>
+
+        <textarea
+            id="message"
+            name="message"
+            placeholder="Write your message here..."
+            required
+        ></textarea>
+
+        <button type="submit" class="send-button">
+            Send Message
+        </button>
+
+    </form>
+
+    <a href="{% url 'business_list' %}" class="back-link">
+        ← Back to Businesses
+    </a>
+
+</div>
+
+</body>
+</html>

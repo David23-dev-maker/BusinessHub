@@ -1,160 +1,535 @@
+{% extends "core/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}
+BusinessHub — Businesses
+{% endblock %}
 
-    <title>BusinessHub | Businesses</title>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/businesses-premium.css' %}">
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+<style>
+    /* ============================================================
+       BUSINESS RATING
+       ============================================================ */
 
-<body>
+    .business-rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        min-height: 24px;
+        flex-wrap: wrap;
+    }
 
-<div class="page">
+    .business-rating-stars {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+    }
 
-    <div class="header">
+    .business-rating-score {
+        font-size: 14px;
+        font-weight: 700;
+        color: #f59e0b;
+    }
 
-        <div>
-            <h1>Discover Businesses</h1>
-            <p>Find businesses and services on BusinessHub</p>
+    .business-rating-count {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .business-rating-empty {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .business-rating-empty-star {
+        font-size: 14px;
+        opacity: 0.65;
+    }
+
+    /* ============================================================
+       RESPONSIVE RATING
+       ============================================================ */
+
+    @media (max-width: 480px) {
+
+        .business-rating {
+            margin-top: 8px;
+            gap: 6px;
+        }
+
+        .business-rating-stars {
+            font-size: 14px;
+        }
+
+        .business-rating-score {
+            font-size: 13px;
+        }
+
+        .business-rating-count,
+        .business-rating-empty {
+            font-size: 12px;
+        }
+
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="businesses-page">
+
+    <div class="businesses-container">
+
+        <!-- Hero -->
+
+        <div class="businesses-hero">
+
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    Discover Local Businesses
+                </div>
+
+                <h1>
+                    Find businesses
+                    <span>you can trust.</span>
+                </h1>
+
+                <p>
+                    Explore businesses, services and local brands
+                    available on BusinessHub.
+                </p>
+
+            </div>
+
         </div>
 
-        <div class="brand">
-            Business<span>Hub</span>
-        </div>
 
-    </div>
+        <!-- Search -->
 
+        <div class="business-search-card">
 
-    <!-- SEARCH -->
-
-    <div class="search-section">
-
-        <form method="GET" action="{% url 'business_list' %}" class="business-search-form">
-
-            <input
-                type="text"
-                name="q"
-                value="{{ query }}"
-                placeholder="Search business, category, city or region..."
+            <form
+                method="GET"
+                action="{% url 'business_list' %}"
+                class="business-search-form"
             >
 
-            <button type="submit">
-                🔍 Search
-            </button>
+                <div class="search-input-wrapper">
 
-        </form>
+                    <span class="search-icon">
+                        🔎
+                    </span>
 
-    </div>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ query }}"
+                        placeholder="Search businesses, categories or locations..."
+                        autocomplete="off"
+                        id="businessSearch"
+                    >
 
+                </div>
 
-    <!-- SEARCH RESULT MESSAGE -->
+                <button
+                    type="submit"
+                    class="search-button"
+                >
+                    Search
+                </button>
 
-    {% if query %}
+            </form>
 
-        <div class="search-result-message">
+            {% if query %}
 
-            <p>
-                Search results for:
-                <strong>"{{ query }}"</strong>
-            </p>
+            <div class="search-result-message">
 
-            <a href="{% url 'business_list' %}">
-                Clear Search
-            </a>
+                <span>
+                    Showing results for
+                    <strong>"{{ query }}"</strong>
+                </span>
+
+                <a href="{% url 'business_list' %}">
+                    Clear search
+                </a>
+
+            </div>
+
+            {% endif %}
 
         </div>
 
-    {% endif %}
+
+        <!-- Directory header -->
+
+        <div class="directory-header">
+
+            <div>
+
+                <span class="section-eyebrow">
+                    BUSINESS DIRECTORY
+                </span>
+
+                <h2>
+                    Explore Businesses
+                </h2>
+
+                <p>
+                    Browse businesses listed on BusinessHub.
+                </p>
+
+            </div>
+
+            <div class="directory-count">
+
+                <strong>
+                    {{ businesses|length }}
+                </strong>
+
+                <span>
+                    Businesses
+                </span>
+
+            </div>
+
+        </div>
 
 
-    <!-- BUSINESSES -->
+        <!-- Business grid -->
 
-    <div class="business-grid">
+        {% if businesses %}
 
-        {% for business in businesses %}
+        <div class="business-grid">
 
-            <div class="business-card">
+            {% for business in businesses %}
 
-                {% if business.logo %}
+            <article class="business-card">
 
-                    <img
-                        src="{{ business.logo.url }}"
-                        alt="{{ business.name }}"
-                        class="business-logo"
-                    >
+                <!-- Business header -->
 
-                {% else %}
+                <div class="business-card-header">
 
-                    <div class="business-logo-placeholder">
-                        🏢
+                    <div class="business-logo">
+
+                        {% if business.logo %}
+
+                            <img
+                                src="{{ business.logo.url }}"
+                                alt="{{ business.name }}"
+                            >
+
+                        {% else %}
+
+                            <span>
+                                {{ business.name|first|upper }}
+                            </span>
+
+                        {% endif %}
+
                     </div>
 
-                {% endif %}
+                    <div class="business-card-heading">
+
+                        <div class="business-category">
+                            {{ business.get_category_display }}
+                        </div>
+
+                        <h3>
+                            {{ business.name }}
+                        </h3>
 
 
-                <div class="business-content">
+                        <!-- Subscription badge -->
 
-                    <h2>{{ business.name }}</h2>
+                        {% if business.plan_badge == "PRO" %}
 
-                    <p class="category">
-                        {{ business.get_category_display }}
-                    </p>
+                        <div class="business-plan-badge business-plan-pro">
+                            ✦ PRO
+                        </div>
 
-                    <p class="description">
-                        {{ business.description|truncatewords:20 }}
-                    </p>
+                        {% elif business.plan_badge == "PLUS" %}
 
-                    <p class="location">
-                        📍 {{ business.city }}, {{ business.region }}
-                    </p>
+                        <div class="business-plan-badge business-plan-plus">
+                            ✦ PLUS
+                        </div>
+
+                        {% endif %}
+
+
+                        <!-- Status -->
+
+                        <div class="business-status">
+                            <span></span>
+                            Active
+                        </div>
+
+
+                        <!-- Rating -->
+
+                        {% if business.review_count %}
+
+                        <div class="business-rating">
+
+                            <span
+                                class="business-rating-stars"
+                                aria-label="{{ business.average_rating|floatformat:1 }} out of 5 stars"
+                            >
+                                ⭐
+                            </span>
+
+                            <span class="business-rating-score">
+                                {{ business.average_rating|floatformat:1 }}
+                            </span>
+
+                            <span class="business-rating-count">
+
+                                {% if business.review_count == 1 %}
+                                    (1 review)
+                                {% else %}
+                                    ({{ business.review_count }} reviews)
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                        {% else %}
+
+                        <div class="business-rating">
+
+                            <span class="business-rating-empty">
+
+                                <span class="business-rating-empty-star">
+                                    ☆
+                                </span>
+
+                                No ratings yet
+
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Description -->
+
+                <div class="business-card-description">
+
+                    {% if business.description %}
+
+                        <p>
+                            {{ business.description|truncatechars:120 }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="no-description">
+                            No business description available.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Location -->
+
+                <div class="business-card-location">
+
+                    <span class="location-icon">
+                        📍
+                    </span>
+
+                    <span>
+
+                        {% if business.city %}
+                            {{ business.city }}
+                        {% endif %}
+
+                        {% if business.region %}
+                            {% if business.city %}, {% endif %}
+                            {{ business.region }}
+                        {% endif %}
+
+                        {% if not business.city and not business.region %}
+                            Location not specified
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="business-card-actions">
 
                     <a
-                        href="tel:{{ business.phone }}"
-                        class="contact-btn"
+                        href="{% url 'view_business' business.id %}"
+                        class="business-action business-action-view"
                     >
-                        Contact Business
+                        View Business
+                    </a>
+
+
+                    <a
+                        href="{% url 'view_business' business.id %}#contact"
+                        class="business-action business-action-contact"
+                    >
+                        Contact
+                    </a>
+
+
+                    <a
+                        href="{% url 'message_business' business.id %}"
+                        class="business-action business-action-message"
+                    >
+                        Message
                     </a>
 
                 </div>
 
+            </article>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <!-- Empty state -->
+
+        <div class="business-empty">
+
+            <div class="empty-icon">
+                🔎
             </div>
 
-        {% empty %}
+            <h2>
+                No businesses found
+            </h2>
 
-            <div class="empty-businesses">
-
-                <h2>No businesses found</h2>
+            <p>
 
                 {% if query %}
 
-                    <p>
-                        We couldn't find a business matching
-                        "<strong>{{ query }}</strong>".
-                    </p>
-
-                    <a href="{% url 'business_list' %}">
-                        View All Businesses
-                    </a>
+                    We couldn't find a business matching
+                    "{{ query }}".
 
                 {% else %}
 
-                    <p>
-                        Be the first business to join BusinessHub.
-                    </p>
+                    There are no businesses listed yet.
+
+                {% endif %}
+
+            </p>
+
+            {% if query %}
+
+                <a
+                    href="{% url 'business_list' %}"
+                    class="empty-button"
+                >
+                    View All Businesses
+                </a>
+
+            {% else %}
+
+                {% if user.is_authenticated %}
+
+                <a
+                    href="{% url 'list_business' %}"
+                    class="empty-button"
+                >
+                    List Your Business
+                </a>
+
+                {% else %}
+
+                <a
+                    href="{% url 'login' %}"
+                    class="empty-button"
+                >
+                    Get Started
+                </a>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Bottom CTA -->
+
+        <div class="business-directory-cta">
+
+            <div class="cta-content">
+
+                <span class="cta-label">
+                    HAVE A BUSINESS?
+                </span>
+
+                <h2>
+                    Put your business in front of more customers.
+                </h2>
+
+                <p>
+                    Create your BusinessHub listing and let customers
+                    discover what you offer.
+                </p>
+
+            </div>
+
+            <div class="cta-action">
+
+                {% if user.is_authenticated %}
+
+                <a
+                    href="{% url 'list_business' %}"
+                    class="cta-button"
+                >
+                    List Your Business
+                    <span>→</span>
+                </a>
+
+                {% else %}
+
+                <a
+                    href="{% url 'login' %}"
+                    class="cta-button"
+                >
+                    Get Started
+                    <span>→</span>
+                </a>
 
                 {% endif %}
 
             </div>
 
-        {% endfor %}
+        </div>
 
     </div>
 
-</div>
+</section>
 
-</body>
-</html>
+{% endblock %}

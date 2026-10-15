@@ -1,0 +1,318 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ food.title }} - BusinessHub{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .food-detail-page{max-width:1180px;margin:0 auto;padding:30px 20px 70px}
+    .food-back-link{display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;color:#4b5563;text-decoration:none;font-size:14px;font-weight:700;transition:.2s ease}
+    .food-back-link:hover{color:#2563eb}
+    .food-detail-card{background:white;border:1px solid #e5e7eb;border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(15,23,42,.05)}
+    .food-detail-grid{display:grid;grid-template-columns:1.05fr .95fr}
+    .food-gallery{background:#f3f4f6;min-height:560px;position:relative}
+    .main-food-image-wrapper{position:relative;width:100%;height:500px;background:#f3f4f6;overflow:hidden}
+    .main-food-image{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s ease}
+    .food-no-image{width:100%;height:500px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f3f4f6,#e5e7eb);color:#9ca3af;font-size:80px}
+    .food-image-count{position:absolute;right:14px;bottom:14px;background:rgba(17,24,39,.82);color:white;padding:7px 10px;border-radius:8px;font-size:12px;font-weight:700}
+    .food-thumbnails{display:flex;gap:9px;padding:12px;overflow-x:auto;background:white;border-top:1px solid #e5e7eb;scrollbar-width:thin}
+    .food-thumbnail{width:72px;height:62px;object-fit:cover;border-radius:9px;flex-shrink:0;cursor:pointer;border:2px solid transparent;transition:.2s ease;opacity:.8}
+    .food-thumbnail:hover{opacity:1;border-color:#2563eb;transform:translateY(-1px)}
+    .food-info{padding:38px}
+    .food-top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:12px}
+    .food-category{display:inline-flex;background:#eff6ff;color:#2563eb;padding:6px 9px;border-radius:8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+    .food-status{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:8px;background:#dcfce7;color:#166534;font-size:12px;font-weight:800}
+    .food-status.unavailable{background:#fee2e2;color:#991b1b}
+    .food-title{font-size:35px;color:#111827;margin:0 0 10px;line-height:1.15;letter-spacing:-.7px}
+    .food-price{font-size:29px;font-weight:850;color:#111827;margin-bottom:24px}
+    .food-description-title{font-size:13px;font-weight:800;color:#374151;margin-bottom:7px}
+    .food-description{color:#6b7280;line-height:1.75;margin-bottom:27px;white-space:pre-line;font-size:14px}
+    .food-details{border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:17px 0;margin-bottom:24px}
+    .detail-row{display:flex;justify-content:space-between;gap:20px;padding:9px 0}
+    .detail-label{color:#6b7280;font-size:14px}
+    .detail-value{color:#111827;font-size:14px;font-weight:700;text-align:right}
+    .availability-title{font-size:13px;color:#6b7280;margin-top:13px;margin-bottom:8px}
+    .availability-options{display:flex;gap:7px;flex-wrap:wrap}
+    .availability-badge{background:#f3f4f6;color:#374151;padding:7px 10px;border-radius:8px;font-size:12px;font-weight:700}
+    .availability-badge.pickup{background:#f0fdf4;color:#166534}
+    .availability-badge.delivery{background:#ecfeff;color:#155e75}
+    .delivery-info{margin-top:13px;padding:12px 13px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;color:#6b7280;font-size:13px;line-height:1.6}
+    .delivery-info strong{color:#374151}
+    .seller-box{background:#f8fafc;border:1px solid #e5e7eb;border-radius:13px;padding:16px;margin-bottom:17px}
+    .seller-content{display:flex;align-items:center;gap:12px}
+    .seller-avatar{width:43px;height:43px;border-radius:50%;background:#111827;color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex-shrink:0}
+    .seller-label{color:#6b7280;font-size:11px;margin-bottom:3px;text-transform:uppercase;font-weight:700;letter-spacing:.3px}
+    .seller-name{color:#111827;font-size:16px;font-weight:750}
+    .message-btn,.login-btn{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;text-align:center;background:#111827;color:white;text-decoration:none;padding:14px;border-radius:10px;font-weight:750;font-size:14px;transition:.2s ease}
+    .message-btn{gap:7px;margin-bottom:9px}
+    .message-btn:hover,.login-btn:hover{background:#2563eb;transform:translateY(-1px);color:white}
+    .unavailable-message{text-align:center;padding:13px;background:#f3f4f6;border-radius:10px;color:#6b7280;font-size:13px;font-weight:700}
+    .promotion-box{margin-top:18px;margin-bottom:18px;padding:16px;border:1px solid #e5e7eb;border-radius:13px;background:#fff}
+    .promotion-title{font-size:13px;font-weight:800;color:#374151;margin-bottom:4px}
+    .promotion-subtitle{font-size:12px;color:#6b7280;margin-bottom:12px;line-height:1.5}
+    .promotion-status{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+    .promotion-active{padding:9px 10px;border-radius:8px;font-size:12px;font-weight:750}
+    .boost-active{background:#fff7ed;color:#c2410c}
+    .featured-active{background:#fefce8;color:#854d0e}
+    .promotion-buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .promotion-btn{display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;padding:12px 9px;border-radius:9px;font-size:12px;font-weight:800;transition:.2s ease}
+    .boost-btn{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+    .boost-btn:hover{background:#ffedd5;transform:translateY(-1px);color:#c2410c}
+    .feature-btn{background:#fefce8;color:#854d0e;border:1px solid #fde68a}
+    .feature-btn:hover{background:#fef9c3;transform:translateY(-1px);color:#854d0e}
+    .owner-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+    .owner-btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;border-radius:9px;text-decoration:none;font-size:13px;font-weight:700;transition:.2s ease}
+    .edit-btn{background:#111827;color:white}
+    .edit-btn:hover{background:#2563eb;color:white}
+    .delete-btn{background:#fee2e2;color:#991b1b}
+    .delete-btn:hover{background:#fecaca;color:#991b1b}
+    .unavailable-btn{width:100%;border:none;background:#f3f4f6;color:#374151;padding:12px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:.2s ease}
+    .unavailable-btn:hover{background:#e5e7eb}
+    @media(max-width:850px){
+        .food-detail-page{padding:22px 14px 55px}
+        .food-detail-grid{grid-template-columns:1fr}
+        .food-gallery{min-height:auto}
+        .main-food-image-wrapper,.food-no-image{height:430px}
+        .food-info{padding:28px 22px}
+        .food-title{font-size:29px}
+        .food-price{font-size:25px}
+    }
+    @media(max-width:520px){
+        .food-detail-page{padding:17px 10px 45px}
+        .food-detail-card{border-radius:15px}
+        .main-food-image-wrapper{height:300px}
+        .food-no-image{height:300px;font-size:65px}
+        .food-thumbnail{width:62px;height:55px}
+        .food-info{padding:21px 16px}
+        .food-top-row{align-items:center}
+        .food-title{font-size:25px}
+        .food-price{font-size:23px;margin-bottom:20px}
+        .food-description{font-size:13px}
+        .detail-row{gap:12px}
+        .detail-label,.detail-value{font-size:13px}
+        .seller-box{padding:13px}
+        .promotion-buttons{grid-template-columns:1fr}
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+{% now "Ymd" as today %}
+
+<div class="food-detail-page">
+    <a href="{% url 'food_marketplace' %}" class="food-back-link">
+        ← Back to Food Marketplace
+    </a>
+
+
+<div class="food-detail-card">
+    <div class="food-detail-grid">
+        <div class="food-gallery">
+            {% with first_image=food.images.first %}
+                {% if first_image %}
+                    <div class="main-food-image-wrapper">
+                        <img
+                            src="{{ first_image.image.url }}"
+                            alt="{{ food.title }}"
+                            class="main-food-image"
+                            id="mainFoodImage"
+                        >
+                        {% if food.images.all|length > 1 %}
+                            <div class="food-image-count">
+                                {{ food.images.all|length }} photos
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="main-food-image-wrapper">
+                        <div class="food-no-image">🍴</div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if food.images.all %}
+                <div class="food-thumbnails">
+                    {% for image in food.images.all %}
+                        <img
+                            src="{{ image.image.url }}"
+                            alt="{{ food.title }}"
+                            class="food-thumbnail"
+                            onclick="changeFoodImage('{{ image.image.url }}', this)"
+                        >
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="food-info">
+            <div class="food-top-row">
+                <div class="food-category">{{ food.get_category_display }}</div>
+                {% if food.status == "available" %}
+                    <div class="food-status">✓ Available</div>
+                {% else %}
+                    <div class="food-status unavailable">Unavailable</div>
+                {% endif %}
+            </div>
+
+            <h1 class="food-title">{{ food.title }}</h1>
+            <div class="food-price">{{ food.price|floatformat:0 }} FCFA</div>
+
+            {% if food.description %}
+                <div class="food-description-title">About this food</div>
+                <div class="food-description">{{ food.description }}</div>
+            {% endif %}
+
+            <div class="food-details">
+                <div class="detail-row">
+                    <span class="detail-label">📍 Location</span>
+                    <span class="detail-value">{{ food.location }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">📦 Quantity</span>
+                    <span class="detail-value">{{ food.quantity }}</span>
+                </div>
+
+                <div class="availability-title">Available options</div>
+                <div class="availability-options">
+                    {% if food.pickup_available %}
+                        <span class="availability-badge pickup">📦 Pickup Available</span>
+                    {% endif %}
+                    {% if food.delivery_available %}
+                        <span class="availability-badge delivery">🚚 Delivery Available</span>
+                    {% endif %}
+                    {% if not food.pickup_available and not food.delivery_available %}
+                        <span class="availability-badge">Contact seller for arrangements</span>
+                    {% endif %}
+                </div>
+
+                {% if food.delivery_available and food.delivery_information %}
+                    <div class="delivery-info">
+                        <strong>🚚 Delivery information</strong><br>
+                        {{ food.delivery_information }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="seller-box">
+                <div class="seller-content">
+                    <div class="seller-avatar">{{ food.seller.username|first|upper }}</div>
+                    <div>
+                        <div class="seller-label">Sold by</div>
+                        <div class="seller-name">{{ food.seller.username }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+                {% if user.id == food.seller_id %}
+                    {% if food.status == "available" %}
+                        <div class="promotion-box">
+                            <div class="promotion-title">🚀 Promote Your Food</div>
+                            <div class="promotion-subtitle">
+                                Get more visibility and reach more customers.
+                            </div>
+
+                            {% if food.active_boost or food.active_featured %}
+                                <div class="promotion-status">
+                                    {% if food.active_boost %}
+                                        <div class="promotion-active boost-active">
+                                            🚀 Boosted until {{ food.active_boost.expiry_date|date:"M d, Y h:i A" }}
+                                        </div>
+                                    {% endif %}
+                                    {% if food.active_featured %}
+                                        <div class="promotion-active featured-active">
+                                            ⭐ Featured until {{ food.active_featured.expiry_date|date:"M d, Y h:i A" }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            <div class="promotion-buttons">
+                                {% if not food.active_boost %}
+                                    <a href="{% url 'boost_food' food.id %}" class="promotion-btn boost-btn">
+                                        {% if today >= "20261012" and today < "20271012" %}
+                                            🚀 Boost — FREE
+                                        {% else %}
+                                            🚀 Boost · 100 XAF
+                                        {% endif %}
+                                    </a>
+                                {% endif %}
+
+                                {% if not food.active_featured %}
+                                    <a href="{% url 'feature_food' food.id %}" class="promotion-btn feature-btn">
+                                        {% if today >= "20261012" and today < "20271012" %}
+                                            ⭐ Feature — FREE
+                                        {% else %}
+                                            ⭐ Feature · 1,000 XAF
+                                        {% endif %}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="owner-actions">
+                        <a href="{% url 'edit_food' food.id %}" class="owner-btn edit-btn">✏️ Edit Food</a>
+                        <a href="{% url 'delete_food' food.id %}" class="owner-btn delete-btn">🗑️ Delete</a>
+                    </div>
+
+                    {% if food.status == "available" %}
+                        <form method="post" action="{% url 'mark_food_unavailable' food.id %}" style="margin-top:9px;">
+                            {% csrf_token %}
+                            <button type="submit" class="unavailable-btn">Mark as Unavailable</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    {% if food.status == "available" %}
+                        <a href="{% url 'message_food_seller' food.id %}" class="message-btn">💬 Message Seller</a>
+                    {% else %}
+                        <div class="unavailable-message">This food is currently unavailable.</div>
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                {% if food.status == "available" %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="login-btn">🔐 Login to Message Seller</a>
+                {% else %}
+                    <div class="unavailable-message">This food is currently unavailable.</div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<script>
+    function changeFoodImage(imageUrl, thumbnail) {
+        const mainImage = document.getElementById("mainFoodImage");
+        if (!mainImage) return;
+
+        mainImage.style.opacity = "0.35";
+
+        setTimeout(function () {
+            mainImage.onload = function () {
+                mainImage.style.opacity = "1";
+            };
+
+            mainImage.src = imageUrl;
+
+            if (mainImage.complete) {
+                mainImage.style.opacity = "1";
+            }
+        }, 100);
+
+        document.querySelectorAll(".food-thumbnail").forEach(function (item) {
+            item.style.borderColor = "transparent";
+            item.style.opacity = "0.8";
+        });
+
+        if (thumbnail) {
+            thumbnail.style.borderColor = "#2563eb";
+            thumbnail.style.opacity = "1";
+        }
+    }
+</script>
+
+{% endblock %}

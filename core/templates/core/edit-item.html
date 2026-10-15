@@ -1,0 +1,1107 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Edit Item | BusinessHub
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .edit-page {
+        max-width: 950px;
+        margin: 48px auto;
+        padding: 0 20px 70px;
+    }
+
+    .edit-header {
+        margin-bottom: 28px;
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #2563eb;
+    }
+
+    .edit-header h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 38px);
+        line-height: 1.1;
+        color: #111827;
+    }
+
+    .edit-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+    .edit-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 13px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 11px;
+        font-size: 15px;
+        font-family: inherit;
+        color: #111827;
+        background: #ffffff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .form-group textarea {
+        min-height: 160px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 4px 0 28px;
+        padding: 14px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: #f9fafb;
+    }
+
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        accent-color: #2563eb;
+    }
+
+    .checkbox-group label {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        cursor: pointer;
+    }
+
+    .section-title {
+        margin: 30px 0 15px;
+        padding-top: 25px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .section-title h2 {
+        margin: 0 0 5px;
+        font-size: 18px;
+        color: #111827;
+    }
+
+    .section-title p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .image-count {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 10px;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .current-images {
+        margin-bottom: 25px;
+    }
+
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+    }
+
+    .image-card {
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        background: #f9fafb;
+        position: relative;
+    }
+
+    .image-card img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .image-card-info {
+        padding: 10px;
+    }
+
+    .image-card-info span {
+        display: block;
+        margin-bottom: 9px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .delete-image-button {
+        width: 100%;
+        border: none;
+        border-radius: 9px;
+        padding: 9px 10px;
+        background: #fee2e2;
+        color: #b91c1c;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .delete-image-button:hover {
+        background: #fecaca;
+    }
+
+    .delete-image-button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+
+    .new-images {
+        margin-top: 5px;
+    }
+
+    .file-box {
+        border: 2px dashed #cbd5e1;
+        border-radius: 14px;
+        padding: 22px;
+        background: #f8fafc;
+        transition: 0.2s;
+    }
+
+    .file-box:hover {
+        border-color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .file-box input {
+        border: none;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .help-text {
+        margin-top: 8px;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .remaining-slots {
+        margin-top: 12px;
+        padding: 11px 13px;
+        border-radius: 10px;
+        background: #f0fdf4;
+        color: #166534;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .remaining-slots.warning {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .new-image-preview {
+        margin-top: 18px;
+        display: none;
+    }
+
+    .new-image-preview h3 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        color: #111827;
+    }
+
+    .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 12px;
+    }
+
+    .preview-card {
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .preview-card img {
+        width: 100%;
+        height: 115px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .preview-card span {
+        display: block;
+        padding: 8px;
+        font-size: 11px;
+        color: #6b7280;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .empty-images {
+        padding: 25px;
+        text-align: center;
+        border: 1px dashed #d1d5db;
+        border-radius: 14px;
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+        padding-top: 25px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .save-button,
+    .cancel-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 12px 22px;
+        border-radius: 11px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .save-button {
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    .save-button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .cancel-button {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .cancel-button:hover {
+        background: #e5e7eb;
+    }
+
+    @media (max-width: 700px) {
+
+        .edit-page {
+            margin-top: 30px;
+            padding-bottom: 45px;
+        }
+
+        .edit-card {
+            padding: 21px;
+            border-radius: 16px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .save-button,
+        .cancel-button {
+            width: 100%;
+        }
+
+        .image-grid,
+        .preview-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="edit-page">
+
+
+<div class="edit-header">
+
+    <div class="eyebrow">
+        BusinessHub Marketplace
+    </div>
+
+    <h1>
+        Edit Item
+    </h1>
+
+    <p>
+        Update your listing information and keep your item details accurate.
+    </p>
+
+</div>
+
+
+<div class="edit-card">
+
+    <!-- MAIN EDIT FORM -->
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+        id="editItemForm"
+    >
+
+        {% csrf_token %}
+
+
+        <!-- Item Title -->
+        <div class="form-group">
+
+            <label for="title">
+                Item Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="{{ item.title }}"
+                maxlength="200"
+                required
+            >
+
+        </div>
+
+
+        <!-- Category + Condition -->
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label for="category">
+                    Category
+                </label>
+
+                <select
+                    id="category"
+                    name="category"
+                    required
+                >
+
+                    {% for value, label in item.CATEGORY_CHOICES %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if item.category == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="condition">
+                    Condition
+                </label>
+
+                <select
+                    id="condition"
+                    name="condition"
+                    required
+                >
+
+                    {% for value, label in item.CONDITION_CHOICES %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if item.condition == value %}selected{% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- Price + Location -->
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label for="price">
+                    Price (FCFA)
+                </label>
+
+                <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    value="{{ item.price }}"
+                    min="0"
+                    step="1"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="location">
+                    Location
+                </label>
+
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value="{{ item.location }}"
+                    maxlength="255"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- Description -->
+        <div class="form-group">
+
+            <label for="description">
+                Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+                required
+            >{{ item.description }}</textarea>
+
+        </div>
+
+
+        <!-- Negotiable -->
+        <div class="checkbox-group">
+
+            <input
+                type="checkbox"
+                id="negotiable"
+                name="negotiable"
+                {% if item.negotiable %}
+                    checked
+                {% endif %}
+            >
+
+            <label for="negotiable">
+                Price is negotiable
+            </label>
+
+        </div>
+
+
+        <!-- Current Images -->
+        <div class="section-title">
+
+            <h2>
+                Current Images
+            </h2>
+
+            <p>
+                Manage the photos currently attached to your listing.
+            </p>
+
+            <div
+                class="image-count"
+                id="imageCount"
+            >
+                {{ item.images.count }} / 10 images
+            </div>
+
+        </div>
+
+
+        <div class="current-images">
+
+            <div
+                class="image-grid"
+                id="currentImageGrid"
+            >
+
+                {% for image in item.images.all %}
+
+                    <div
+                        class="image-card"
+                        data-image-id="{{ image.id }}"
+                    >
+
+                        <img
+                            src="{{ image.image.url }}"
+                            alt="{{ item.title }}"
+                            loading="lazy"
+                        >
+
+                        <div class="image-card-info">
+
+                            <span>
+                                Item image {{ forloop.counter }}
+                            </span>
+
+                            <button
+                                type="button"
+                                class="delete-image-button"
+                                data-delete-url="{% url 'delete_item_image' image.id %}"
+                            >
+                                🗑️ Delete Image
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-images" id="emptyImages">
+
+                        📷 No images have been added to this item yet.
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Add Images -->
+        <div class="section-title">
+
+            <h2>
+                Add More Images
+            </h2>
+
+            <p>
+                Add additional photos to make your listing more attractive.
+            </p>
+
+        </div>
+
+
+        <div class="form-group new-images">
+
+            <div class="file-box">
+
+                <input
+                    type="file"
+                    id="images"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                >
+
+                <div class="help-text">
+                    Select one or more images. Maximum 10 images total.
+                </div>
+
+
+                <div
+                    id="remainingSlots"
+                    class="remaining-slots"
+                >
+                    Calculating available image slots...
+                </div>
+
+
+                <!-- New Image Preview -->
+                <div
+                    id="newImagePreview"
+                    class="new-image-preview"
+                >
+
+                    <h3>
+                        New Images Preview
+                    </h3>
+
+                    <div
+                        id="previewGrid"
+                        class="preview-grid"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Actions -->
+        <div class="form-actions">
+
+            <a
+                href="{% url 'item_detail' item.id %}"
+                class="cancel-button"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="save-button"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const imageInput = document.getElementById("images");
+
+    const previewContainer =
+        document.getElementById("newImagePreview");
+
+    const previewGrid =
+        document.getElementById("previewGrid");
+
+    const remainingSlots =
+        document.getElementById("remainingSlots");
+
+    const imageCount =
+        document.getElementById("imageCount");
+
+    const currentImageGrid =
+        document.getElementById("currentImageGrid");
+
+
+    const maximumImages = 10;
+
+
+    function getCurrentImageCount() {
+
+        return currentImageGrid.querySelectorAll(
+            ".image-card"
+        ).length;
+
+    }
+
+
+    function updateImageCount() {
+
+        const count = getCurrentImageCount();
+
+        imageCount.textContent =
+            count + " / " + maximumImages + " images";
+
+        return count;
+
+    }
+
+
+    function updateRemainingSlots(selectedCount = 0) {
+
+        const currentCount =
+            getCurrentImageCount();
+
+        const availableSlots =
+            maximumImages - currentCount;
+
+        const afterSelection =
+            availableSlots - selectedCount;
+
+
+        if (afterSelection < 0) {
+
+            remainingSlots.textContent =
+                "Too many images selected. You can add only "
+                + availableSlots
+                + " more image(s).";
+
+            remainingSlots.classList.add("warning");
+
+            return false;
+        }
+
+
+        if (afterSelection === 0) {
+
+            remainingSlots.textContent =
+                "You have selected the maximum number of images.";
+
+            remainingSlots.classList.add("warning");
+
+            return true;
+        }
+
+
+        remainingSlots.textContent =
+            afterSelection
+            + " image slot(s) remaining after this selection.";
+
+        remainingSlots.classList.remove("warning");
+
+        return true;
+
+    }
+
+
+    updateImageCount();
+
+    updateRemainingSlots();
+
+
+    /*
+     * DELETE EXISTING IMAGE
+     */
+
+    document.querySelectorAll(".delete-image-button")
+        .forEach(function (button) {
+
+            button.addEventListener("click", async function () {
+
+                const confirmed = confirm(
+                    "Are you sure you want to delete this image?"
+                );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                const deleteUrl =
+                    this.dataset.deleteUrl;
+
+                const card =
+                    this.closest(".image-card");
+
+
+                this.disabled = true;
+
+                this.textContent =
+                    "Deleting...";
+
+
+                const csrfToken =
+                    document.querySelector(
+                        "#editItemForm input[name='csrfmiddlewaretoken']"
+                    ).value;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            deleteUrl,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "X-CSRFToken": csrfToken,
+                                    "X-Requested-With": "XMLHttpRequest"
+                                },
+
+                                credentials: "same-origin"
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Image deletion failed."
+                        );
+
+                    }
+
+
+                    card.remove();
+
+
+                    updateImageCount();
+
+                    updateRemainingSlots();
+
+
+                    if (
+                        getCurrentImageCount() === 0
+                    ) {
+
+                        const emptyMessage =
+                            document.createElement("div");
+
+                        emptyMessage.className =
+                            "empty-images";
+
+                        emptyMessage.id =
+                            "emptyImages";
+
+                        emptyMessage.textContent =
+                            "📷 No images have been added to this item yet.";
+
+                        currentImageGrid.appendChild(
+                            emptyMessage
+                        );
+
+                    }
+
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "Unable to delete the image. Please try again."
+                    );
+
+
+                    this.disabled = false;
+
+                    this.textContent =
+                        "🗑️ Delete Image";
+
+                }
+
+            });
+
+        });
+
+
+    /*
+     * NEW IMAGE PREVIEW
+     */
+
+    if (imageInput) {
+
+        imageInput.addEventListener(
+            "change",
+            function () {
+
+                const files =
+                    Array.from(this.files);
+
+
+                const availableSlots =
+                    maximumImages
+                    - getCurrentImageCount();
+
+
+                if (
+                    files.length >
+                    availableSlots
+                ) {
+
+                    alert(
+                        "You can add only "
+                        + availableSlots
+                        + " more image(s)."
+                    );
+
+
+                    this.value = "";
+
+                    previewGrid.innerHTML = "";
+
+                    previewContainer.style.display =
+                        "none";
+
+                    updateRemainingSlots();
+
+                    return;
+
+                }
+
+
+                previewGrid.innerHTML = "";
+
+
+                if (files.length === 0) {
+
+                    previewContainer.style.display =
+                        "none";
+
+                    updateRemainingSlots();
+
+                    return;
+
+                }
+
+
+                previewContainer.style.display =
+                    "block";
+
+
+                files.forEach(
+                    function (file, index) {
+
+                        if (
+                            !file.type.startsWith(
+                                "image/"
+                            )
+                        ) {
+                            return;
+                        }
+
+
+                        const reader =
+                            new FileReader();
+
+
+                        reader.onload =
+                            function (event) {
+
+                                const card =
+                                    document.createElement(
+                                        "div"
+                                    );
+
+                                card.className =
+                                    "preview-card";
+
+
+                                const image =
+                                    document.createElement(
+                                        "img"
+                                    );
+
+                                image.src =
+                                    event.target.result;
+
+                                image.alt =
+                                    "New image "
+                                    + (index + 1);
+
+
+                                const name =
+                                    document.createElement(
+                                        "span"
+                                    );
+
+                                name.textContent =
+                                    file.name;
+
+
+                                card.appendChild(
+                                    image
+                                );
+
+                                card.appendChild(
+                                    name
+                                );
+
+
+                                previewGrid.appendChild(
+                                    card
+                                );
+
+                            };
+
+
+                        reader.readAsDataURL(file);
+
+                    }
+                );
+
+
+                updateRemainingSlots(
+                    files.length
+                );
+
+            }
+        );
+
+    }
+
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+
+{% block title %}
+Notifications | BusinessHub
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/notifications.css' %}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="bh-notifications-page">
+
+
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="bh-notifications-page-header">
+
+        <div>
+
+            <div class="bh-notifications-page-eyebrow">
+                BUSINESSHUB
+            </div>
+
+            <h1>
+                Notifications
+            </h1>
+
+            <p>
+                Stay up to date with messages and activity on your account.
+            </p>
+
+        </div>
+
+
+        {% if notifications %}
+
+            <form
+                method="POST"
+                action="{% url 'mark_all_notifications_read' %}"
+                class="bh-notifications-mark-read"
+            >
+
+                {% csrf_token %}
+
+                <button type="submit">
+                    Mark all as read
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =================================================
+         NOTIFICATIONS PANEL
+    ================================================== -->
+
+    <div class="bh-notifications-panel">
+
+
+        {% if notifications %}
+
+
+            <div class="bh-notifications-panel-header">
+
+                <strong>
+                    Recent activity
+                </strong>
+
+                <span class="bh-notifications-count">
+
+                    {{ notifications|length }}
+
+                    {% if notifications|length == 1 %}
+                        notification
+                    {% else %}
+                        notifications
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+
+            {% for notification in notifications %}
+
+                <a
+                    href="{% url 'notification_detail' notification.id %}"
+                    class="bh-full-notification {% if not notification.is_read %}unread{% endif %}"
+                >
+
+                    <div class="bh-full-notification-icon">
+
+                        {% if notification.notification_type == "message" %}
+
+                            💬
+
+                        {% elif notification.notification_type == "tracking" %}
+
+                            📦
+
+                        {% elif notification.notification_type == "business" %}
+
+                            🏪
+
+                        {% else %}
+
+                            🔔
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="bh-full-notification-content">
+
+                        <div class="bh-full-notification-top">
+
+                            <h3>
+                                {{ notification.title }}
+                            </h3>
+
+                            {% if not notification.is_read %}
+
+                                <span class="bh-full-notification-new">
+                                    NEW
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="bh-full-notification-message">
+
+                            {{ notification.message }}
+
+                        </div>
+
+
+                        <div class="bh-full-notification-time">
+
+                            {{ notification.created_at|timesince }} ago
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <div class="bh-notifications-empty">
+
+                <div class="bh-notifications-empty-icon">
+                    🔔
+                </div>
+
+                <h2>
+                    You're all caught up
+                </h2>
+
+                <p>
+                    New notifications will appear here when there's
+                    activity on your BusinessHub account.
+                </p>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="bh-signup-button"
+                >
+                    Back to BusinessHub
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,390 @@
+/* =========================================================
+   BUSINESSHUB — DELETE BUSINESS
+   Premium Delete Confirmation
+   ========================================================= */
+
+.delete-page {
+    min-height: calc(100vh - 160px);
+    padding: 70px 24px 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(220, 38, 38, 0.06),
+            transparent 40%
+        ),
+        #f8fafc;
+}
+
+.delete-container {
+    width: 100%;
+    max-width: 620px;
+}
+
+.delete-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 28px;
+    padding: 46px;
+    text-align: center;
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.08),
+        0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   WARNING ICON
+   ========================================================= */
+
+.delete-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fef2f2;
+    border: 8px solid #fff1f2;
+
+    color: #dc2626;
+
+    font-size: 28px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.delete-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: #dc2626;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.delete-card h1 {
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 34px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.delete-intro {
+    max-width: 500px;
+
+    margin: 16px auto 28px;
+
+    color: #64748b;
+
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.delete-intro strong {
+    color: #111827;
+}
+
+
+/* =========================================================
+   WARNING BOX
+   ========================================================= */
+
+.delete-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 18px;
+
+    margin-bottom: 22px;
+
+    text-align: left;
+
+    border-radius: 16px;
+
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+}
+
+.warning-icon {
+    flex: 0 0 auto;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #ffedd5;
+
+    color: #ea580c;
+
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.delete-warning strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #9a3412;
+
+    font-size: 14px;
+}
+
+.delete-warning p {
+    margin: 0;
+
+    color: #9a3412;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BUSINESS PREVIEW
+   ========================================================= */
+
+.delete-business-preview {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding: 18px;
+
+    margin-bottom: 28px;
+
+    text-align: left;
+
+    border-radius: 18px;
+
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.delete-business-preview img,
+.delete-business-placeholder {
+    width: 64px;
+    height: 64px;
+
+    flex: 0 0 auto;
+
+    border-radius: 14px;
+}
+
+.delete-business-preview img {
+    object-fit: cover;
+}
+
+.delete-business-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.delete-business-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.delete-business-info strong {
+    color: #111827;
+
+    font-size: 16px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.delete-business-info span {
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.delete-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.delete-confirm-button,
+.delete-cancel-button {
+    width: 100%;
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 15px;
+    font-weight: 750;
+
+    text-decoration: none;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.delete-confirm-button {
+    border: 0;
+
+    background: #dc2626;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(220, 38, 38, 0.18);
+}
+
+.delete-confirm-button span:last-child {
+    margin-left: 10px;
+
+    font-size: 22px;
+    line-height: 1;
+}
+
+.delete-confirm-button:hover {
+    background: #b91c1c;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 26px rgba(220, 38, 38, 0.25);
+}
+
+.delete-cancel-button {
+    background: #ffffff;
+
+    color: #334155;
+
+    border: 1px solid #cbd5e1;
+}
+
+.delete-cancel-button:hover {
+    background: #f8fafc;
+
+    border-color: #94a3b8;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SECURITY NOTE
+   ========================================================= */
+
+.delete-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin-top: 24px;
+}
+
+.delete-security span {
+    font-size: 14px;
+}
+
+.delete-security p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    .delete-page {
+        min-height: auto;
+
+        padding: 40px 16px 60px;
+    }
+
+    .delete-card {
+        padding: 30px 20px;
+
+        border-radius: 22px;
+    }
+
+    .delete-card h1 {
+        font-size: 28px;
+    }
+
+    .delete-intro {
+        font-size: 14px;
+    }
+
+    .delete-warning {
+        padding: 15px;
+    }
+
+    .delete-business-preview {
+        padding: 14px;
+    }
+
+    .delete-business-preview img,
+    .delete-business-placeholder {
+        width: 54px;
+        height: 54px;
+    }
+
+    .delete-confirm-button,
+    .delete-cancel-button {
+        min-height: 50px;
+    }
+}

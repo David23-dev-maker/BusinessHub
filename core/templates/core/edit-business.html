@@ -1,79 +1,608 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Business - BusinessHub</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+{% extends "core/base.html" %}
+{% load static %}
 
-<body>
+{% block title %}
+BusinessHub — Edit Business
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/edit-business-premium.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="edit-business-page">
+
 
 <div class="edit-business-container">
 
-    <h1>Edit Your Business</h1>
+    <!-- Header -->
+    <div class="edit-business-header">
 
-    <form method="POST">
-        {% csrf_token %}
+        <div>
+            <span class="edit-eyebrow">
+                Business Management
+            </span>
 
-        <label>Business Name</label>
-        <input
-            type="text"
-            name="business_name"
-            value="{{ business.business_name }}"
-            required
+            <h1>
+                Edit Your Business
+            </h1>
+
+            <p>
+                Keep your business information accurate and up to date.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'owner_dashboard' %}"
+            class="back-dashboard-button"
+        >
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- Form Card -->
+    <div class="edit-business-card">
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="edit-business-form"
         >
 
-        <label>Category</label>
-        <input
-            type="text"
-            name="category"
-            value="{{ business.category }}"
-            required
-        >
+            {% csrf_token %}
 
-        <label>Description</label>
-        <textarea
-            name="description"
-            required
-        >{{ business.description }}</textarea>
 
-        <label>City</label>
-        <input
-            type="text"
-            name="city"
-            value="{{ business.city }}"
-            required
-        >
+            <!-- Business Information -->
+            <div class="form-section">
 
-        <label>Region</label>
-        <input
-            type="text"
-            name="region"
-            value="{{ business.region }}"
-            required
-        >
+                <div class="form-section-header">
 
-        <label>Phone</label>
-        <input
-            type="text"
-            name="phone"
-            value="{{ business.phone }}"
-            required
-        >
+                    <div class="section-icon">
+                        🏢
+                    </div>
 
-        <button type="submit">
-            Save Changes
-        </button>
+                    <div>
+                        <h2>Business Information</h2>
 
-    </form>
+                        <p>
+                            Update the basic details customers see.
+                        </p>
+                    </div>
 
-    <br>
+                </div>
 
-    <a href="{% url 'owner_dashboard' %}">
-        ← Back to Dashboard
-    </a>
+
+                <div class="form-grid">
+
+                    <!-- Business Name -->
+                    <div class="form-group full-width">
+
+                        <label for="business_name">
+                            Business Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="business_name"
+                            name="name"
+                            value="{{ business.name }}"
+                            placeholder="Enter your business name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+                        <select
+                            id="category"
+                            name="category"
+                            required
+                        >
+
+                            {% for value, label in categories %}
+                                <option
+                                    value="{{ value }}"
+                                    {% if business.category == value %}selected{% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Phone -->
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone
+                        </label>
+
+                        <input
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            value="{{ business.phone }}"
+                            placeholder="Business phone number"
+                        >
+
+                    </div>
+
+
+                    <!-- Email -->
+                    <div class="form-group full-width">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ business.email }}"
+                            placeholder="Business email address"
+                        >
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="form-group full-width">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            placeholder="Tell customers about your business..."
+                            required
+                        >{{ business.description }}</textarea>
+
+                        <span class="field-hint">
+                            Give customers a clear idea of what your business offers.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Business Logo -->
+            <div class="form-section">
+
+                <div class="form-section-header">
+
+                    <div class="section-icon">
+                        🖼️
+                    </div>
+
+                    <div>
+                        <h2>Business Logo</h2>
+
+                        <p>
+                            Add, replace, or remove your business image.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="business-logo-editor">
+
+                    <!-- Current Logo -->
+                    {% if business.logo %}
+
+                        <div class="current-logo-area">
+
+                            <span class="logo-label">
+                                Current Logo
+                            </span>
+
+                            <div class="logo-preview-wrapper">
+
+                                <img
+                                    id="currentLogoPreview"
+                                    src="{{ business.logo.url }}"
+                                    alt="{{ business.name }} logo"
+                                    class="business-logo-preview"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="no-logo-message">
+
+                            <div class="no-logo-icon">
+                                🏢
+                            </div>
+
+                            <div>
+                                <strong>No business logo</strong>
+
+                                <p>
+                                    Your business does not currently have a logo.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- New Logo Preview -->
+                    <div
+                        id="newLogoPreviewContainer"
+                        class="new-logo-preview-container"
+                        style="display: none;"
+                    >
+
+                        <span class="logo-label">
+                            New Logo Preview
+                        </span>
+
+                        <div class="logo-preview-wrapper">
+
+                            <img
+                                id="newLogoPreview"
+                                src=""
+                                alt="New business logo preview"
+                                class="business-logo-preview"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Upload -->
+                    <div class="logo-upload-area">
+
+                        <label
+                            for="logo"
+                            class="logo-upload-label"
+                        >
+                            <span class="upload-icon">
+                                📷
+                            </span>
+
+                            <span class="upload-title">
+                                Choose a new logo
+                            </span>
+
+                            <span class="upload-description">
+                                JPG, PNG, WEBP or other supported image formats
+                            </span>
+                        </label>
+
+                        <input
+                            type="file"
+                            id="logo"
+                            name="logo"
+                            accept="image/*"
+                        >
+
+                    </div>
+
+
+                    <!-- Remove Existing Logo -->
+                    {% if business.logo %}
+
+                        <div class="remove-logo-area">
+
+                            <label class="remove-logo-label">
+
+                                <input
+                                    type="checkbox"
+                                    name="remove_logo"
+                                    id="remove_logo"
+                                >
+
+                                <span>
+                                    Remove current logo
+                                </span>
+
+                            </label>
+
+                            <p class="field-hint">
+                                Leave unchecked if you want to keep your current logo.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Location -->
+            <div class="form-section">
+
+                <div class="form-section-header">
+
+                    <div class="section-icon">
+                        📍
+                    </div>
+
+                    <div>
+                        <h2>Business Location</h2>
+
+                        <p>
+                            Help customers know where to find you.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- City -->
+                    <div class="form-group">
+
+                        <label for="city">
+                            City
+                        </label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            value="{{ business.city }}"
+                            placeholder="e.g. Buea"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Region -->
+                    <div class="form-group">
+
+                        <label for="region">
+                            Region
+                        </label>
+
+                        <input
+                            type="text"
+                            id="region"
+                            name="region"
+                            value="{{ business.region }}"
+                            placeholder="e.g. Southwest"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Opening Hours -->
+            <div class="form-section">
+
+                <div class="form-section-header">
+
+                    <div class="section-icon">
+                        🕐
+                    </div>
+
+                    <div>
+                        <h2>Opening Hours</h2>
+
+                        <p>
+                            Tell customers when your business is available.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="opening_time">
+                            Opening Time
+                        </label>
+
+                        <input
+                            type="time"
+                            id="opening_time"
+                            name="opening_time"
+                            value="{% if business.opening_time %}{{ business.opening_time|time:'H:i' }}{% endif %}"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="closing_time">
+                            Closing Time
+                        </label>
+
+                        <input
+                            type="time"
+                            id="closing_time"
+                            name="closing_time"
+                            value="{% if business.closing_time %}{{ business.closing_time|time:'H:i' }}{% endif %}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Actions -->
+            <div class="edit-form-actions">
+
+                <a
+                    href="{% url 'owner_dashboard' %}"
+                    class="cancel-edit-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="save-business-button"
+                >
+                    <span>Save Changes</span>
+                    <span>✓</span>
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- Help -->
+    <div class="edit-help">
+
+        <div class="help-icon">
+            💡
+        </div>
+
+        <div>
+            <strong>Keep your information current</strong>
+
+            <p>
+                Accurate business details make it easier for customers
+                to find and contact you.
+            </p>
+        </div>
+
+    </div>
 
 </div>
 
-</body>
-</html>
+
+</section>
+
+<!-- Logo Preview Script -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const logoInput = document.getElementById("logo");
+    const newLogoPreview = document.getElementById("newLogoPreview");
+    const newLogoPreviewContainer =
+        document.getElementById("newLogoPreviewContainer");
+
+    const removeLogoCheckbox =
+        document.getElementById("remove_logo");
+
+
+    if (logoInput) {
+
+        logoInput.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+
+                newLogoPreviewContainer.style.display = "none";
+                newLogoPreview.src = "";
+
+                return;
+            }
+
+
+            if (!file.type.startsWith("image/")) {
+
+                alert("Please select a valid image file.");
+
+                this.value = "";
+
+                newLogoPreviewContainer.style.display = "none";
+
+                return;
+            }
+
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                newLogoPreview.src = event.target.result;
+
+                newLogoPreviewContainer.style.display = "block";
+
+            };
+
+            reader.readAsDataURL(file);
+
+
+            /*
+             * If the user selects a new logo,
+             * there is no reason to keep the remove checkbox checked.
+             */
+            if (removeLogoCheckbox) {
+                removeLogoCheckbox.checked = false;
+            }
+
+        });
+
+    }
+
+
+    /*
+     * If the user chooses "Remove current logo",
+     * clear any newly selected logo so the actions do not conflict.
+     */
+    if (removeLogoCheckbox) {
+
+        removeLogoCheckbox.addEventListener("change", function () {
+
+            if (this.checked && logoInput) {
+
+                logoInput.value = "";
+
+                if (newLogoPreviewContainer) {
+                    newLogoPreviewContainer.style.display = "none";
+                }
+
+                if (newLogoPreview) {
+                    newLogoPreview.src = "";
+                }
+
+            }
+
+        });
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

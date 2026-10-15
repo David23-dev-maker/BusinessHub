@@ -1,0 +1,694 @@
+{% extends "core/base.html" %}
+
+{% block title %}Sell Food | BusinessHub{% endblock %}
+
+{% block content %}
+
+<style>
+    .sell-food-page {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 42px 20px 70px;
+    }
+
+    .sell-food-header {
+        margin-bottom: 28px;
+    }
+
+    .sell-food-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 10px;
+        color: #2563eb;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .sell-food-header h1 {
+        margin: 0 0 9px;
+        color: #0f172a;
+        font-size: 36px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+    }
+
+    .sell-food-header p {
+        max-width: 650px;
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .sell-food-card {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .form-body {
+        padding: 32px;
+    }
+
+    .form-section {
+        margin-bottom: 34px;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .section-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: #eff6ff;
+        font-size: 18px;
+    }
+
+    .form-section-title {
+        margin: 0;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .form-section-subtitle {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .required-mark {
+        color: #dc2626;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #dbe1ea;
+        border-radius: 11px;
+        padding: 12px 13px;
+        background: #ffffff;
+        color: #111827;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition:
+            border-color 0.18s ease,
+            box-shadow 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 47px;
+    }
+
+    .form-group textarea {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #a8b1bf;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.09);
+    }
+
+    .form-help {
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .photo-box {
+        padding: 28px 22px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 15px;
+        background: #f8fafc;
+        text-align: center;
+        transition:
+            border-color 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .photo-box:hover {
+        border-color: #93c5fd;
+        background: #f8fbff;
+    }
+
+    .photo-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 12px;
+        border-radius: 15px;
+        background: #eff6ff;
+        font-size: 25px;
+    }
+
+    .photo-box strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .photo-box span {
+        display: block;
+        max-width: 430px;
+        margin: 0 auto 17px;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .photo-box input {
+        display: block;
+        width: min(100%, 500px);
+        box-sizing: border-box;
+        margin: 0 auto;
+        padding: 9px;
+        border: 1px solid #dbe1ea;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #475569;
+        font-family: inherit;
+        font-size: 13px;
+    }
+
+    .checkbox-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .checkbox-option {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-height: 52px;
+        box-sizing: border-box;
+        padding: 0 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        background: #ffffff;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 650;
+        cursor: pointer;
+        transition:
+            border-color 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .checkbox-option:hover {
+        border-color: #bfdbfe;
+        background: #f8fbff;
+    }
+
+    .checkbox-option input {
+        width: 17px;
+        height: 17px;
+        margin: 0;
+        accent-color: #2563eb;
+        cursor: pointer;
+    }
+
+    .form-error {
+        margin: 24px 32px 0;
+        padding: 13px 15px;
+        border: 1px solid #fecaca;
+        border-radius: 11px;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 22px 32px;
+        border-top: 1px solid #edf0f4;
+        background: #fafbfc;
+    }
+
+    .cancel-button,
+    .submit-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        box-sizing: border-box;
+        border-radius: 11px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+        transition:
+            transform 0.18s ease,
+            background 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .cancel-button {
+        padding: 0 20px;
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .cancel-button:hover {
+        background: #e2e8f0;
+    }
+
+    .submit-button {
+        padding: 0 25px;
+        border: none;
+        background: #2563eb;
+        color: #ffffff;
+        cursor: pointer;
+        box-shadow: 0 5px 14px rgba(37, 99, 235, 0.18);
+    }
+
+    .submit-button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 7px 18px rgba(37, 99, 235, 0.23);
+    }
+
+    @media (max-width: 700px) {
+        .sell-food-page {
+            padding: 30px 14px 55px;
+        }
+
+        .sell-food-header h1 {
+            font-size: 30px;
+        }
+
+        .form-body {
+            padding: 24px 18px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .checkbox-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-error {
+            margin: 18px 18px 0;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+            padding: 18px;
+        }
+
+        .cancel-button,
+        .submit-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="sell-food-page">
+
+    <div class="sell-food-header">
+        <div class="sell-food-eyebrow">
+            🍽️ Food Marketplace
+        </div>
+
+        <h1>Sell Your Food</h1>
+
+        <p>
+            Create a food listing and let people discover what you're
+            selling on BusinessHub.
+        </p>
+    </div>
+
+    <div class="sell-food-card">
+
+        {% if error %}
+            <div class="form-error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-body">
+
+                <!-- FOOD INFORMATION -->
+                <div class="form-section">
+
+                    <div class="form-section-header">
+                        <div class="section-icon">🍛</div>
+
+                        <div>
+                            <h2 class="form-section-title">
+                                Food Information
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Tell buyers what you're offering.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="title">
+                                Food Name <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                placeholder="e.g. Jollof Rice with Chicken"
+                                value="{{ request.POST.title|default:'' }}"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">
+                                Price (FCFA) <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                min="0"
+                                step="1"
+                                placeholder="e.g. 2500"
+                                value="{{ request.POST.price|default:'' }}"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">
+                                Food Category <span class="required-mark">*</span>
+                            </label>
+
+                            <select
+                                id="category"
+                                name="category"
+                                required
+                            >
+                                <option value="">
+                                    Select a category
+                                </option>
+
+                                {% for value, label in categories %}
+                                    <option
+                                        value="{{ value }}"
+                                        {% if request.POST.category == value %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantity">
+                                Quantity Available <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                id="quantity"
+                                name="quantity"
+                                min="1"
+                                step="1"
+                                value="{{ request.POST.quantity|default:'1' }}"
+                                required
+                            >
+
+                            <span class="form-help">
+                                Number of portions, plates, pieces, etc.
+                            </span>
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="description">
+                                Description <span class="required-mark">*</span>
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                placeholder="Describe the food, ingredients, portion size, preparation, etc."
+                                required
+                            >{{ request.POST.description|default:'' }}</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- PHOTOS -->
+                <div class="form-section">
+
+                    <div class="form-section-header">
+                        <div class="section-icon">📷</div>
+
+                        <div>
+                            <h2 class="form-section-title">
+                                Food Photos
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Good photos help people understand what you're selling.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="photo-box">
+
+                        <div class="photo-icon">
+                            📸
+                        </div>
+
+                        <strong>
+                            Add photos of your food
+                        </strong>
+
+                        <span>
+                            Select multiple photos if you want. You can upload up to 10 photos.
+                        </span>
+
+                        <input
+                            type="file"
+                            name="images"
+                            id="images"
+                            accept="image/*"
+                            multiple
+                        >
+
+                    </div>
+                </div>
+
+                <!-- LOCATION -->
+                <div class="form-section">
+
+                    <div class="form-section-header">
+                        <div class="section-icon">📍</div>
+
+                        <div>
+                            <h2 class="form-section-title">
+                                Location
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Let nearby buyers know where the food is available.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group full">
+                            <label for="location">
+                                Location / City <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="location"
+                                name="location"
+                                placeholder="e.g. Buea, Molyko"
+                                value="{{ request.POST.location|default:'' }}"
+                                required
+                            >
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ORDER OPTIONS -->
+                <div class="form-section">
+
+                    <div class="form-section-header">
+                        <div class="section-icon">🛍️</div>
+
+                        <div>
+                            <h2 class="form-section-title">
+                                Order Options
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Choose how buyers can receive their order.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-row">
+
+                        <label class="checkbox-option">
+                            <input
+                                type="checkbox"
+                                name="pickup_available"
+                                {% if request.POST.pickup_available %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <span>
+                                Pickup Available
+                            </span>
+                        </label>
+
+                        <label class="checkbox-option">
+                            <input
+                                type="checkbox"
+                                name="delivery_available"
+                                {% if request.POST.delivery_available %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <span>
+                                Delivery Available
+                            </span>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- DELIVERY INFORMATION -->
+                <div class="form-section">
+
+                    <div class="form-group">
+                        <label for="delivery_information">
+                            Delivery Information
+                        </label>
+
+                        <textarea
+                            id="delivery_information"
+                            name="delivery_information"
+                            placeholder="Optional: Explain delivery areas, delivery fees, estimated time, etc."
+                        >{{ request.POST.delivery_information|default:'' }}</textarea>
+
+                        <span class="form-help">
+                            Optional. This information will help buyers understand your delivery arrangement.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'food_marketplace' %}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+                    Publish Food Listing
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,976 @@
+ /* =========================================================
+    BUSINESSHUB — NOTIFICATIONS
+ ========================================================= */
+
+
+/* =========================================================
+   NAVBAR NOTIFICATION BUTTON
+========================================================= */
+
+.bh-notification-button {
+    position: relative;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid transparent;
+    border-radius: 11px;
+
+    background: transparent;
+    color: #475569;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.bh-notification-button:hover,
+.bh-notification-button.active {
+    background: #f8fafc;
+    border-color: var(--bh-border);
+    color: var(--bh-primary);
+}
+
+
+/* =========================================================
+   CSS BELL ICON
+========================================================= */
+
+.bh-notification-icon {
+    position: relative;
+
+    width: 18px;
+    height: 19px;
+
+    display: block;
+
+    color: currentColor;
+}
+
+
+.bh-notification-icon::before {
+    content: "";
+
+    position: absolute;
+
+    left: 2px;
+    top: 2px;
+
+    width: 14px;
+    height: 14px;
+
+    border: 1.8px solid currentColor;
+    border-radius: 9px 9px 5px 5px;
+}
+
+
+.bh-notification-icon::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 18px;
+    height: 2px;
+
+    border-radius: 999px;
+
+    background: currentColor;
+
+    box-shadow:
+        7px 4px 0 -0.5px currentColor;
+}
+
+
+/* =========================================================
+   NOTIFICATION BADGE
+========================================================= */
+
+.bh-notification-badge {
+    position: absolute;
+
+    top: 1px;
+    right: 0;
+
+    min-width: 18px;
+    height: 18px;
+
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid white;
+    border-radius: 999px;
+
+    background: var(--bh-danger);
+    color: white;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    box-shadow:
+        0 2px 5px rgba(220, 38, 38, 0.2);
+}
+
+
+/* =========================================================
+   NOTIFICATION DROPDOWN
+========================================================= */
+
+.bh-notification-menu {
+    position: absolute;
+
+    top: calc(100% + 12px);
+    right: 0;
+
+    width: 380px;
+    max-height: 520px;
+
+    overflow: hidden;
+
+    padding: 0;
+
+    background: white;
+
+    border: 1px solid var(--bh-border);
+    border-radius: 18px;
+
+    box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.16);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform:
+        translateY(-8px)
+        scale(0.98);
+
+    transform-origin: top right;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+}
+
+
+.bh-notifications:hover .bh-notification-menu,
+.bh-notifications.open .bh-notification-menu,
+.bh-notification-menu.open {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =========================================================
+   DROPDOWN HEADER
+========================================================= */
+
+.bh-notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 17px 18px 15px;
+
+    background: white;
+}
+
+
+.bh-notification-header-left {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.bh-notification-header-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: var(--bh-primary-light);
+    color: var(--bh-primary);
+
+    font-size: 15px;
+}
+
+
+.bh-notification-header strong {
+    display: block;
+
+    color: var(--bh-dark);
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+
+.bh-notification-header small {
+    display: block;
+
+    margin-top: 1px;
+
+    color: var(--bh-muted);
+
+    font-size: 11px;
+}
+
+
+.bh-notification-header a {
+    color: var(--bh-primary);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.bh-notification-header a:hover {
+    color: var(--bh-primary-dark);
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.bh-notification-divider {
+    height: 1px;
+
+    margin: 0;
+
+    background: var(--bh-border);
+}
+
+
+/* =========================================================
+   DROPDOWN LIST
+========================================================= */
+
+.bh-notification-list {
+    max-height: 380px;
+
+    overflow-y: auto;
+
+    padding: 6px;
+}
+
+
+.bh-notification-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.bh-notification-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+
+    border-radius: 999px;
+}
+
+
+/* =========================================================
+   DROPDOWN ITEM
+========================================================= */
+
+.bh-notification-item {
+    display: flex;
+
+    gap: 12px;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    color: inherit;
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.bh-notification-item:hover {
+    background: #f8fafc;
+}
+
+
+.bh-notification-item.unread {
+    background: var(--bh-primary-light);
+}
+
+
+.bh-notification-item.unread:hover {
+    background: #e5efff;
+}
+
+
+/* =========================================================
+   ITEM ICON
+========================================================= */
+
+.bh-notification-item-icon {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #f1f5f9;
+
+    font-size: 15px;
+}
+
+
+.bh-notification-item.unread
+.bh-notification-item-icon {
+    background: white;
+}
+
+
+/* =========================================================
+   ITEM CONTENT
+========================================================= */
+
+.bh-notification-item-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.bh-notification-item-title {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--bh-dark);
+
+    font-size: 13px;
+    font-weight: 750;
+
+    line-height: 1.3;
+}
+
+
+.bh-notification-unread-dot {
+    width: 6px;
+    height: 6px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--bh-primary);
+}
+
+
+.bh-notification-item-message {
+    margin-top: 4px;
+
+    color: var(--bh-muted);
+
+    font-size: 12px;
+
+    line-height: 1.45;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+}
+
+
+.bh-notification-item-time {
+    margin-top: 5px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   EMPTY DROPDOWN
+========================================================= */
+
+.bh-notification-empty {
+    padding: 35px 20px;
+
+    text-align: center;
+
+    color: var(--bh-muted);
+
+    font-size: 13px;
+}
+
+
+.bh-notification-empty-icon {
+    width: 46px;
+    height: 46px;
+
+    margin: 0 auto 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   DROPDOWN FOOTER
+========================================================= */
+
+.bh-notification-footer {
+    padding: 8px;
+
+    border-top: 1px solid var(--bh-border);
+}
+
+
+.bh-notification-footer a {
+    display: block;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    color: var(--bh-primary);
+
+    font-size: 12px;
+    font-weight: 750;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.bh-notification-footer a:hover {
+    background: var(--bh-primary-light);
+
+    color: var(--bh-primary-dark);
+}
+
+
+/* =========================================================
+   NOTIFICATIONS PAGE
+========================================================= */
+
+.bh-notifications-page {
+    width: min(1050px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 55px 0 70px;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.bh-notifications-page-header {
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-bottom: 25px;
+}
+
+
+.bh-notifications-page-eyebrow {
+    margin-bottom: 7px;
+
+    color: var(--bh-primary);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+
+.bh-notifications-page-header h1 {
+    color: var(--bh-dark);
+
+    font-size: 32px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.8px;
+}
+
+
+.bh-notifications-page-header p {
+    margin-top: 5px;
+
+    color: var(--bh-muted);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   MARK ALL AS READ
+========================================================= */
+
+.bh-notifications-mark-read {
+    flex-shrink: 0;
+}
+
+
+.bh-notifications-mark-read button {
+    height: 40px;
+
+    padding: 0 15px;
+
+    border: 1px solid var(--bh-border);
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.bh-notifications-mark-read button:hover {
+    background: var(--bh-primary-light);
+
+    border-color: #bfdbfe;
+
+    color: var(--bh-primary);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MAIN PANEL
+========================================================= */
+
+.bh-notifications-panel {
+    overflow: hidden;
+
+    background: white;
+
+    border: 1px solid var(--bh-border);
+
+    border-radius: 18px;
+
+    box-shadow: var(--bh-shadow-sm);
+}
+
+
+/* =========================================================
+   PANEL HEADER
+========================================================= */
+
+.bh-notifications-panel-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 17px 20px;
+
+    border-bottom: 1px solid var(--bh-border);
+}
+
+
+.bh-notifications-panel-header strong {
+    color: var(--bh-dark);
+
+    font-size: 14px;
+
+    font-weight: 800;
+}
+
+
+.bh-notifications-count {
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    background: #f1f5f9;
+
+    color: var(--bh-muted);
+
+    font-size: 10px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   FULL NOTIFICATION
+========================================================= */
+
+.bh-full-notification {
+    display: flex;
+
+    gap: 15px;
+
+    padding: 20px;
+
+    border-bottom: 1px solid #eef2f7;
+
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease;
+}
+
+
+.bh-full-notification:last-child {
+    border-bottom: none;
+}
+
+
+.bh-full-notification:hover {
+    background: #f8fafc;
+}
+
+
+.bh-full-notification.unread {
+    background: #f8fbff;
+}
+
+
+.bh-full-notification.unread:hover {
+    background: #f1f7ff;
+}
+
+
+/* =========================================================
+   FULL NOTIFICATION ICON
+========================================================= */
+
+.bh-full-notification-icon {
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #f1f5f9;
+
+    font-size: 18px;
+}
+
+
+.bh-full-notification.unread
+.bh-full-notification-icon {
+    background: var(--bh-primary-light);
+}
+
+
+/* =========================================================
+   FULL NOTIFICATION CONTENT
+========================================================= */
+
+.bh-full-notification-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.bh-full-notification-top {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+}
+
+
+.bh-full-notification-top h3 {
+    color: var(--bh-dark);
+
+    font-size: 14px;
+
+    font-weight: 750;
+}
+
+
+.bh-full-notification-new {
+    padding: 3px 7px;
+
+    border-radius: 999px;
+
+    background: #dbeafe;
+
+    color: var(--bh-primary);
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.6px;
+}
+
+
+.bh-full-notification-message {
+    margin-top: 5px;
+
+    color: var(--bh-muted);
+
+    font-size: 13px;
+
+    line-height: 1.55;
+}
+
+
+.bh-full-notification-time {
+    margin-top: 7px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   EMPTY PAGE STATE
+========================================================= */
+
+.bh-notifications-empty {
+    padding: 85px 30px;
+
+    text-align: center;
+}
+
+
+.bh-notifications-empty-icon {
+    width: 72px;
+    height: 72px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 22px;
+
+    background: var(--bh-primary-light);
+
+    color: var(--bh-primary);
+
+    font-size: 24px;
+}
+
+
+.bh-notifications-empty h2 {
+    color: var(--bh-dark);
+
+    font-size: 21px;
+
+    font-weight: 800;
+}
+
+
+.bh-notifications-empty p {
+    max-width: 430px;
+
+    margin: 8px auto 23px;
+
+    color: var(--bh-muted);
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .bh-notification-menu {
+        position: fixed;
+
+        top: 70px;
+        right: 14px;
+
+        width: min(
+            380px,
+            calc(100vw - 28px)
+        );
+
+        max-height: 70vh;
+
+        overflow: hidden;
+    }
+
+
+    .bh-notifications-page {
+        width: calc(100% - 28px);
+
+        padding-top: 35px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .bh-notifications-page {
+        width: calc(100% - 24px);
+
+        padding-top: 28px;
+
+        padding-bottom: 50px;
+    }
+
+
+    .bh-notifications-page-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 16px;
+    }
+
+
+    .bh-notifications-page-header h1 {
+        font-size: 27px;
+    }
+
+
+    .bh-notifications-mark-read {
+        width: 100%;
+    }
+
+
+    .bh-notifications-mark-read button {
+        width: 100%;
+    }
+
+
+    .bh-full-notification {
+        gap: 12px;
+
+        padding: 16px;
+    }
+
+
+    .bh-full-notification-icon {
+        width: 40px;
+        height: 40px;
+
+        min-width: 40px;
+
+        border-radius: 11px;
+
+        font-size: 16px;
+    }
+
+
+    .bh-full-notification-top h3 {
+        font-size: 13px;
+    }
+
+
+    .bh-full-notification-message {
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .bh-notification-menu {
+        right: 10px;
+
+        width: calc(100vw - 20px);
+    }
+
+}

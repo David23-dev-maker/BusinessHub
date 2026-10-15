@@ -1,0 +1,430 @@
+.business-view-page {
+    padding: 40px 20px 70px;
+}
+
+.business-view-container {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.back-link:hover {
+    color: #111827;
+    transform: translateX(-3px);
+}
+
+
+/* Hero */
+
+.business-view-hero {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.07);
+    margin-bottom: 24px;
+}
+
+.business-view-brand {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.business-logo-large {
+    width: 92px;
+    height: 92px;
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #111827, #334155);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.business-logo-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.business-logo-large span {
+    color: #ffffff;
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.business-category {
+    display: inline-flex;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.business-title-area h1 {
+    margin: 0;
+    font-size: 32px;
+    color: #111827;
+    letter-spacing: -0.7px;
+}
+
+.business-status {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+
+/* Buttons */
+
+.business-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 11px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.btn-primary {
+    background: #111827;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1f2937;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.btn-danger:hover {
+    background: #fee2e2;
+}
+
+
+/* Cards */
+
+.business-view-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.business-info-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.business-about-card {
+    grid-column: span 2;
+}
+
+.card-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 22px;
+}
+
+.card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+}
+
+.card-heading h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #111827;
+}
+
+.card-heading p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+
+/* Description */
+
+.business-description p {
+    color: #475569;
+    line-height: 1.8;
+    margin: 0;
+    font-size: 15px;
+}
+
+.empty-description,
+.empty-info {
+    color: #94a3b8 !important;
+}
+
+
+/* Contact */
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 13px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.info-row a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: right;
+}
+
+.info-row a:hover {
+    text-decoration: underline;
+}
+
+
+/* Location */
+
+.location-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    color: #475569;
+}
+
+.location-box strong {
+    font-size: 17px;
+    color: #111827;
+}
+
+.location-box span {
+    font-size: 14px;
+}
+
+
+/* Hours */
+
+.hours-time {
+    font-size: 21px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.hours-time span {
+    color: #94a3b8;
+    margin: 0 5px;
+}
+
+.hours-status {
+    margin-top: 8px;
+    color: #22c55e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* Details */
+
+.business-details-card {
+    grid-column: span 2;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.detail-item {
+    padding: 17px;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.detail-item span {
+    display: block;
+    color: #94a3b8;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.detail-item strong {
+    color: #334155;
+    font-size: 14px;
+}
+
+.active-text {
+    color: #16a34a !important;
+}
+
+
+/* Bottom actions */
+
+.business-bottom-actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.bottom-edit,
+.bottom-delete {
+    padding: 12px 18px;
+    border-radius: 11px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.bottom-edit {
+    background: #111827;
+    color: white;
+}
+
+.bottom-delete {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* Mobile */
+
+@media (max-width: 800px) {
+
+    .business-view-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .business-actions {
+        width: 100%;
+    }
+
+    .business-actions .btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    .business-view-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .business-about-card,
+    .business-details-card {
+        grid-column: span 1;
+    }
+
+    .details-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 550px) {
+
+    .business-view-page {
+        padding: 25px 14px 50px;
+    }
+
+    .business-view-hero {
+        padding: 20px;
+    }
+
+    .business-view-brand {
+        align-items: flex-start;
+    }
+
+    .business-logo-large {
+        width: 70px;
+        height: 70px;
+        border-radius: 17px;
+    }
+
+    .business-title-area h1 {
+        font-size: 23px;
+    }
+
+    .business-info-card {
+        padding: 20px;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .info-row a {
+        text-align: left;
+    }
+
+    .business-bottom-actions {
+        flex-direction: column;
+    }
+
+    .bottom-edit,
+    .bottom-delete {
+        text-align: center;
+    }
+}

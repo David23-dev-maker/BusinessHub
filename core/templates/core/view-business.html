@@ -1,0 +1,1543 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}
+BusinessHub — {{ business.name }}
+{% endblock %}
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/view-business-premium.css' %}"
+>
+
+<style>
+
+.business-rating-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.rating-stars {
+    display: flex;
+    gap: 2px;
+    font-size: 21px;
+    letter-spacing: 1px;
+}
+
+.rating-star {
+    color: #d1d5db;
+}
+
+.rating-star.active {
+    color: #f59e0b;
+}
+
+.rating-number {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.rating-count {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.business-reviews-section {
+    margin-top: 32px;
+}
+
+.reviews-summary-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.reviews-summary-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.reviews-summary-content h2 {
+    margin: 0 0 7px;
+}
+
+.reviews-summary-content p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.reviews-average {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.average-number {
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.average-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.review-count-text {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.review-form-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.review-form-card h3 {
+    margin: 0 0 8px;
+    font-size: 21px;
+}
+
+.review-form-description {
+    color: #6b7280;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.star-selector {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 3px;
+    margin-bottom: 20px;
+}
+
+.star-selector input {
+    display: none;
+}
+
+.star-selector label {
+    font-size: 36px;
+    color: #d1d5db;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.star-selector label:hover,
+.star-selector label:hover ~ label,
+.star-selector input:checked ~ label {
+    color: #f59e0b;
+}
+
+.review-textarea {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    padding: 14px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.review-textarea:focus {
+    border-color: #6366f1;
+}
+
+.review-submit-btn {
+    margin-top: 15px;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #111827;
+    color: #ffffff;
+}
+
+.review-submit-btn:hover {
+    opacity: 0.9;
+}
+
+.review-notice {
+    background: #f9fafb;
+    border-radius: 14px;
+    padding: 18px;
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.review-notice strong {
+    color: #111827;
+}
+
+.reviews-list-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.reviews-list-card h3 {
+    margin: 0 0 22px;
+    font-size: 21px;
+}
+
+.review-item {
+    padding: 22px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.review-item:first-child {
+    padding-top: 0;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reviewer-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #111827;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.reviewer-name {
+    font-weight: 700;
+}
+
+.review-date {
+    color: #9ca3af;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.review-comment {
+    margin-top: 14px;
+    color: #374151;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.review-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+}
+
+.review-action-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 5px 0;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.edit-review-btn {
+    color: #4f46e5;
+}
+
+.delete-review-btn {
+    color: #dc2626;
+}
+
+.edit-review-box {
+    margin-top: 15px;
+    padding: 18px;
+    background: #f9fafb;
+    border-radius: 14px;
+}
+
+.edit-review-box textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.edit-review-stars {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 12px;
+}
+
+.edit-review-stars input {
+    display: none;
+}
+
+.edit-review-stars label {
+    font-size: 28px;
+    color: #d1d5db;
+    cursor: pointer;
+}
+
+.edit-review-stars label.active {
+    color: #f59e0b;
+}
+
+.edit-review-submit {
+    margin-top: 10px;
+    padding: 10px 17px;
+    border: none;
+    border-radius: 9px;
+    background: #111827;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cancel-edit {
+    margin-left: 10px;
+    padding: 10px 17px;
+    border-radius: 9px;
+    background: #e5e7eb;
+    color: #111827;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.empty-reviews {
+    text-align: center;
+    padding: 35px 15px;
+    color: #6b7280;
+}
+
+.empty-reviews-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 700px) {
+
+    .reviews-summary-card,
+    .review-form-card,
+    .reviews-list-card {
+        padding: 20px;
+    }
+
+    .average-number {
+        font-size: 38px;
+    }
+
+    .review-header {
+        align-items: flex-start;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<section class="business-view-page">
+
+<div class="business-view-container">
+
+    <a
+        href="{% url 'owner_dashboard' %}"
+        class="back-link"
+    >
+        ← Back to Dashboard
+    </a>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <div class="business-view-hero">
+
+        <div class="business-view-brand">
+
+            <div class="business-logo-large">
+
+                {% if business.logo %}
+
+                    <img
+                        src="{{ business.logo.url }}"
+                        alt="{{ business.name }}"
+                    >
+
+                {% else %}
+
+                    <span>
+                        {{ business.name|first|upper }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="business-title-area">
+
+                <div class="business-category">
+                    {{ business.get_category_display }}
+                </div>
+
+                <h1>
+                    {{ business.name }}
+                </h1>
+
+                <div class="business-status">
+
+                    <span class="status-dot"></span>
+
+                    Active Business
+
+                </div>
+
+
+                <!-- Rating -->
+
+                <div class="business-rating-summary">
+
+                    <div class="rating-stars">
+
+                        {% if average_rating >= 5 %}
+
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+
+                        {% elif average_rating >= 4 %}
+
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star">★</span>
+
+                        {% elif average_rating >= 3 %}
+
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+
+                        {% elif average_rating >= 2 %}
+
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+
+                        {% elif average_rating >= 1 %}
+
+                            <span class="rating-star active">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+
+                        {% else %}
+
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+                            <span class="rating-star">★</span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <span class="rating-number">
+
+                        {% if review_count %}
+                            {{ average_rating|floatformat:1 }}/5
+                        {% else %}
+                            No rating yet
+                        {% endif %}
+
+                    </span>
+
+
+                    <span class="rating-count">
+
+                        {% if review_count %}
+
+                            {{ review_count }}
+
+                            {% if review_count == 1 %}
+                                review
+                            {% else %}
+                                reviews
+                            {% endif %}
+
+                        {% else %}
+
+                            Be the first to review
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OWNER-ONLY ACTIONS -->
+
+        {% if user.is_authenticated and business.owner == user %}
+
+            <div class="business-actions">
+
+                <a
+                    href="{% url 'edit_business' business.id %}"
+                    class="btn btn-primary"
+                >
+                    Edit Business
+                </a>
+
+                <a
+                    href="{% url 'delete_business' business.id %}"
+                    class="btn btn-danger"
+                >
+                    Delete
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN BUSINESS INFORMATION
+    ====================================================== -->
+
+    <div class="business-view-grid">
+
+        <!-- About -->
+
+        <div class="business-info-card business-about-card">
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    🏢
+                </div>
+
+                <div>
+
+                    <h2>
+                        About the Business
+                    </h2>
+
+                    <p>
+                        Business information and description
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="business-description">
+
+                {% if business.description %}
+
+                    <p>
+                        {{ business.description }}
+                    </p>
+
+                {% else %}
+
+                    <p class="empty-description">
+                        No business description has been added yet.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Contact -->
+
+        <div
+            class="business-info-card"
+            id="contact"
+        >
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    📞
+                </div>
+
+                <div>
+
+                    <h2>
+                        Contact Information
+                    </h2>
+
+                    <p>
+                        How customers can reach you
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-list">
+
+                {% if business.phone %}
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Phone
+                        </span>
+
+                        <a href="tel:{{ business.phone }}">
+                            {{ business.phone }}
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+
+                {% if business.email %}
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Email
+                        </span>
+
+                        <a href="mailto:{{ business.email }}">
+                            {{ business.email }}
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+
+                {% if not business.phone and not business.email %}
+
+                    <div class="empty-info">
+                        No contact information has been added.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Location -->
+
+        <div class="business-info-card">
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    📍
+                </div>
+
+                <div>
+
+                    <h2>
+                        Location
+                    </h2>
+
+                    <p>
+                        Where customers can find you
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="location-box">
+
+                {% if business.city %}
+
+                    <strong>
+                        {{ business.city }}
+                    </strong>
+
+                {% endif %}
+
+
+                {% if business.region %}
+
+                    <span>
+                        {{ business.region }}
+                    </span>
+
+                {% endif %}
+
+
+                {% if not business.city and not business.region %}
+
+                    <span class="empty-info">
+                        No location has been added.
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Opening Hours -->
+
+        <div class="business-info-card">
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    🕒
+                </div>
+
+                <div>
+
+                    <h2>
+                        Opening Hours
+                    </h2>
+
+                    <p>
+                        Your business operating hours
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="hours-box">
+
+                {% if business.opening_time and business.closing_time %}
+
+                    <div class="hours-time">
+
+                        {{ business.opening_time|time:"g:i A" }}
+
+                        <span>—</span>
+
+                        {{ business.closing_time|time:"g:i A" }}
+
+                    </div>
+
+
+                    <div class="hours-status">
+                        Regular operating hours
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-info">
+                        Opening hours have not been added.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Business Details -->
+
+        <div class="business-info-card business-details-card">
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    ℹ️
+                </div>
+
+                <div>
+
+                    <h2>
+                        Business Details
+                    </h2>
+
+                    <p>
+                        Additional information
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="details-grid">
+
+                <div class="detail-item">
+
+                    <span>
+                        Category
+                    </span>
+
+                    <strong>
+                        {{ business.get_category_display }}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        Location
+                    </span>
+
+                    <strong>
+
+                        {% if business.city %}
+                            {{ business.city }}
+                        {% else %}
+                            Not specified
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong class="active-text">
+                        Active
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        Listed
+                    </span>
+
+                    <strong>
+                        {{ business.created_at|date:"M d, Y" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         REVIEWS
+    ====================================================== -->
+
+    <section class="business-reviews-section">
+
+
+        <!-- Rating summary -->
+
+        <div class="reviews-summary-card">
+
+            <div class="reviews-summary-content">
+
+                <div>
+
+                    <h2>
+                        Customer Reviews
+                    </h2>
+
+                    <p>
+                        See what customers are saying about
+                        {{ business.name }}.
+                    </p>
+
+                </div>
+
+
+                <div class="reviews-average">
+
+                    <div class="average-number">
+
+                        {% if review_count %}
+                            {{ average_rating|floatformat:1 }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="average-details">
+
+                        <div class="rating-stars">
+
+                            {% if average_rating >= 5 %}
+
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+
+                            {% elif average_rating >= 4 %}
+
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star">★</span>
+
+                            {% elif average_rating >= 3 %}
+
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+
+                            {% elif average_rating >= 2 %}
+
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+
+                            {% elif average_rating >= 1 %}
+
+                                <span class="rating-star active">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+
+                            {% else %}
+
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <span class="review-count-text">
+
+                            {% if review_count %}
+
+                                Based on
+                                {{ review_count }}
+
+                                {% if review_count == 1 %}
+                                    review
+                                {% else %}
+                                    reviews
+                                {% endif %}
+
+                            {% else %}
+
+                                No reviews yet
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REVIEW FORM -->
+
+        {% if user.is_authenticated %}
+
+            {% if business.owner == user %}
+
+                <div class="review-notice">
+
+                    <strong>
+                        Business owner
+                    </strong>
+
+                    <br>
+
+                    You cannot leave a review for your own business.
+
+                </div>
+
+            {% elif user_review %}
+
+                <div class="review-notice">
+
+                    <strong>
+                        You've already reviewed this business.
+                    </strong>
+
+                    <br>
+
+                    You can edit or delete your review below.
+
+                </div>
+
+            {% else %}
+
+                <div class="review-form-card">
+
+                    <h3>
+                        Leave a Review
+                    </h3>
+
+                    <div class="review-form-description">
+
+                        Share your experience with other
+                        BusinessHub customers.
+
+                    </div>
+
+
+                    <form
+                        method="POST"
+                        action="{% url 'submit_business_review' business.id %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <div class="star-selector">
+
+                            <input
+                                type="radio"
+                                name="rating"
+                                id="rating5"
+                                value="5"
+                                required
+                            >
+
+                            <label for="rating5">
+                                ★
+                            </label>
+
+                            <input
+                                type="radio"
+                                name="rating"
+                                id="rating4"
+                                value="4"
+                            >
+
+                            <label for="rating4">
+                                ★
+                            </label>
+
+                            <input
+                                type="radio"
+                                name="rating"
+                                id="rating3"
+                                value="3"
+                            >
+
+                            <label for="rating3">
+                                ★
+                            </label>
+
+                            <input
+                                type="radio"
+                                name="rating"
+                                id="rating2"
+                                value="2"
+                            >
+
+                            <label for="rating2">
+                                ★
+                            </label>
+
+                            <input
+                                type="radio"
+                                name="rating"
+                                id="rating1"
+                                value="1"
+                            >
+
+                            <label for="rating1">
+                                ★
+                            </label>
+
+                        </div>
+
+
+                        <textarea
+                            name="comment"
+                            class="review-textarea"
+                            placeholder="Write your review..."
+                            required
+                        ></textarea>
+
+
+                        <button
+                            type="submit"
+                            class="review-submit-btn"
+                        >
+                            Submit Review
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="review-notice">
+
+                <strong>
+                    Want to leave a review?
+                </strong>
+
+                <br>
+
+                Please log in to your BusinessHub account
+                to rate and review this business.
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- REVIEW LIST -->
+
+        <div class="reviews-list-card">
+
+            <h3>
+                Customer Feedback
+            </h3>
+
+
+            {% if reviews %}
+
+                {% for review in reviews %}
+
+                    <div class="review-item">
+
+                        <div class="review-header">
+
+                            <div class="reviewer-info">
+
+                                <div class="reviewer-avatar">
+                                    {{ review.reviewer.username|first|upper }}
+                                </div>
+
+                                <div>
+
+                                    <div class="reviewer-name">
+
+                                        {% if review.reviewer.get_full_name %}
+                                            {{ review.reviewer.get_full_name }}
+                                        {% else %}
+                                            {{ review.reviewer.username }}
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="review-date">
+
+                                        {{ review.created_at|date:"M d, Y" }}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Review stars -->
+
+                            <div class="rating-stars">
+
+                                {% if review.rating == 5 %}
+
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+
+                                {% elif review.rating == 4 %}
+
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star">★</span>
+
+                                {% elif review.rating == 3 %}
+
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star">★</span>
+                                    <span class="rating-star">★</span>
+
+                                {% elif review.rating == 2 %}
+
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star">★</span>
+                                    <span class="rating-star">★</span>
+                                    <span class="rating-star">★</span>
+
+                                {% else %}
+
+                                    <span class="rating-star active">★</span>
+                                    <span class="rating-star">★</span>
+                                    <span class="rating-star">★</span>
+                                    <span class="rating-star">★</span>
+                                    <span class="rating-star">★</span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="review-comment">
+
+                            {{ review.comment }}
+
+                        </div>
+
+
+                        <!-- REVIEW OWNER ACTIONS -->
+
+                        {% if user.is_authenticated %}
+
+                            {% if review.reviewer.id == user.id %}
+
+                                <div class="review-actions">
+
+                                    <button
+                                        type="button"
+                                        class="review-action-btn edit-review-btn"
+                                        onclick="toggleEditReview('{{ review.id }}')"
+                                    >
+                                        Edit
+                                    </button>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'delete_business_review' business.id %}"
+                                        style="display: inline;"
+                                        onsubmit="return confirm('Are you sure you want to delete your review?');"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="review-action-btn delete-review-btn"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+
+                                <!-- Edit form -->
+
+                                <div
+                                    id="edit-review-{{ review.id }}"
+                                    class="edit-review-box"
+                                    style="display: none;"
+                                >
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'edit_business_review' business.id %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <div class="edit-review-stars">
+
+                                            {% if review.rating == 5 %}
+
+                                                <input
+                                                    type="radio"
+                                                    name="rating"
+                                                    value="5"
+                                                    id="edit-{{ review.id }}-5"
+                                                    checked
+                                                >
+
+                                                <label
+                                                    for="edit-{{ review.id }}-5"
+                                                    class="active"
+                                                >
+                                                    ★
+                                                </label>
+
+                                            {% elif review.rating == 4 %}
+
+                                                <input
+                                                    type="radio"
+                                                    name="rating"
+                                                    value="4"
+                                                    id="edit-{{ review.id }}-4"
+                                                    checked
+                                                >
+
+                                                <label
+                                                    for="edit-{{ review.id }}-4"
+                                                    class="active"
+                                                >
+                                                    ★
+                                                </label>
+
+                                            {% elif review.rating == 3 %}
+
+                                                <input
+                                                    type="radio"
+                                                    name="rating"
+                                                    value="3"
+                                                    id="edit-{{ review.id }}-3"
+                                                    checked
+                                                >
+
+                                                <label
+                                                    for="edit-{{ review.id }}-3"
+                                                    class="active"
+                                                >
+                                                    ★
+                                                </label>
+
+                                            {% elif review.rating == 2 %}
+
+                                                <input
+                                                    type="radio"
+                                                    name="rating"
+                                                    value="2"
+                                                    id="edit-{{ review.id }}-2"
+                                                    checked
+                                                >
+
+                                                <label
+                                                    for="edit-{{ review.id }}-2"
+                                                    class="active"
+                                                >
+                                                    ★
+                                                </label>
+
+                                            {% else %}
+
+                                                <input
+                                                    type="radio"
+                                                    name="rating"
+                                                    value="1"
+                                                    id="edit-{{ review.id }}-1"
+                                                    checked
+                                                >
+
+                                                <label
+                                                    for="edit-{{ review.id }}-1"
+                                                    class="active"
+                                                >
+                                                    ★
+                                                </label>
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <textarea
+                                            name="comment"
+                                            required
+                                        >{{ review.comment }}</textarea>
+
+
+                                        <button
+                                            type="submit"
+                                            class="edit-review-submit"
+                                        >
+                                            Save Changes
+                                        </button>
+
+
+                                        <button
+                                            type="button"
+                                            class="cancel-edit"
+                                            onclick="toggleEditReview('{{ review.id }}')"
+                                        >
+                                            Cancel
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-reviews">
+
+                    <div class="empty-reviews-icon">
+                        ⭐
+                    </div>
+
+                    <strong>
+                        No reviews yet
+                    </strong>
+
+                    <p>
+                        Be the first person to review this business.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         BOTTOM OWNER ACTIONS
+    ====================================================== -->
+
+    {% if user.is_authenticated and business.owner == user %}
+
+        <div class="business-bottom-actions">
+
+            <a
+                href="{% url 'edit_business' business.id %}"
+                class="bottom-edit"
+            >
+                Edit Business
+            </a>
+
+            <a
+                href="{% url 'delete_business' business.id %}"
+                class="bottom-delete"
+            >
+                Delete Business
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+</section>
+
+<script>
+
+function toggleEditReview(reviewId) {
+
+    const box = document.getElementById(
+        "edit-review-" + reviewId
+    );
+
+    if (!box) {
+        return;
+    }
+
+    if (box.style.display === "none") {
+
+        box.style.display = "block";
+
+    } else {
+
+        box.style.display = "none";
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

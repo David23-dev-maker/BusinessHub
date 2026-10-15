@@ -1,0 +1,597 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+    My Items | BusinessHub
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .my-items-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px 70px;
+    }
+
+    /* HEADER */
+
+    .my-items-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .my-items-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 10px;
+        color: #2563eb;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .my-items-header h1 {
+        margin: 0 0 7px;
+        color: #111827;
+        font-size: clamp(30px, 5vw, 38px);
+        line-height: 1.1;
+        letter-spacing: -.03em;
+    }
+
+    .my-items-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* SELL BUTTON */
+
+    .sell-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 45px;
+        padding: 0 18px;
+        border-radius: 10px;
+        background: #111827;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 750;
+        white-space: nowrap;
+        transition: .2s ease;
+    }
+
+    .sell-button:hover {
+        background: #2563eb;
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+
+    /* GRID */
+
+    .my-items-grid {
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(240px, 1fr)
+        );
+        gap: 20px;
+    }
+
+    /* CARD */
+
+    .my-item-card {
+        overflow: hidden;
+        border: 1px solid #e5e9ef;
+        border-radius: 17px;
+        background: #ffffff;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, .045);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .my-item-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, .09);
+    }
+
+    /* IMAGE */
+
+    .my-item-image {
+        position: relative;
+        width: 100%;
+        height: 215px;
+        overflow: hidden;
+        background: #f1f5f9;
+    }
+
+    .my-item-image img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        transition: transform .3s ease;
+    }
+
+    .my-item-card:hover .my-item-image img {
+        transform: scale(1.035);
+    }
+
+    .no-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: #94a3b8;
+        font-size: 40px;
+    }
+
+    /* STATUS */
+
+    .status-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, .08);
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .status-available {
+        color: #047857;
+    }
+
+    .status-sold {
+        color: #dc2626;
+    }
+
+    /* CONTENT */
+
+    .my-item-content {
+        padding: 16px;
+    }
+
+    .my-item-title {
+        margin: 0 0 8px;
+        overflow: hidden;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 750;
+        line-height: 1.35;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .my-item-price {
+        margin-bottom: 11px;
+        color: #2563eb;
+        font-size: 20px;
+        font-weight: 850;
+        letter-spacing: -.02em;
+    }
+
+    /* META */
+
+    .my-item-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 7px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .my-item-meta:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .meta-label {
+        color: #94a3b8;
+    }
+
+    /* DESCRIPTION */
+
+    .my-item-description {
+        margin: 13px 0 17px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    /* ACTIONS */
+
+    .my-item-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .item-action {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 9px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 750;
+        transition: .2s ease;
+    }
+
+    .view-action {
+        background: #f1f5f9;
+        color: #111827;
+    }
+
+    .view-action:hover {
+        background: #e2e8f0;
+        color: #111827;
+    }
+
+    .edit-action {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .edit-action:hover {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .sold-action {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .sold-action:hover {
+        background: #d1fae5;
+        color: #047857;
+    }
+
+    .delete-action {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .delete-action:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    /* EMPTY STATE */
+
+    .empty-state {
+        padding: 65px 25px;
+        border: 1px solid #e5e9ef;
+        border-radius: 18px;
+        background: #ffffff;
+        text-align: center;
+    }
+
+    .empty-icon {
+        margin-bottom: 14px;
+        font-size: 45px;
+    }
+
+    .empty-state h2 {
+        margin: 0 0 9px;
+        color: #111827;
+        font-size: 21px;
+    }
+
+    .empty-state p {
+        max-width: 500px;
+        margin: 0 auto 22px;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+
+        .my-items-page {
+            padding: 25px 14px 60px;
+        }
+
+        .my-items-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .sell-button {
+            width: 100%;
+        }
+
+        .my-items-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .my-item-image {
+            height: 160px;
+        }
+
+        .my-item-content {
+            padding: 12px;
+        }
+
+        .my-item-title {
+            font-size: 14px;
+        }
+
+        .my-item-price {
+            font-size: 17px;
+        }
+
+        .my-item-meta {
+            font-size: 12px;
+        }
+
+        .my-item-description {
+            font-size: 12px;
+        }
+
+        .item-action {
+            min-height: 38px;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 430px) {
+
+        .my-items-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .my-item-image {
+            height: 220px;
+        }
+
+        .my-item-content {
+            padding: 15px;
+        }
+
+        .my-item-title {
+            font-size: 16px;
+        }
+
+        .my-item-price {
+            font-size: 19px;
+        }
+
+        .item-action {
+            font-size: 12px;
+        }
+    }
+
+</style>
+
+
+<div class="my-items-page">
+
+    <!-- HEADER -->
+
+    <div class="my-items-header">
+
+        <div>
+
+            <div class="my-items-eyebrow">
+                🛍️ Items Marketplace
+            </div>
+
+            <h1>
+                My Items
+            </h1>
+
+            <p>
+                Manage the items you have listed on BusinessHub.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'sell_item' %}"
+            class="sell-button"
+        >
+            ＋ Sell an Item
+        </a>
+
+    </div>
+
+
+    <!-- ITEMS -->
+
+    {% if items %}
+
+        <div class="my-items-grid">
+
+            {% for item in items %}
+
+                <article class="my-item-card">
+
+                    <!-- IMAGE -->
+
+                    <div class="my-item-image">
+
+                        {% with image=item.images.all|first %}
+
+                            {% if image %}
+
+                                <img
+                                    src="{{ image.image.url }}"
+                                    alt="{{ item.title }}"
+                                    loading="lazy"
+                                >
+
+                            {% else %}
+
+                                <div class="no-image">
+                                    📦
+                                </div>
+
+                            {% endif %}
+
+                        {% endwith %}
+
+
+                        {% if item.status == "sold" %}
+
+                            <span class="status-badge status-sold">
+                                Sold
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge status-available">
+                                Available
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- CONTENT -->
+
+                    <div class="my-item-content">
+
+                        <h2 class="my-item-title">
+                            {{ item.title }}
+                        </h2>
+
+
+                        <div class="my-item-price">
+                            {{ item.price|floatformat:0 }} FCFA
+                        </div>
+
+
+                        <div class="my-item-meta">
+                            <span class="meta-label">
+                                Category:
+                            </span>
+
+                            {{ item.get_category_display }}
+                        </div>
+
+
+                        <div class="my-item-meta">
+                            <span class="meta-label">
+                                Condition:
+                            </span>
+
+                            {{ item.get_condition_display }}
+                        </div>
+
+
+                        <div class="my-item-meta">
+                            📍 {{ item.location }}
+                        </div>
+
+
+                        <p class="my-item-description">
+                            {{ item.description|truncatewords:18 }}
+                        </p>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="my-item-actions">
+
+                            <a
+                                href="{% url 'item_detail' item.id %}"
+                                class="item-action view-action"
+                            >
+                                View
+                            </a>
+
+
+                            <a
+                                href="{% url 'edit_item' item.id %}"
+                                class="item-action edit-action"
+                            >
+                                ✏️ Edit
+                            </a>
+
+
+                            {% if item.status != "sold" %}
+
+                                <a
+                                    href="{% url 'mark_item_sold' item.id %}"
+                                    class="item-action sold-action"
+                                    onclick="return confirm('Mark this item as sold?');"
+                                >
+                                    ✓ Mark Sold
+                                </a>
+
+                            {% endif %}
+
+
+                            <a
+                                href="{% url 'delete_item' item.id %}"
+                                class="item-action delete-action"
+                                onclick="return confirm('Are you sure you want to delete this item? This cannot be undone.');"
+                            >
+                                🗑 Delete
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- EMPTY -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                🛍️
+            </div>
+
+            <h2>
+                You haven't listed any items yet
+            </h2>
+
+            <p>
+                Sell something on BusinessHub and reach people
+                looking for it.
+            </p>
+
+            <a
+                href="{% url 'sell_item' %}"
+                class="sell-button"
+            >
+                ＋ Sell Your First Item
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

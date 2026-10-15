@@ -1,0 +1,603 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Sell an Item | BusinessHub
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sell-page {
+        max-width: 950px;
+        margin: 48px auto;
+        padding: 0 20px 70px;
+    }
+
+    .sell-header {
+        margin-bottom: 28px;
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #2563eb;
+    }
+
+    .sell-header h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 38px);
+        line-height: 1.1;
+        color: #111827;
+    }
+
+    .sell-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+    .sell-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+    }
+
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .message {
+        padding: 13px 15px;
+        border-radius: 11px;
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        border-radius: 11px;
+        padding: 13px 14px;
+        font-family: inherit;
+        font-size: 15px;
+        color: #111827;
+        background: #ffffff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .form-group textarea {
+        min-height: 160px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 3px 0 25px;
+        padding: 14px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: #f9fafb;
+    }
+
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        accent-color: #2563eb;
+    }
+
+    .checkbox-group label {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .photo-section {
+        margin-top: 28px;
+        padding-top: 26px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .photo-heading {
+        margin-bottom: 14px;
+    }
+
+    .photo-heading h2 {
+        margin: 0 0 5px;
+        font-size: 18px;
+        color: #111827;
+    }
+
+    .photo-heading p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .image-box {
+        border: 2px dashed #cbd5e1;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        background: #f8fafc;
+        transition: 0.2s;
+    }
+
+    .image-box:hover {
+        border-color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .image-box input {
+        border: none;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .image-help {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 9px;
+    }
+
+    .preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .preview-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+    }
+
+    .preview img {
+        width: 100%;
+        height: 115px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .preview-number {
+        position: absolute;
+        top: 7px;
+        left: 7px;
+        padding: 4px 7px;
+        border-radius: 7px;
+        background: rgba(17, 24, 39, 0.78);
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+        padding-top: 25px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn {
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 22px;
+        border-radius: 11px;
+        border: none;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    @media (max-width: 700px) {
+        .sell-page {
+            margin-top: 30px;
+            padding-bottom: 45px;
+        }
+
+        .sell-card {
+            padding: 21px;
+            border-radius: 16px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .preview {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="sell-page">
+
+    <div class="sell-header">
+
+        <div class="eyebrow">
+            BusinessHub Marketplace
+        </div>
+
+        <h1>Sell an Item</h1>
+
+        <p>
+            Create a listing and let people discover what you're selling.
+        </p>
+
+    </div>
+
+
+    {% if messages %}
+
+        <div class="messages">
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="sell-card">
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <div class="form-group">
+
+                <label for="title">
+                    Item Title
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Example: iPhone 13 Pro"
+                    maxlength="200"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Category
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
+
+                        <option value="">
+                            Select category
+                        </option>
+
+                        {% for value, label in categories %}
+
+                            <option value="{{ value }}">
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="condition">
+                        Condition
+                    </label>
+
+                    <select
+                        id="condition"
+                        name="condition"
+                        required
+                    >
+
+                        <option value="">
+                            Select condition
+                        </option>
+
+                        <option value="new">
+                            New
+                        </option>
+
+                        <option value="used">
+                            Used
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="price">
+                        Price (FCFA)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        min="0"
+                        step="1"
+                        placeholder="Example: 250000"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="location">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        maxlength="255"
+                        placeholder="Example: Buea, Cameroon"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Describe the item, its condition, features, age, etc."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <div class="checkbox-group">
+
+                <input
+                    type="checkbox"
+                    id="negotiable"
+                    name="negotiable"
+                >
+
+                <label for="negotiable">
+                    Price is negotiable
+                </label>
+
+            </div>
+
+
+            <div class="photo-section">
+
+                <div class="photo-heading">
+
+                    <h2>
+                        Photos
+                    </h2>
+
+                    <p>
+                        Add clear photos so buyers can see exactly what you're selling.
+                    </p>
+
+                </div>
+
+
+                <div class="image-box">
+
+                    <input
+                        type="file"
+                        id="images"
+                        name="images"
+                        accept="image/*"
+                        multiple
+                    >
+
+                    <div class="image-help">
+                        Select up to 10 photos.
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="preview"
+                    class="preview"
+                ></div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'items_marketplace' %}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    + Add Item
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+    const imageInput = document.getElementById("images");
+    const preview = document.getElementById("preview");
+
+    if (imageInput && preview) {
+
+        imageInput.addEventListener("change", function () {
+
+            preview.innerHTML = "";
+
+            const files = Array.from(this.files).slice(0, 10);
+
+            files.forEach(function (file, index) {
+
+                if (!file.type.startsWith("image/")) {
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "preview-item";
+
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
+                    img.alt = "Selected item photo";
+
+                    const number = document.createElement("span");
+                    number.className = "preview-number";
+                    number.textContent = index + 1;
+
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(number);
+
+                    preview.appendChild(wrapper);
+                };
+
+                reader.readAsDataURL(file);
+            });
+
+        });
+    }
+</script>
+
+{% endblock %}

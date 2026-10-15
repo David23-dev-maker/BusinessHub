@@ -1,422 +1,1221 @@
+{% extends "core/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}
+BusinessHub — Connect. Buy. Grow.
+{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>BusinessHub - Connect. Buy. Grow.</title>
-
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
-</head>
+<link rel="stylesheet" href="{% static 'css/home-premium.css' %}">
 
-<body>
+<style>
+/* =========================================================
+   BUSINESSHUB HOMEPAGE SEARCH
+   Custom dropdown designed to stay inside the phone screen.
+   ========================================================= */
 
-    <!-- ================= NAVIGATION ================= -->
+.home-search-category {
+    position: relative;
+    flex: 0 0 auto;
+    min-width: 0;
+    display: flex;
+    align-items: stretch;
+}
 
-    <header class="navbar">
+.home-search-category-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-width: 130px;
+    max-width: 175px;
+    height: 100%;
+    padding: 0 12px;
+    border: 0;
+    border-left: 1px solid #e5e7eb;
+    border-radius: 0;
+    background: #fff;
+    color: #172033;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
 
-        <div class="logo">
-            <div class="logo-icon">
-                ◈
-            </div>
+.home-search-category-trigger:hover {
+    background: #f8fafc;
+}
 
-            <span>BusinessHub</span>
-        </div>
+.home-search-category-trigger:focus-visible,
+.home-search-category-option:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
+}
+
+.home-search-category-arrow {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 1;
+    transition: transform 0.15s ease;
+}
+
+.home-search-category-trigger[aria-expanded="true"]
+.home-search-category-arrow {
+    transform: rotate(180deg);
+}
+
+/* The menu uses fixed positioning calculated by JavaScript. */
+
+.home-search-category-menu {
+    position: fixed;
+    z-index: 99999;
+    box-sizing: border-box;
+    padding: 6px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+}
+
+.home-search-category-menu[hidden] {
+    display: none !important;
+}
+
+.home-search-category-option {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+    color: #172033;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+
+.home-search-category-option:hover,
+.home-search-category-option:focus {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.home-search-category-option.is-selected {
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 800;
+}
+
+/* Tablet and mobile layout. */
+
+@media (max-width: 700px) {
+    .home-search-category-trigger {
+        min-width: 115px;
+        padding-right: 9px;
+        padding-left: 9px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 430px) {
+    .home-search-category {
+        width: 100%;
+        min-height: 42px;
+        margin: 0;
+    }
+
+    .home-search-category-trigger {
+        justify-content: space-between;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        min-height: 42px;
+        padding: 0 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+}
+</style>
+{% endblock %}
 
 
-        <nav class="nav-links">
+{% block content %}
 
-            <a href="index.html" class="active">
-                Home
-            </a>
+<!-- =====================================================
+     HERO
+===================================================== -->
 
-            <a href="{% url 'tracking' %}">
-                Track Package
-            </a>
+<section class="hero">
 
-            <a  href="{% url 'business_list' %}">
-                Businesses
-            </a>
+    <div class="hero-content">
 
-            <a href="{% url 'categories' %}">
-                Categories
-            </a>
+        <span class="hero-label">
+            THE LOCAL MARKETPLACE
+        </span>
 
-            <a href="{% url 'list_business' %}">
-                List Your Business
-            </a>
+        <h1>
+            Connect.
+            <span>Buy.</span>
+            Grow.
+        </h1>
 
-        </nav>
+        <p>
+            Discover local businesses, shop products,
+            find fresh food and connect with people
+            all in one place.
+        </p>
 
+        <!-- HOMEPAGE SEARCH -->
 
-        <div class="profile-button">
-            👤
-        </div>
+        <form class="home-search" id="homeSearchForm" method="get">
 
-    </header>
+            <input
+                type="search"
+                name="q"
+                id="homeSearchInput"
+                placeholder="Search businesses, products or food..."
+                aria-label="Search businesses, products or food"
+                autocomplete="off"
+                required
+            >
 
+            <!-- CUSTOM CATEGORY SELECTOR -->
 
-    <!-- ================= HERO SECTION ================= -->
+            <div class="home-search-category">
 
-    <section class="hero">
-
-        <div class="hero-content">
-
-            <h1>
-                Connect.
-                <span>Buy.</span>
-                Grow.
-            </h1>
-
-            <p>
-                Discover local businesses, shop products,
-                order services and track your deliveries
-                all in one place.
-            </p>
-
-
-            <!-- SEARCH -->
-
-            <div class="home-search">
-
-                <input
-                    type="text"
-                    placeholder="Search businesses, products or services..."
+                <button
+                    type="button"
+                    class="home-search-category-trigger"
+                    id="homeSearchType"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-controls="homeSearchTypeMenu"
+                    aria-label="Choose what to search"
                 >
-
-                <button>
-                    🔍 Search
+                    <span id="homeSearchTypeLabel">Businesses</span>
+                    <span
+                        class="home-search-category-arrow"
+                        aria-hidden="true"
+                    >▾</span>
                 </button>
 
+                <div
+                    class="home-search-category-menu"
+                    id="homeSearchTypeMenu"
+                    role="listbox"
+                    aria-label="Search category"
+                    hidden
+                >
+
+                    <button
+                        type="button"
+                        class="home-search-category-option is-selected"
+                        role="option"
+                        aria-selected="true"
+                        data-value="businesses"
+                    >
+                        Businesses
+                    </button>
+
+                    <button
+                        type="button"
+                        class="home-search-category-option"
+                        role="option"
+                        aria-selected="false"
+                        data-value="items"
+                    >
+                        Items
+                    </button>
+
+                    <button
+                        type="button"
+                        class="home-search-category-option"
+                        role="option"
+                        aria-selected="false"
+                        data-value="food"
+                    >
+                        Food
+                    </button>
+
+                </div>
+
+                <input
+                    type="hidden"
+                    id="homeSearchTypeValue"
+                    value="businesses"
+                >
+
             </div>
 
+            <button type="submit">
+                🔍 Search
+            </button>
 
-            <!-- HERO BUTTONS -->
+        </form>
 
-            <div class="hero-buttons">
+        <script>
+        (function () {
+            "use strict";
 
-                <a href="{% url 'business_list' %}" class="primary-button">
-                    Explore Businesses
-                </a>
+            const form = document.getElementById("homeSearchForm");
+            const input = document.getElementById("homeSearchInput");
+            const trigger = document.getElementById("homeSearchType");
+            const label = document.getElementById("homeSearchTypeLabel");
+            const selectedValue = document.getElementById(
+                "homeSearchTypeValue"
+            );
+            const menu = document.getElementById("homeSearchTypeMenu");
 
-                <a href="{% url 'list_business' %}" class="secondary-button">
-                    List Your Business
-                </a>
+            if (
+                !form ||
+                !input ||
+                !trigger ||
+                !label ||
+                !selectedValue ||
+                !menu
+            ) {
+                return;
+            }
 
-            </div>
+            const options = Array.from(
+                menu.querySelectorAll(".home-search-category-option")
+            );
 
-        </div>
+            if (!options.length) {
+                return;
+            }
 
+            let activeIndex = 0;
 
-        <!-- HERO VISUAL -->
+            function selectedIndex() {
+                const index = options.findIndex(function (option) {
+                    return option.dataset.value === selectedValue.value;
+                });
 
-        <div class="hero-visual">
+                return index >= 0 ? index : 0;
+            }
 
-            <div class="location-circle">
-                📍
-            </div>
+            function selectOption(option) {
+                if (!option) {
+                    return;
+                }
 
-            <div class="floating-card card-one">
-                🛒
-                <span>Shopping</span>
-            </div>
+                selectedValue.value = option.dataset.value;
+                label.textContent = option.textContent.trim();
 
-            <div class="floating-card card-two">
-                🍴
-                <span>Restaurants</span>
-            </div>
+                options.forEach(function (item) {
+                    const selected = item === option;
 
-            <div class="floating-card card-three">
-                🚚
-                <span>Delivery</span>
-            </div>
+                    item.classList.toggle("is-selected", selected);
+                    item.setAttribute(
+                        "aria-selected",
+                        selected ? "true" : "false"
+                    );
+                });
 
-        </div>
+                activeIndex = options.indexOf(option);
+            }
 
-    </section>
+            function positionMenu() {
+                const triggerRect = trigger.getBoundingClientRect();
 
+                const viewportWidth = document.documentElement.clientWidth;
+                const viewportHeight = window.innerHeight;
+                const padding = 12;
+                const gap = 6;
 
-    <!-- ================= CATEGORIES ================= -->
+                const availableWidth = Math.max(
+                    100,
+                    viewportWidth - padding * 2
+                );
 
-    <section class="categories-section">
+                const menuWidth = Math.min(
+                    Math.max(triggerRect.width, 150),
+                    availableWidth
+                );
 
-        <div class="section-heading">
+                menu.style.position = "fixed";
+                menu.style.left = "0px";
+                menu.style.top = "0px";
+                menu.style.right = "auto";
+                menu.style.bottom = "auto";
+                menu.style.width = menuWidth + "px";
+                menu.style.maxWidth = availableWidth + "px";
+                menu.style.maxHeight =
+                    Math.max(100, viewportHeight - padding * 2) + "px";
 
-            <div>
-                <h2>
-                    Explore Categories
-                </h2>
+                const menuRect = menu.getBoundingClientRect();
 
-                <p>
-                    Find exactly what you're looking for.
-                </p>
-            </div>
+                let left = triggerRect.left;
 
-            <a href="{% url 'categories' %}">
-                View All →
+                if (left + menuRect.width > viewportWidth - padding) {
+                    left = viewportWidth - menuRect.width - padding;
+                }
+
+                left = Math.max(padding, left);
+
+                const spaceBelow = viewportHeight - triggerRect.bottom;
+                const spaceAbove = triggerRect.top;
+
+                let top;
+
+                if (
+                    menuRect.height + gap > spaceBelow &&
+                    spaceAbove > spaceBelow
+                ) {
+                    top = triggerRect.top - menuRect.height - gap;
+                } else {
+                    top = triggerRect.bottom + gap;
+                }
+
+                top = Math.max(
+                    padding,
+                    Math.min(
+                        top,
+                        viewportHeight - menuRect.height - padding
+                    )
+                );
+
+                menu.style.left = left + "px";
+                menu.style.top = top + "px";
+            }
+
+            function openMenu(focusOption) {
+                menu.hidden = false;
+                trigger.setAttribute("aria-expanded", "true");
+
+                activeIndex = selectedIndex();
+
+                positionMenu();
+
+                if (focusOption) {
+                    options[activeIndex].focus();
+                }
+            }
+
+            function closeMenu(returnFocus) {
+                menu.hidden = true;
+                trigger.setAttribute("aria-expanded", "false");
+
+                if (returnFocus) {
+                    trigger.focus();
+                }
+            }
+
+            trigger.addEventListener("click", function () {
+                if (menu.hidden) {
+                    openMenu(false);
+                } else {
+                    closeMenu(false);
+                }
+            });
+
+            trigger.addEventListener("keydown", function (event) {
+                if (
+                    event.key === "ArrowDown" ||
+                    event.key === "ArrowUp"
+                ) {
+                    event.preventDefault();
+                    openMenu(true);
+                } else if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                ) {
+                    event.preventDefault();
+
+                    if (menu.hidden) {
+                        openMenu(true);
+                    } else {
+                        closeMenu(false);
+                    }
+                } else if (event.key === "Escape") {
+                    closeMenu(false);
+                }
+            });
+
+            options.forEach(function (option, index) {
+                option.addEventListener("click", function () {
+                    selectOption(option);
+                    closeMenu(true);
+                });
+
+                option.addEventListener("keydown", function (event) {
+                    if (event.key === "ArrowDown") {
+                        event.preventDefault();
+
+                        activeIndex = (index + 1) % options.length;
+                        options[activeIndex].focus();
+
+                    } else if (event.key === "ArrowUp") {
+                        event.preventDefault();
+
+                        activeIndex =
+                            (index - 1 + options.length) % options.length;
+
+                        options[activeIndex].focus();
+
+                    } else if (
+                        event.key === "Enter" ||
+                        event.key === " "
+                    ) {
+                        event.preventDefault();
+                        selectOption(option);
+                        closeMenu(true);
+
+                    } else if (event.key === "Escape") {
+                        event.preventDefault();
+                        closeMenu(true);
+
+                    } else if (event.key === "Tab") {
+                        closeMenu(false);
+                    }
+                });
+            });
+
+            document.addEventListener("click", function (event) {
+                if (
+                    !menu.hidden &&
+                    !trigger.contains(event.target) &&
+                    !menu.contains(event.target)
+                ) {
+                    closeMenu(false);
+                }
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape" && !menu.hidden) {
+                    closeMenu(true);
+                }
+            });
+
+            window.addEventListener("resize", function () {
+                if (!menu.hidden) {
+                    positionMenu();
+                }
+            });
+
+            window.addEventListener("scroll", function () {
+                if (!menu.hidden) {
+                    positionMenu();
+                }
+            }, true);
+
+            /* Preserve the existing search destinations. */
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const query = input.value.trim();
+
+                if (!query) {
+                    input.focus();
+                    return;
+                }
+
+                const destinations = {
+                    businesses: "{% url 'business_list' %}",
+                    items: "{% url 'items_marketplace' %}",
+                    food: "{% url 'food_marketplace' %}"
+                };
+
+                const destination = destinations[selectedValue.value];
+
+                if (!destination) {
+                    return;
+                }
+
+                window.location.href =
+                    destination + "?q=" + encodeURIComponent(query);
+            });
+
+        })();
+        </script>
+
+        <div class="hero-buttons">
+
+            <a
+                href="{% url 'business_list' %}"
+                class="primary-button"
+            >
+                Explore Businesses
+            </a>
+
+            <a
+                href="{% url 'items_marketplace' %}"
+                class="secondary-button"
+            >
+                Browse Marketplace
             </a>
 
         </div>
 
+    </div>
 
-        <div class="category-grid">
+    <div class="hero-visual">
 
-            <a href="{% url 'categories' %}" class="category-card">
-
-                <div class="category-icon blue">
-                    🍴
-                </div>
-
-                <h3>
-                    Restaurants & Food
-                </h3>
-
-                <p>
-                    Restaurants, cafés and food services.
-                </p>
-
-            </a>
-
-
-            <a href="{% url 'categories' %}" class="category-card">
-
-                <div class="category-icon green">
-                    🛒
-                </div>
-
-                <h3>
-                    Shopping & Retail
-                </h3>
-
-                <p>
-                    Shops, groceries, fashion and more.
-                </p>
-
-            </a>
-
-
-            <a href="{% url 'categories' %}" class="category-card">
-
-                <div class="category-icon purple">
-💻
-                </div>
-
-                <h3>
-                    Electronics
-                </h3>
-
-                <p>
-                    Phones, computers and accessories.
-                </p>
-
-            </a>
-
-
-            <a href="{% url 'categories' %}" class="category-card">
-
-                <div class="category-icon orange">
-                    🏠
-                </div>
-
-                <h3>
-                    Home & Living
-                </h3>
-
-                <p>
-                    Furniture, appliances and home services.
-                </p>
-
-            </a>
-
+        <div class="location-circle">
+            ◈
         </div>
 
-    </section>
-
-
-    <!-- ================= HOW IT WORKS ================= -->
-
-    <section class="how-section">
-
-        <div class="section-title">
-
-            <h2>
-                How BusinessHub Works
-            </h2>
-
-            <p>
-                Everything you need to discover and connect
-                with businesses online.
-            </p>
-
+        <div class="floating-card card-one">
+            🛍️
+            <span>Items</span>
         </div>
 
-
-        <div class="how-grid">
-
-            <div class="how-card">
-
-                <div class="how-number">
-                    01
-                </div>
-
-                <h3>
-                    Find a Business
-                </h3>
-
-                <p>
-                    Search for businesses, products or
-                    services near you.
-                </p>
-
-            </div>
-
-
-            <div class="how-card">
-
-                <div class="how-number">
-                    02
-                </div>
-
-                <h3>
-                    Order Online
-                </h3>
-
-                <p>
-                    Choose what you want and place your
-                    order directly through BusinessHub.
-                </p>
-
-            </div>
-
-
-            <div class="how-card">
-
-                <div class="how-number">
-                    03
-                </div>
-
-                <h3>
-                    Pay Securely
-                </h3>
-
-                <p>
-                    Pay using supported online payment
-                    methods.
-                </p>
-
-            </div>
-
-
-            <div class="how-card">
-
-                <div class="how-number">
-                    04
-                </div>
-
-                <h3>
-                    Track Your Order
-                </h3>
-
-                <p>
-                    Follow your package from the business
-                    to your destination.
-                </p>
-
-            </div>
-
+        <div class="floating-card card-two">
+            🍲
+            <span>Food</span>
         </div>
 
-    </section>
+        <div class="floating-card card-three">
+            🏪
+            <span>Businesses</span>
+        </div>
+
+    </div>
+
+</section>
 
 
-    <!-- ================= BUSINESS ADVERTISEMENT ================= -->
+<!-- =====================================================
+     CATEGORIES
+===================================================== -->
 
-    <section class="business-banner">
+<section class="categories-section">
+
+    <div class="section-heading">
 
         <div>
 
+            <span class="section-label">
+                DISCOVER
+            </span>
+
             <h2>
-                Grow Your Business With BusinessHub
+                Explore Categories
             </h2>
 
             <p>
-                Advertise your business, reach more customers
-                and receive orders online.
+                Find businesses and products across different categories.
             </p>
 
         </div>
 
-
-        <a href="{% url 'list_business' %}">
-            Start Advertising →
+        <a href="{% url 'categories' %}">
+            View All →
         </a>
 
-    </section>
+    </div>
 
+    <div class="category-grid">
 
-    <!-- ================= FOOTER ================= -->
+        <a
+            href="{% url 'categories' %}"
+            class="category-card"
+        >
 
-    <footer class="footer">
-
-        <div class="footer-logo">
-
-            <div class="logo-icon">
-                ◈
+            <div class="category-icon blue">
+                🍴
             </div>
+
+            <h3>
+                Restaurants & Food
+            </h3>
+
+            <p>
+                Discover food, restaurants and local food sellers.
+            </p>
+
+        </a>
+
+        <a
+            href="{% url 'categories' %}"
+            class="category-card"
+        >
+
+            <div class="category-icon green">
+                🛒
+            </div>
+
+            <h3>
+                Shopping & Retail
+            </h3>
+
+            <p>
+                Find products, shops and everyday essentials.
+            </p>
+
+        </a>
+
+        <a
+            href="{% url 'categories' %}"
+            class="category-card"
+        >
+
+            <div class="category-icon purple">
+                💻
+            </div>
+
+            <h3>
+                Electronics
+            </h3>
+
+            <p>
+                Phones, computers, accessories and more.
+            </p>
+
+        </a>
+
+        <a
+            href="{% url 'categories' %}"
+            class="category-card"
+        >
+
+            <div class="category-icon orange">
+                🏠
+            </div>
+
+            <h3>
+                Home & Living
+            </h3>
+
+            <p>
+                Furniture, appliances and home services.
+            </p>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     BUSINESSES
+===================================================== -->
+
+<section class="marketplace-section">
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                DISCOVER LOCAL
+            </span>
+
+            <h2>
+                Businesses Near You
+            </h2>
+
+            <p>
+                Explore businesses listed on BusinessHub.
+            </p>
+
+        </div>
+
+        <a href="{% url 'business_list' %}">
+            View All Businesses →
+        </a>
+
+    </div>
+
+    {% if home_businesses %}
+
+        <div class="marketplace-grid">
+
+            {% for business in home_businesses %}
+
+                <a
+                    href="{% url 'view_business' business.id %}"
+                    class="marketplace-card"
+                >
+
+                    <div class="marketplace-image">
+
+                        {% if business.logo %}
+
+                            <img
+                                src="{{ business.logo.url }}"
+                                alt="{{ business.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="marketplace-placeholder business-placeholder">
+                                🏪
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="marketplace-card-content">
+
+                        <span class="marketplace-type">
+                            {{ business.category|title }}
+                        </span>
+
+                        <h3>
+                            {{ business.name }}
+                        </h3>
+
+                        {% if business.plan_badge == "PRO" %}
+
+                            <span class="home-business-plan-badge home-business-plan-pro">
+                                ✦ PRO
+                            </span>
+
+                        {% elif business.plan_badge == "PLUS" %}
+
+                            <span class="home-business-plan-badge home-business-plan-plus">
+                                ✦ PLUS
+                            </span>
+
+                        {% endif %}
+
+                        {% if business.city %}
+
+                            <p class="marketplace-location">
+                                📍 {{ business.city }}
+                                {% if business.region %}
+                                    , {{ business.region }}
+                                {% endif %}
+                            </p>
+
+                        {% endif %}
+
+                        <span class="marketplace-link">
+                            View Business →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="marketplace-empty">
 
             <div>
-                <strong>
-                    BusinessHub
-                </strong>
-
-                <small>
-                    Connect. Buy. Grow.
-                </small>
+                🏪
             </div>
 
-        </div>
+            <h3>
+                Businesses are coming soon
+            </h3>
 
-
-        <div class="footer-links">
-
-            <a href="index.html">
-                Home
-            </a>
-
-            <a href="{% url 'tracking' %}">
-                Track Package
-            </a>
-
-            <a  href="{% url 'business_list' %}">
-                Businesses
-            </a>
-
-            <a href="{% url 'categories' %}">
-                Categories
-            </a>
+            <p>
+                Be one of the first businesses to join BusinessHub.
+            </p>
 
             <a href="{% url 'list_business' %}">
-                List Your Business
+                List Your Business →
             </a>
 
         </div>
 
+    {% endif %}
 
-        <div class="copyright">
+</section>
 
-            © 2026 BusinessHub.
-            All rights reserved.
+
+<!-- =====================================================
+     ITEMS
+===================================================== -->
+
+<section class="marketplace-section marketplace-section-alt">
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                SHOP
+            </span>
+
+            <h2>
+                Latest Items
+            </h2>
+
+            <p>
+                Discover products recently listed on BusinessHub.
+            </p>
 
         </div>
 
-    </footer>
+        <a href="{% url 'items_marketplace' %}">
+            View All Items →
+        </a>
+
+    </div>
+
+    {% if home_items %}
+
+        <div class="marketplace-grid">
+
+            {% for item in home_items %}
+
+                <a
+                    href="{% url 'item_detail' item.id %}"
+                    class="marketplace-card"
+                >
+
+                    <div class="marketplace-image">
+
+                        {% with first_image=item.images.first %}
+
+                            {% if first_image %}
+
+                                <img
+                                    src="{{ first_image.image.url }}"
+                                    alt="{{ item.title }}"
+                                >
+
+                            {% else %}
+
+                                <div class="marketplace-placeholder item-placeholder">
+                                    🛍️
+                                </div>
+
+                            {% endif %}
+
+                        {% endwith %}
+
+                    </div>
+
+                    <div class="marketplace-card-content">
+
+                        {% if item.category %}
+
+                            <span class="marketplace-type">
+                                {{ item.category|title }}
+                            </span>
+
+                        {% endif %}
+
+                        <h3>
+                            {{ item.title }}
+                        </h3>
+
+                        <strong class="marketplace-price">
+                            {{ item.price }} XAF
+                        </strong>
+
+                        {% if item.location %}
+
+                            <p class="marketplace-location">
+                                📍 {{ item.location }}
+                            </p>
+
+                        {% endif %}
+
+                        <span class="marketplace-link">
+                            View Item →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="marketplace-empty">
+
+            <div>
+                🛍️
+            </div>
+
+            <h3>
+                No items listed yet
+            </h3>
+
+            <p>
+                New products will appear here when sellers add them.
+            </p>
+
+            <a href="{% url 'items_marketplace' %}">
+                Browse Items →
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
 
 
-    <script src="js/script.js"></script>
+<!-- =====================================================
+     FOOD
+===================================================== -->
 
-</body>
+<section class="marketplace-section">
 
-</html>                    
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                FRESH & LOCAL
+            </span>
+
+            <h2>
+                Fresh Food
+            </h2>
+
+            <p>
+                Discover food listings from local sellers.
+            </p>
+
+        </div>
+
+        <a href="{% url 'food_marketplace' %}">
+            Explore Food →
+        </a>
+
+    </div>
+
+    {% if home_foods %}
+
+        <div class="marketplace-grid">
+
+            {% for food in home_foods %}
+
+                <a
+                    href="{% url 'food_detail' food.id %}"
+                    class="marketplace-card"
+                >
+
+                    <div class="marketplace-image">
+
+                        {% with first_image=food.images.first %}
+
+                            {% if first_image %}
+
+                                <img
+                                    src="{{ first_image.image.url }}"
+                                    alt="{{ food.title }}"
+                                >
+
+                            {% else %}
+
+                                <div class="marketplace-placeholder food-placeholder">
+                                    🍲
+                                </div>
+
+                            {% endif %}
+
+                        {% endwith %}
+
+                    </div>
+
+                    <div class="marketplace-card-content">
+
+                        {% if food.category %}
+
+                            <span class="marketplace-type">
+                                {{ food.category|title }}
+                            </span>
+
+                        {% endif %}
+
+                        <h3>
+                            {{ food.title }}
+                        </h3>
+
+                        <strong class="marketplace-price">
+                            {{ food.price }} XAF
+                        </strong>
+
+                        {% if food.location %}
+
+                            <p class="marketplace-location">
+                                📍 {{ food.location }}
+                            </p>
+
+                        {% endif %}
+
+                        <span class="marketplace-link">
+                            View Food →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="marketplace-empty">
+
+            <div>
+                🍲
+            </div>
+
+            <h3>
+                No food listings yet
+            </h3>
+
+            <p>
+                Food listings from local sellers will appear here.
+            </p>
+
+            <a href="{% url 'food_marketplace' %}">
+                Explore Food →
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<section class="how-section">
+
+    <div class="section-title">
+
+        <span class="section-label">
+            SIMPLE & EASY
+        </span>
+
+        <h2>
+            How BusinessHub Works
+        </h2>
+
+        <p>
+            Everything you need to discover, buy and connect
+            in one place.
+        </p>
+
+    </div>
+
+    <div class="how-grid">
+
+        <div class="how-card">
+
+            <div class="how-number">
+                01
+            </div>
+
+            <h3>
+                Discover
+            </h3>
+
+            <p>
+                Find businesses, products and food
+                available on BusinessHub.
+            </p>
+
+        </div>
+
+        <div class="how-card">
+
+            <div class="how-number">
+                02
+            </div>
+
+            <h3>
+                Connect
+            </h3>
+
+            <p>
+                Contact sellers and businesses directly
+                through the platform.
+            </p>
+
+        </div>
+
+        <div class="how-card">
+
+            <div class="how-number">
+                03
+            </div>
+
+            <h3>
+                Buy
+            </h3>
+
+            <p>
+                Choose what you need and use the
+                available payment options.
+            </p>
+
+        </div>
+
+        <div class="how-card">
+
+            <div class="how-number">
+                04
+            </div>
+
+            <h3>
+                Track
+            </h3>
+
+            <p>
+                Follow your delivery and stay updated
+                from start to finish.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     BUSINESS CTA
+===================================================== -->
+
+<section class="business-banner">
+
+    <div>
+
+        <span class="section-label">
+            FOR BUSINESS OWNERS
+        </span>
+
+        <h2>
+            Grow Your Business With BusinessHub
+        </h2>
+
+        <p>
+            Put your business in front of more customers,
+            showcase what you offer and grow your presence online.
+        </p>
+
+    </div>
+
+    <a href="{% url 'list_business' %}">
+        List Your Business →
+    </a>
+
+</section>
+
+{% endblock %}

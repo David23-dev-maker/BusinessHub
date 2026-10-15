@@ -1,0 +1,679 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .services-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 35px 20px 60px;
+        color: #111827;
+    }
+
+    .services-hero {
+        text-align: center;
+        padding: 45px 24px;
+        margin-bottom: 35px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #111827, #1f3b63);
+        color: white;
+    }
+
+    .services-hero .eyebrow {
+        display: inline-block;
+        padding: 7px 14px;
+        border-radius: 30px;
+        background: rgba(34, 197, 94, .17);
+        color: #86efac;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+    }
+
+    .services-hero h1 {
+        margin: 0 0 14px;
+        font-size: clamp(30px, 5vw, 46px);
+        font-weight: 900;
+        color: white;
+    }
+
+    .services-hero p {
+        max-width: 700px;
+        margin: 0 auto;
+        color: #dbeafe;
+        line-height: 1.8;
+        font-size: 16px;
+    }
+
+    .launch-banner {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 22px;
+        margin-bottom: 38px;
+        border: 1px solid #bbf7d0;
+        border-radius: 16px;
+        background: #f0fdf4;
+    }
+
+    .launch-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 24px;
+    }
+
+    .launch-banner h3 {
+        margin: 0 0 5px;
+        font-size: 17px;
+        color: #166534;
+    }
+
+    .launch-banner p {
+        margin: 0;
+        color: #166534;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .services-section {
+        margin-bottom: 48px;
+    }
+
+    .section-heading {
+        margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 8px;
+        font-size: 27px;
+        font-weight: 900;
+        color: #111827;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #6b7280;
+        line-height: 1.7;
+    }
+
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    .plan-card {
+        position: relative;
+        padding: 30px;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        background: white;
+        box-shadow: 0 8px 28px rgba(15, 23, 42, .05);
+        transition: transform .2s, box-shadow .2s;
+    }
+
+    .plan-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px rgba(15, 23, 42, .09);
+    }
+
+    .plan-card.pro {
+        border: 2px solid #2563eb;
+    }
+
+    .plan-label {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 15px;
+        border-radius: 20px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: .5px;
+    }
+
+    .plan-card h3 {
+        margin: 0 0 10px;
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    .plan-price {
+        margin: 0 0 15px;
+        font-size: 35px;
+        font-weight: 900;
+        color: #15803d;
+    }
+
+    .plan-price small {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    .plan-description {
+        margin: 0 0 20px;
+        color: #6b7280;
+        line-height: 1.7;
+    }
+
+    .plan-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 25px;
+    }
+
+    .plan-features li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 9px 0;
+        border-bottom: 1px solid #f3f4f6;
+        color: #374151;
+        line-height: 1.5;
+        font-size: 14px;
+    }
+
+    .plan-features li span {
+        color: #16a34a;
+        font-weight: 900;
+    }
+
+    .service-button {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 18px;
+        border: none;
+        border-radius: 12px;
+        background: #111827;
+        color: white !important;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none !important;
+        cursor: pointer;
+        transition: background .2s, transform .2s;
+    }
+
+    .service-button:hover {
+        background: #374151;
+        transform: translateY(-1px);
+    }
+
+    .service-button.green {
+        background: #15803d;
+    }
+
+    .service-button.green:hover {
+        background: #166534;
+    }
+
+    .service-button.blue {
+        background: #2563eb;
+    }
+
+    .service-button.blue:hover {
+        background: #1d4ed8;
+    }
+
+    .service-button.secondary {
+        background: white;
+        color: #111827 !important;
+        border: 1px solid #d1d5db;
+    }
+
+    .service-button.secondary:hover {
+        background: #f9fafb;
+    }
+
+    .button-stack {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .service-card {
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        background: white;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, .04);
+    }
+
+    .service-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        margin-bottom: 18px;
+        border-radius: 15px;
+        background: #eff6ff;
+        font-size: 25px;
+    }
+
+    .service-card h3 {
+        margin: 0 0 10px;
+        font-size: 19px;
+        font-weight: 900;
+    }
+
+    .service-card p {
+        flex: 1;
+        margin: 0 0 18px;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .free-badge {
+        display: inline-block;
+        align-self: flex-start;
+        margin-bottom: 18px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        background: #dcfce7;
+        color: #166534;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .promotion-note {
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 12px;
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .services-help {
+        padding: 28px;
+        border-radius: 20px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        text-align: center;
+    }
+
+    .services-help h2 {
+        margin: 0 0 10px;
+        font-size: 24px;
+        font-weight: 900;
+    }
+
+    .services-help p {
+        margin: 0 auto 20px;
+        max-width: 650px;
+        color: #6b7280;
+        line-height: 1.8;
+    }
+
+    .help-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .help-buttons .service-button {
+        width: auto;
+        min-width: 190px;
+    }
+
+    @media (max-width: 900px) {
+        .services-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 650px) {
+        .services-page {
+            padding: 20px 14px 40px;
+        }
+
+        .services-hero {
+            padding: 35px 18px;
+            border-radius: 18px;
+        }
+
+        .plans-grid,
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .plan-card {
+            padding: 24px;
+        }
+
+        .launch-banner {
+            align-items: flex-start;
+            padding: 16px;
+        }
+
+        .section-heading h2 {
+            font-size: 23px;
+        }
+
+        .help-buttons .service-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="services-page">
+
+    <section class="services-hero">
+        <span class="eyebrow">BUSINESSHUB FREE LAUNCH</span>
+        <h1>Everything You Need to Grow</h1>
+        <p>
+            Discover BusinessHub tools that help you promote your business,
+            sell food and items, and reach more customers.
+            Enjoy the free-launch period and start using the platform today.
+        </p>
+    </section>
+
+    {% if free_launch %}
+        <section class="launch-banner">
+            <div class="launch-icon">✓</div>
+            <div>
+                <h3>Free Launch Is Active</h3>
+                <p>
+                    BusinessHub's launch period runs from
+                    12 October 2026 to 11 October 2027.
+                    Eligible services are free during this period.
+                    Choose an action below to get started.
+                </p>
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="services-section">
+        <div class="section-heading">
+            <h2>BusinessHub Plans</h2>
+            <p>
+                Explore the available plans and manage your business
+                from your BusinessHub dashboard.
+            </p>
+        </div>
+
+        <div class="plans-grid">
+
+            <article class="plan-card">
+                <span class="plan-label">PLUS PLAN</span>
+                <h3>BusinessHub Plus</h3>
+
+                {% if free_launch %}
+                    <div class="plan-price">
+                        FREE <small>during launch</small>
+                    </div>
+                {% else %}
+                    <div class="plan-price">
+                        Plus
+                    </div>
+                {% endif %}
+
+                <p class="plan-description">
+                    For sellers and businesses ready to grow their
+                    presence on BusinessHub.
+                </p>
+
+                <ul class="plan-features">
+                    <li><span>✓</span> Manage your business listings</li>
+                    <li><span>✓</span> Reach customers on the marketplace</li>
+                    <li><span>✓</span> Access your business dashboard</li>
+                    <li><span>✓</span> Manage your listings and enquiries</li>
+                </ul>
+
+                {% if free_launch %}
+                    <a href="{% url 'owner_dashboard' %}"
+                       class="service-button green">
+                        Go to Business Dashboard →
+                    </a>
+                    <div class="promotion-note">
+                        This button opens your dashboard. It does not
+                        create a paid subscription or independently
+                        activate a Plus subscription.
+                    </div>
+                {% else %}
+                    <a href="{% url 'payment_checkout' %}?service=plus"
+                       class="service-button">
+                        Choose Plus →
+                    </a>
+                {% endif %}
+            </article>
+
+            <article class="plan-card pro">
+                <span class="plan-label">PRO PLAN</span>
+                <h3>BusinessHub Pro</h3>
+
+                {% if free_launch %}
+                    <div class="plan-price">
+                        FREE <small>during launch</small>
+                    </div>
+                {% else %}
+                    <div class="plan-price">
+                        Pro
+                    </div>
+                {% endif %}
+
+                <p class="plan-description">
+                    For businesses looking to expand their reach
+                    and manage their marketplace presence.
+                </p>
+
+                <ul class="plan-features">
+                    <li><span>✓</span> Manage your business listings</li>
+                    <li><span>✓</span> Promote your items and food listings</li>
+                    <li><span>✓</span> Access your business dashboard</li>
+                    <li><span>✓</span> Manage your business activity</li>
+                </ul>
+
+                {% if free_launch %}
+                    <a href="{% url 'owner_dashboard' %}"
+                       class="service-button blue">
+                        Go to Business Dashboard →
+                    </a>
+                    <div class="promotion-note">
+                        This button opens your dashboard. It does not
+                        create a paid subscription or independently
+                        activate a Pro subscription.
+                    </div>
+                {% else %}
+                    <a href="{% url 'payment_checkout' %}?service=pro"
+                       class="service-button">
+                        Choose Pro →
+                    </a>
+                {% endif %}
+            </article>
+
+        </div>
+    </section>
+
+    <section class="services-section">
+        <div class="section-heading">
+            <h2>Promote Your Listings</h2>
+            <p>
+                Give your listings more visibility. Choose your own
+                food or item listings to find the available promotion actions.
+            </p>
+        </div>
+
+        <div class="services-grid">
+
+            <article class="service-card">
+                <div class="service-icon">🚀</div>
+                <h3>Boost an Item</h3>
+                <p>
+                    Give one of your available items a boost to help
+                    it stand out in the marketplace.
+                </p>
+
+                {% if free_launch %}
+                    <span class="free-badge">FREE DURING LAUNCH</span>
+                    <a href="{% url 'my_items' %}"
+                       class="service-button green">
+                        Choose an Item to Boost →
+                    </a>
+                {% else %}
+                    <a href="{% url 'my_items' %}"
+                       class="service-button">
+                        View My Items →
+                    </a>
+                {% endif %}
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon">⭐</div>
+                <h3>Feature an Item</h3>
+                <p>
+                    Find the item you want to feature and use its
+                    available promotion action.
+                </p>
+
+                {% if free_launch %}
+                    <span class="free-badge">FREE DURING LAUNCH</span>
+                    <a href="{% url 'my_items' %}"
+                       class="service-button green">
+                        Choose an Item to Feature →
+                    </a>
+                {% else %}
+                    <a href="{% url 'my_items' %}"
+                       class="service-button">
+                        View My Items →
+                    </a>
+                {% endif %}
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon">🍲</div>
+                <h3>Promote Food</h3>
+                <p>
+                    Open your food listings and select the food item
+                    you want to promote.
+                </p>
+
+                {% if free_launch %}
+                    <span class="free-badge">FREE DURING LAUNCH</span>
+                    <a href="{% url 'my_food' %}"
+                       class="service-button green">
+                        View My Food Listings →
+                    </a>
+                {% else %}
+                    <a href="{% url 'my_food' %}"
+                       class="service-button">
+                        View My Food Listings →
+                    </a>
+                {% endif %}
+            </article>
+
+        </div>
+
+        <div class="promotion-note">
+            <strong>Important:</strong>
+            Opening your listings page does not automatically activate a
+            promotion. Select the relevant action for your own listing.
+            Any promotion that is free during launch must still be activated
+            through its existing action.
+        </div>
+    </section>
+
+    <section class="services-section">
+        <div class="section-heading">
+            <h2>More BusinessHub Services</h2>
+            <p>
+                Explore the other services available on the platform.
+            </p>
+        </div>
+
+        <div class="services-grid">
+
+            <article class="service-card">
+                <div class="service-icon">🏪</div>
+                <h3>List Your Business</h3>
+                <p>
+                    Create a business listing so customers can discover
+                    your business and its details.
+                </p>
+                <a href="{% url 'list_business' %}"
+                   class="service-button secondary">
+                    List Your Business →
+                </a>
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon">🛍️</div>
+                <h3>Sell Items</h3>
+                <p>
+                    List products for sale without needing to register
+                    a separate business listing.
+                </p>
+                <a href="{% url 'sell_item' %}"
+                   class="service-button secondary">
+                    Sell an Item →
+                </a>
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon">🍽️</div>
+                <h3>Sell Food</h3>
+                <p>
+                    Add food listings with prices, photos and details
+                    so potential customers can find them.
+                </p>
+                <a href="{% url 'sell_food' %}"
+                   class="service-button secondary">
+                    Sell Food →
+                </a>
+            </article>
+
+        </div>
+    </section>
+
+    <section class="services-help">
+        <h2>Ready to Get Started?</h2>
+        <p>
+            Open your dashboard to manage your business, or visit the
+            marketplace to explore listings on BusinessHub.
+        </p>
+
+        <div class="help-buttons">
+            <a href="{% url 'owner_dashboard' %}"
+               class="service-button blue">
+                Business Dashboard →
+            </a>
+
+            <a href="{% url 'items_marketplace' %}"
+               class="service-button secondary">
+                Browse Items →
+            </a>
+
+            <a href="{% url 'food_marketplace' %}"
+               class="service-button secondary">
+                Browse Food →
+            </a>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

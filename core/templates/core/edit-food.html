@@ -1,0 +1,1246 @@
+{% extends "core/base.html" %}
+
+{% block title %}Edit Food | BusinessHub{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-food-page {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 42px 20px 70px;
+    }
+
+    .edit-food-header {
+        margin-bottom: 28px;
+    }
+
+    .edit-food-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 10px;
+        color: #2563eb;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .edit-food-header h1 {
+        margin: 0 0 9px;
+        color: #0f172a;
+        font-size: 36px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+    }
+
+    .edit-food-header p {
+        max-width: 650px;
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .edit-food-card {
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .form-body {
+        padding: 32px;
+    }
+
+    .form-section {
+        margin-bottom: 34px;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .section-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: #eff6ff;
+        font-size: 18px;
+    }
+
+    .form-section-title {
+        margin: 0;
+        color: #111827;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .form-section-subtitle {
+        margin: 4px 0 0;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .required-mark {
+        color: #dc2626;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #dbe1ea;
+        border-radius: 11px;
+        padding: 12px 13px;
+        background: #ffffff;
+        color: #111827;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition:
+            border-color 0.18s ease,
+            box-shadow 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 47px;
+    }
+
+    .form-group textarea {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: #a8b1bf;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.09);
+    }
+
+    .form-help {
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* CURRENT IMAGES */
+
+    .current-images {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .current-image {
+        position: relative;
+        height: 160px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        border-radius: 13px;
+        background: #f1f5f9;
+    }
+
+    .current-image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 9px;
+        background: linear-gradient(
+            to top,
+            rgba(15, 23, 42, 0.82),
+            rgba(15, 23, 42, 0)
+        );
+    }
+
+    .delete-image-button {
+        width: 100%;
+        min-height: 36px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(220, 38, 38, 0.94);
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 750;
+        cursor: pointer;
+        transition:
+            background 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    .delete-image-button:hover {
+        background: #b91c1c;
+        transform: translateY(-1px);
+    }
+
+    .delete-image-button:disabled {
+        opacity: 0.65;
+        cursor: wait;
+        transform: none;
+    }
+
+    .no-images {
+        margin-bottom: 18px;
+        padding: 16px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #94a3b8;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    /* NEW IMAGE PREVIEWS */
+
+    .new-image-preview-section {
+        display: none;
+        margin-top: 18px;
+    }
+
+    .new-image-preview-title {
+        margin: 0 0 10px;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .new-image-previews {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+    }
+
+    .new-image-preview {
+        position: relative;
+        height: 120px;
+        overflow: hidden;
+        border: 1px solid #dbeafe;
+        border-radius: 11px;
+        background: #eff6ff;
+    }
+
+    .new-image-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .new-image-label {
+        position: absolute;
+        left: 7px;
+        top: 7px;
+        padding: 4px 7px;
+        border-radius: 6px;
+        background: rgba(37, 99, 235, 0.9);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 750;
+    }
+
+    .image-limit-message {
+        margin-top: 12px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .photo-box {
+        padding: 28px 22px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 15px;
+        background: #f8fafc;
+        text-align: center;
+        transition:
+            border-color 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .photo-box:hover {
+        border-color: #93c5fd;
+        background: #f8fbff;
+    }
+
+    .photo-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 12px;
+        border-radius: 15px;
+        background: #eff6ff;
+        font-size: 25px;
+    }
+
+    .photo-box strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #334155;
+        font-size: 14px;
+    }
+
+    .photo-box span {
+        display: block;
+        max-width: 450px;
+        margin: 0 auto 17px;
+        color: #94a3b8;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .photo-box input {
+        display: block;
+        width: min(100%, 500px);
+        box-sizing: border-box;
+        margin: 0 auto;
+        padding: 9px;
+        border: 1px solid #dbe1ea;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #475569;
+        font-family: inherit;
+        font-size: 13px;
+    }
+
+    .checkbox-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .checkbox-option {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        min-height: 52px;
+        box-sizing: border-box;
+        padding: 0 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        background: #ffffff;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 650;
+        cursor: pointer;
+        transition:
+            border-color 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .checkbox-option:hover {
+        border-color: #bfdbfe;
+        background: #f8fbff;
+    }
+
+    .checkbox-option input {
+        width: 17px;
+        height: 17px;
+        margin: 0;
+        accent-color: #2563eb;
+        cursor: pointer;
+    }
+
+    .form-error {
+        margin: 24px 32px 0;
+        padding: 13px 15px;
+        border: 1px solid #fecaca;
+        border-radius: 11px;
+        background: #fef2f2;
+        color: #b91c1c;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 22px 32px;
+        border-top: 1px solid #edf0f4;
+        background: #fafbfc;
+    }
+
+    .cancel-button,
+    .submit-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        box-sizing: border-box;
+        border-radius: 11px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+        transition:
+            transform 0.18s ease,
+            background 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .cancel-button {
+        padding: 0 20px;
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .cancel-button:hover {
+        background: #e2e8f0;
+    }
+
+    .submit-button {
+        padding: 0 25px;
+        border: none;
+        background: #2563eb;
+        color: #ffffff;
+        cursor: pointer;
+        box-shadow: 0 5px 14px rgba(37, 99, 235, 0.18);
+    }
+
+    .submit-button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 7px 18px rgba(37, 99, 235, 0.23);
+    }
+
+    @media (max-width: 700px) {
+        .edit-food-page {
+            padding: 30px 14px 55px;
+        }
+
+        .edit-food-header h1 {
+            font-size: 30px;
+        }
+
+        .form-body {
+            padding: 24px 18px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .checkbox-row {
+            grid-template-columns: 1fr;
+        }
+
+        .current-images {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .new-image-previews {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .form-error {
+            margin: 18px 18px 0;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+            padding: 18px;
+        }
+
+        .cancel-button,
+        .submit-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="edit-food-page">
+
+    <div class="edit-food-header">
+        <div class="edit-food-eyebrow">
+            🍽️ Food Marketplace
+        </div>
+
+        <h1>Edit Food Listing</h1>
+
+        <p>
+            Update your food information, photos, location, and order options.
+        </p>
+    </div>
+
+    <div class="edit-food-card">
+
+        {% if error %}
+            <div class="form-error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            id="editFoodForm"
+        >
+            {% csrf_token %}
+
+            <div class="form-body">
+
+                <!-- FOOD INFORMATION -->
+
+                <div class="form-section">
+
+                    <div class="form-section-header">
+
+                        <div class="section-icon">
+                            🍛
+                        </div>
+
+                        <div>
+                            <h2 class="form-section-title">
+                                Food Information
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Keep your listing information accurate and up to date.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label for="title">
+                                Food Name
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                value="{{ food.title }}"
+                                placeholder="e.g. Jollof Rice with Chicken"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="price">
+                                Price (FCFA)
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                min="0"
+                                step="1"
+                                value="{{ food.price }}"
+                                placeholder="e.g. 2500"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="category">
+                                Food Category
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <select
+                                id="category"
+                                name="category"
+                                required
+                            >
+
+                                <option value="">
+                                    Select a category
+                                </option>
+
+                                {% for value, label in categories %}
+
+                                    <option
+                                        value="{{ value }}"
+                                        {% if food.category == value %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ label }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="quantity">
+                                Quantity Available
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                id="quantity"
+                                name="quantity"
+                                min="1"
+                                step="1"
+                                value="{{ food.quantity }}"
+                                required
+                            >
+
+                            <span class="form-help">
+                                Number of portions, plates, pieces, etc.
+                            </span>
+
+                        </div>
+
+                        <div class="form-group full">
+
+                            <label for="description">
+                                Description
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                placeholder="Describe the food, ingredients, portion size, preparation, etc."
+                                required
+                            >{{ food.description }}</textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CURRENT PHOTOS -->
+
+                <div class="form-section">
+
+                    <div class="form-section-header">
+
+                        <div class="section-icon">
+                            📷
+                        </div>
+
+                        <div>
+                            <h2 class="form-section-title">
+                                Current Photos
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Delete old photos or add new ones. Maximum 10 photos total.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="current-images"
+                        id="currentImages"
+                    >
+
+                        {% for image in food.images.all %}
+
+                            <div
+                                class="current-image"
+                                data-image-id="{{ image.id }}"
+                            >
+
+                                <img
+                                    src="{{ image.image.url }}"
+                                    alt="{{ food.title }}"
+                                    loading="lazy"
+                                >
+
+                                <div class="image-overlay">
+
+                                    <button
+                                        type="button"
+                                        class="delete-image-button"
+                                        data-delete-url="{% url 'delete_food_image' image.id %}"
+                                    >
+                                        🗑️ Delete Image
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div
+                                class="no-images"
+                                id="emptyImages"
+                            >
+                                No photos have been added to this listing yet.
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="photo-box">
+
+                        <div class="photo-icon">
+                            📸
+                        </div>
+
+                        <strong>
+                            Add more photos
+                        </strong>
+
+                        <span>
+                            Select additional photos. You can have a maximum of 10 photos total.
+                        </span>
+
+                        <input
+                            type="file"
+                            name="images"
+                            id="images"
+                            accept="image/*"
+                            multiple
+                        >
+
+                        <div
+                            class="image-limit-message"
+                            id="imageLimitMessage"
+                        ></div>
+
+                    </div>
+
+
+                    <div
+                        class="new-image-preview-section"
+                        id="newImagePreviewSection"
+                    >
+
+                        <p class="new-image-preview-title">
+                            New Photos Preview
+                        </p>
+
+                        <div
+                            class="new-image-previews"
+                            id="newImagePreviews"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LOCATION -->
+
+                <div class="form-section">
+
+                    <div class="form-section-header">
+
+                        <div class="section-icon">
+                            📍
+                        </div>
+
+                        <div>
+
+                            <h2 class="form-section-title">
+                                Location
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Update where buyers can find or collect the food.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group full">
+
+                            <label for="location">
+                                Location / City
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="location"
+                                name="location"
+                                value="{{ food.location }}"
+                                placeholder="e.g. Buea, Molyko"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ORDER OPTIONS -->
+
+                <div class="form-section">
+
+                    <div class="form-section-header">
+
+                        <div class="section-icon">
+                            🛍️
+                        </div>
+
+                        <div>
+
+                            <h2 class="form-section-title">
+                                Order Options
+                            </h2>
+
+                            <p class="form-section-subtitle">
+                                Choose how buyers can receive their order.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="checkbox-row">
+
+                        <label class="checkbox-option">
+
+                            <input
+                                type="checkbox"
+                                name="pickup_available"
+                                {% if food.pickup_available %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <span>
+                                Pickup Available
+                            </span>
+
+                        </label>
+
+
+                        <label class="checkbox-option">
+
+                            <input
+                                type="checkbox"
+                                name="delivery_available"
+                                {% if food.delivery_available %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <span>
+                                Delivery Available
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DELIVERY INFORMATION -->
+
+                <div class="form-section">
+
+                    <div class="form-group">
+
+                        <label for="delivery_information">
+                            Delivery Information
+                        </label>
+
+                        <textarea
+                            id="delivery_information"
+                            name="delivery_information"
+                            placeholder="Optional: Explain delivery areas, delivery fees, estimated time, etc."
+                        >{{ food.delivery_information }}</textarea>
+
+                        <span class="form-help">
+                            Optional. Add delivery areas, fees, estimated time, or any other useful details.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'food_detail' food_id=food.id %}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const editFoodForm = document.getElementById("editFoodForm");
+    const currentImages = document.getElementById("currentImages");
+    const imageInput = document.getElementById("images");
+    const previewSection = document.getElementById(
+        "newImagePreviewSection"
+    );
+    const previewContainer = document.getElementById(
+        "newImagePreviews"
+    );
+    const imageLimitMessage = document.getElementById(
+        "imageLimitMessage"
+    );
+
+    const maximumImages = 10;
+
+
+    function getCurrentImageCount() {
+        return currentImages.querySelectorAll(
+            ".current-image"
+        ).length;
+    }
+
+
+    function updateImageLimitMessage() {
+
+        const currentCount = getCurrentImageCount();
+
+        const remaining = Math.max(
+            0,
+            maximumImages - currentCount
+        );
+
+        if (remaining === 0) {
+
+            imageLimitMessage.textContent =
+                "You already have the maximum of 10 photos.";
+
+            imageInput.disabled = true;
+
+        } else {
+
+            imageLimitMessage.textContent =
+                `${currentCount} photo(s) uploaded. ` +
+                `${remaining} slot(s) remaining.`;
+
+            imageInput.disabled = false;
+        }
+    }
+
+
+    function createEmptyMessage() {
+
+        if (
+            !currentImages.querySelector(".current-image") &&
+            !document.getElementById("emptyImages")
+        ) {
+
+            const emptyMessage = document.createElement("div");
+
+            emptyMessage.className = "no-images";
+            emptyMessage.id = "emptyImages";
+
+            emptyMessage.textContent =
+                "No photos have been added to this listing yet.";
+
+            currentImages.appendChild(emptyMessage);
+        }
+    }
+
+
+    function removeEmptyMessage() {
+
+        const emptyMessage =
+            document.getElementById("emptyImages");
+
+        if (emptyMessage) {
+            emptyMessage.remove();
+        }
+    }
+
+
+    /* DELETE EXISTING FOOD IMAGE */
+
+    document.querySelectorAll(".delete-image-button")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                async function () {
+
+                    const confirmed = confirm(
+                        "Are you sure you want to delete this food image?"
+                    );
+
+                    if (!confirmed) {
+                        return;
+                    }
+
+                    const deleteUrl =
+                        this.dataset.deleteUrl;
+
+                    const card =
+                        this.closest(".current-image");
+
+                    this.disabled = true;
+                    this.textContent = "Deleting...";
+
+                    const csrfToken =
+                        editFoodForm.querySelector(
+                            "input[name='csrfmiddlewaretoken']"
+                        ).value;
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                deleteUrl,
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "X-CSRFToken": csrfToken,
+                                        "X-Requested-With": "XMLHttpRequest"
+                                    },
+
+                                    credentials: "same-origin"
+                                }
+                            );
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Image deletion failed."
+                            );
+                        }
+
+                        card.remove();
+
+                        createEmptyMessage();
+
+                        updateImageLimitMessage();
+
+                    } catch (error) {
+
+                        console.error(error);
+
+                        alert(
+                            "Unable to delete the image. Please try again."
+                        );
+
+                        this.disabled = false;
+
+                        this.textContent =
+                            "🗑️ Delete Image";
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* NEW IMAGE PREVIEW + 10 IMAGE LIMIT */
+
+    imageInput.addEventListener(
+        "change",
+        function () {
+
+            previewContainer.innerHTML = "";
+
+            previewSection.style.display = "none";
+
+            const currentCount =
+                getCurrentImageCount();
+
+            const selectedFiles =
+                Array.from(this.files);
+
+            const remainingSlots =
+                maximumImages - currentCount;
+
+
+            if (selectedFiles.length === 0) {
+
+                updateImageLimitMessage();
+
+                return;
+            }
+
+
+            if (remainingSlots <= 0) {
+
+                alert(
+                    "You already have 10 photos. Delete an existing photo before adding another."
+                );
+
+                this.value = "";
+
+                updateImageLimitMessage();
+
+                return;
+            }
+
+
+            if (selectedFiles.length > remainingSlots) {
+
+                alert(
+                    `You can only add ${remainingSlots} more photo(s).`
+                );
+
+                this.value = "";
+
+                updateImageLimitMessage();
+
+                return;
+            }
+
+
+            removeEmptyMessage();
+
+
+            selectedFiles.forEach(
+                function (file) {
+
+                    if (!file.type.startsWith("image/")) {
+                        return;
+                    }
+
+                    const reader =
+                        new FileReader();
+
+                    reader.onload =
+                        function (event) {
+
+                            const preview =
+                                document.createElement("div");
+
+                            preview.className =
+                                "new-image-preview";
+
+                            preview.innerHTML = `
+                                <img
+                                    src="${event.target.result}"
+                                    alt="New food photo"
+                                >
+                                <span class="new-image-label">
+                                    New
+                                </span>
+                            `;
+
+                            previewContainer.appendChild(
+                                preview
+                            );
+
+                            previewSection.style.display =
+                                "block";
+                        };
+
+                    reader.readAsDataURL(file);
+                }
+            );
+
+            imageLimitMessage.textContent =
+                `${currentCount + selectedFiles.length} photo(s) total after saving.`;
+
+        }
+    );
+
+
+    updateImageLimitMessage();
+
+});
+</script>
+
+{% endblock %}

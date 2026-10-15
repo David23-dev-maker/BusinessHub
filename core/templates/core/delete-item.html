@@ -1,0 +1,220 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Delete Item | BusinessHub
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+.delete-page {
+    max-width: 650px;
+    margin: 70px auto;
+    padding: 0 20px 70px;
+}
+
+.delete-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.delete-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #fef2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.delete-card h1 {
+    margin: 0 0 12px;
+    font-size: 28px;
+}
+
+.delete-card p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0 auto 25px;
+}
+
+.item-preview {
+    background: #f9fafb;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.item-preview-title {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.item-preview-price {
+    font-weight: 600;
+    color: #111827;
+}
+
+.item-preview-location {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.delete-warning {
+    color: #991b1b;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.delete-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.delete-button,
+.cancel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.delete-button {
+    border: none;
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.delete-button:hover {
+    background: #b91c1c;
+}
+
+.cancel-button {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.cancel-button:hover {
+    background: #e5e7eb;
+}
+
+@media (max-width: 600px) {
+
+    .delete-page {
+        margin-top: 35px;
+    }
+
+    .delete-card {
+        padding: 28px 20px;
+    }
+
+    .delete-actions {
+        flex-direction: column-reverse;
+    }
+
+    .delete-button,
+    .cancel-button {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="delete-page">
+
+
+<div class="delete-card">
+
+    <div class="delete-icon">
+        🗑️
+    </div>
+
+
+    <h1>
+        Delete Item?
+    </h1>
+
+
+    <p>
+        Are you sure you want to permanently delete this listing?
+        This action cannot be undone.
+    </p>
+
+
+    <div class="item-preview">
+
+        <div class="item-preview-title">
+            {{ item.title }}
+        </div>
+
+        <div class="item-preview-price">
+            {{ item.price|floatformat:0 }} FCFA
+        </div>
+
+        <div class="item-preview-location">
+            📍 {{ item.location }}
+        </div>
+
+    </div>
+
+
+    <div class="delete-warning">
+        ⚠️ This item and its listing images will be removed permanently.
+    </div>
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="delete-actions">
+
+            <a
+                href="{% url 'item_detail' item.id %}"
+                class="cancel-button"
+            >
+                Cancel
+            </a>
+
+
+            <button
+                type="submit"
+                class="delete-button"
+            >
+                Yes, Delete Item
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+</div>
+
+{% endblock %}

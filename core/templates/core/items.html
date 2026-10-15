@@ -1,0 +1,1326 @@
+
+{% extends "core/base.html" %}
+
+{% block title %}Items Marketplace | BusinessHub{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =====================================================
+       BUSINESSHUB ITEMS MARKETPLACE
+       Responsive marketplace styling
+    ===================================================== */
+
+    .items-page {
+        width: 100%;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 35px 20px 70px;
+        color: #111827;
+        box-sizing: border-box;
+    }
+
+    .items-page *,
+    .items-page *::before,
+    .items-page *::after {
+        box-sizing: border-box;
+    }
+
+    .items-page a {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .items-hero {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        padding: 44px;
+        margin-bottom: 28px;
+        border: 1px solid #e5e7eb;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #111827 0%, #1e293b 65%, #263c5a 100%);
+        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.09);
+    }
+
+    .items-hero::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        width: 300px;
+        height: 300px;
+        top: -155px;
+        right: -60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.045);
+        pointer-events: none;
+    }
+
+    .items-hero::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        width: 230px;
+        height: 230px;
+        right: 180px;
+        bottom: -180px;
+        border-radius: 50%;
+        background: rgba(96, 165, 250, 0.10);
+        pointer-events: none;
+    }
+
+    .items-hero-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+    }
+
+    .items-hero-text {
+        position: relative;
+        z-index: 1;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .items-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        margin-bottom: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #bfdbfe;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .items-hero h1 {
+        max-width: 720px;
+        margin: 0 0 14px;
+        color: #ffffff;
+        font-size: clamp(34px, 4.5vw, 48px);
+        font-weight: 850;
+        line-height: 1.12;
+        letter-spacing: -1.5px;
+        overflow-wrap: anywhere;
+    }
+
+    .items-hero h1 span {
+        color: #93c5fd;
+    }
+
+    .items-hero p {
+        max-width: 650px;
+        margin: 0 0 24px;
+        color: #cbd5e1;
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    /* =========================
+       SELL ITEM BUTTON
+    ========================= */
+
+    .sell-item-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 46px;
+        padding: 12px 19px;
+        border: 1px solid #ffffff;
+        border-radius: 11px;
+        background: #ffffff;
+        color: #111827;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.4;
+        text-align: center;
+        text-decoration: none;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .sell-item-button:hover {
+        transform: translateY(-2px);
+        border-color: #dbeafe;
+        background: #dbeafe;
+        color: #111827;
+    }
+
+    .sell-item-button:focus-visible {
+        outline: 3px solid #93c5fd;
+        outline-offset: 3px;
+    }
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    .items-search {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+        max-width: 850px;
+        margin-top: 30px;
+    }
+
+    .items-search input {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+        height: 51px;
+        padding: 0 17px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        outline: none;
+        background: #ffffff;
+        color: #111827;
+        font-family: inherit;
+        font-size: 14px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .items-search input::placeholder {
+        color: #94a3b8;
+    }
+
+    .items-search input:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    .items-search button {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        min-width: 112px;
+        min-height: 51px;
+        padding: 0 23px;
+        border: 1px solid #2563eb;
+        border-radius: 12px;
+        background: #2563eb;
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .items-search button:hover {
+        transform: translateY(-1px);
+        border-color: #1d4ed8;
+        background: #1d4ed8;
+    }
+
+    .items-search button:focus-visible {
+        outline: 3px solid #93c5fd;
+        outline-offset: 3px;
+    }
+
+    /* =========================
+       CATEGORY NAVIGATION
+    ========================= */
+
+    .items-category-section {
+        margin-bottom: 30px;
+    }
+
+    .items-category-heading {
+        margin: 0 0 12px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+    }
+
+    .items-category-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        width: 100%;
+        overflow-x: auto;
+        padding: 3px 2px 12px;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .items-category-row a {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: 9px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.4;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .items-category-row a:hover {
+        border-color: #93c5fd;
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .items-category-row a.active {
+        border-color: #111827;
+        background: #111827;
+        color: #ffffff;
+    }
+
+    .items-category-row a:focus-visible {
+        outline: 3px solid #93c5fd;
+        outline-offset: 2px;
+    }
+
+    /* =========================
+       RESULTS TOOLBAR
+    ========================= */
+
+    .items-toolbar {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 21px;
+    }
+
+    .items-toolbar-heading {
+        min-width: 0;
+    }
+
+    .items-toolbar-eyebrow {
+        display: block;
+        margin-bottom: 5px;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+    }
+
+    .items-toolbar h2 {
+        margin: 0;
+        color: #111827;
+        font-size: 27px;
+        font-weight: 850;
+        line-height: 1.25;
+        letter-spacing: -0.7px;
+        overflow-wrap: anywhere;
+    }
+
+    .items-count {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 7px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* =========================
+       ITEMS GRID
+    ========================= */
+
+    .items-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: stretch;
+        gap: 21px;
+        width: 100%;
+    }
+
+    /* =========================
+       ITEM CARD
+    ========================= */
+
+    .item-card {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.045);
+        transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .item-card:hover {
+        transform: translateY(-4px);
+        border-color: #cbd5e1;
+        box-shadow: 0 15px 34px rgba(15, 23, 42, 0.10);
+    }
+
+    /* =========================
+       ITEM IMAGE
+    ========================= */
+
+    .item-image {
+        position: relative;
+        width: 100%;
+        height: 215px;
+        overflow: hidden;
+        background: #f1f5f9;
+    }
+
+    .item-image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .item-card:hover .item-image img {
+        transform: scale(1.04);
+    }
+
+    .no-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        color: #94a3b8;
+        font-size: 42px;
+    }
+
+    /* =========================
+       PROMOTION BADGES
+       Existing owner-only visibility preserved
+    ========================= */
+
+    .promotion-badges {
+        position: absolute;
+        z-index: 2;
+        top: 11px;
+        left: 11px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-width: calc(100% - 22px);
+    }
+
+    .promotion-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 9px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 999px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        font-size: 10px;
+        font-weight: 850;
+        line-height: 1.3;
+    }
+
+    .promotion-badge.boosted {
+        background: #fff3cd;
+        color: #8a5a00;
+    }
+
+    .promotion-badge.featured {
+        background: #eee8ff;
+        color: #5b2ca0;
+    }
+
+    /* =========================
+       ITEM CARD BODY
+    ========================= */
+
+    .item-body {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-width: 0;
+        padding: 16px;
+    }
+
+    .item-title {
+        display: -webkit-box;
+        min-height: 42px;
+        margin: 0 0 9px;
+        overflow: hidden;
+        color: #111827;
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .item-price {
+        margin-bottom: 12px;
+        color: #2563eb;
+        font-size: 20px;
+        font-weight: 850;
+        line-height: 1.25;
+        letter-spacing: -0.5px;
+        overflow-wrap: anywhere;
+    }
+
+    .item-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        padding: 6px 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 7px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 10px;
+        font-weight: 750;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+    }
+
+    .item-location {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        min-width: 0;
+        margin-bottom: 15px;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    /* =========================
+       PROMOTION STATUS
+    ========================= */
+
+    .boost-status {
+        margin-bottom: 11px;
+        padding: 10px;
+        border: 1px solid #fde68a;
+        border-radius: 9px;
+        background: #fffbeb;
+        color: #92400e;
+        font-size: 10px;
+        font-weight: 750;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .featured-status {
+        margin-bottom: 11px;
+        padding: 10px;
+        border: 1px solid #ddd6fe;
+        border-radius: 9px;
+        background: #f5f3ff;
+        color: #5b21b6;
+        font-size: 10px;
+        font-weight: 750;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    /* =========================
+       PROMOTION BUTTONS
+    ========================= */
+
+    .boost-button,
+    .feature-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+        padding: 10px 9px;
+        margin-bottom: 9px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.45;
+        text-align: center;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .boost-button {
+        background: linear-gradient(135deg, #f59e0b, #ea580c);
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.16);
+    }
+
+    .boost-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 16px rgba(234, 88, 12, 0.23);
+        color: #ffffff;
+    }
+
+    .feature-button {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        box-shadow: 0 4px 12px rgba(109, 40, 217, 0.16);
+    }
+
+    .feature-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 16px rgba(109, 40, 217, 0.23);
+        color: #ffffff;
+    }
+
+    .boost-button:focus-visible,
+    .feature-button:focus-visible,
+    .view-button:focus-visible {
+        outline: 3px solid #93c5fd;
+        outline-offset: 2px;
+    }
+
+    /* =========================
+       VIEW ITEM BUTTON
+    ========================= */
+
+    .view-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 43px;
+        margin-top: auto;
+        padding: 11px 12px;
+        border: 1px solid #111827;
+        border-radius: 10px;
+        background: #111827;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.4;
+        text-align: center;
+        text-decoration: none;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .view-button:hover {
+        border-color: #2563eb;
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    /* =========================
+       EMPTY STATE
+    ========================= */
+
+    .empty {
+        padding: 62px 25px;
+        border: 1px solid #e5e7eb;
+        border-radius: 21px;
+        background: #ffffff;
+        box-shadow: 0 8px 26px rgba(15, 23, 42, 0.035);
+        color: #64748b;
+        text-align: center;
+    }
+
+    .empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 19px;
+        background: #f1f5f9;
+        font-size: 30px;
+    }
+
+    .empty h3 {
+        margin: 0 0 9px;
+        color: #111827;
+        font-size: 22px;
+        font-weight: 850;
+        line-height: 1.4;
+    }
+
+    .empty p {
+        max-width: 420px;
+        margin: 0 auto;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* =========================
+       TABLETS
+    ========================= */
+
+    @media (max-width: 1050px) {
+        .items-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .items-hero {
+            padding: 37px;
+        }
+
+        .item-image {
+            height: 195px;
+        }
+
+        .item-body {
+            padding: 14px;
+        }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 700px) {
+        .items-page {
+            padding: 24px 14px 50px;
+        }
+
+        .items-hero {
+            padding: 30px 22px;
+            margin-bottom: 23px;
+            border-radius: 21px;
+        }
+
+        .items-hero-content {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .items-eyebrow {
+            margin-bottom: 14px;
+            font-size: 10px;
+        }
+
+        .items-hero h1 {
+            font-size: clamp(30px, 7vw, 37px);
+            letter-spacing: -1px;
+        }
+
+        .items-hero p {
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .sell-item-button {
+            width: 100%;
+        }
+
+        .items-search {
+            flex-direction: column;
+            gap: 9px;
+            margin-top: 22px;
+        }
+
+        .items-search input {
+            width: 100%;
+            height: 48px;
+        }
+
+        .items-search button {
+            width: 100%;
+            min-height: 46px;
+        }
+
+        .items-category-section {
+            margin-bottom: 24px;
+        }
+
+        .items-category-row {
+            gap: 8px;
+        }
+
+        .items-category-row a {
+            min-height: 37px;
+            padding: 8px 13px;
+            font-size: 12px;
+        }
+
+        .items-toolbar {
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .items-toolbar h2 {
+            font-size: 23px;
+        }
+
+        .items-count {
+            min-height: 30px;
+            padding: 6px 9px;
+            font-size: 11px;
+        }
+
+        .items-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px;
+        }
+
+        .item-card {
+            border-radius: 15px;
+        }
+
+        .item-image {
+            height: auto;
+            aspect-ratio: 1 / 1;
+        }
+
+        .item-body {
+            padding: 12px;
+        }
+
+        .item-title {
+            min-height: 39px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .item-price {
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
+
+        .item-meta {
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            padding: 5px 6px;
+            font-size: 10px;
+        }
+
+        .item-location {
+            margin-bottom: 12px;
+            font-size: 11px;
+        }
+
+        .promotion-badges {
+            top: 8px;
+            left: 8px;
+            gap: 5px;
+            max-width: calc(100% - 16px);
+        }
+
+        .promotion-badge {
+            padding: 5px 7px;
+            font-size: 9px;
+        }
+
+        .boost-button,
+        .feature-button {
+            min-height: 40px;
+            padding: 9px 6px;
+            font-size: 10px;
+        }
+
+        .view-button {
+            min-height: 41px;
+            padding: 9px 7px;
+            font-size: 11px;
+        }
+
+        .boost-status,
+        .featured-status {
+            padding: 8px;
+            font-size: 10px;
+        }
+
+        .empty {
+            padding: 42px 18px;
+        }
+
+        .empty h3 {
+            font-size: 20px;
+        }
+
+        .empty p {
+            font-size: 13px;
+        }
+    }
+
+    /* =========================
+       SMALL PHONES
+    ========================= */
+
+    @media (max-width: 430px) {
+        .items-page {
+            padding-right: 11px;
+            padding-left: 11px;
+        }
+
+        .items-hero {
+            padding: 25px 17px;
+            border-radius: 18px;
+        }
+
+        .items-hero h1 {
+            font-size: 30px;
+        }
+
+        .items-hero p {
+            font-size: 13px;
+        }
+
+        .items-toolbar {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .items-toolbar h2 {
+            font-size: 22px;
+        }
+
+        .items-grid {
+            gap: 10px;
+        }
+
+        .item-body {
+            padding: 10px;
+        }
+
+        .item-title {
+            font-size: 13px;
+        }
+
+        .item-price {
+            font-size: 16px;
+        }
+
+        .badge {
+            font-size: 9px;
+        }
+
+        .item-location {
+            font-size: 10px;
+        }
+
+        .boost-button,
+        .feature-button {
+            font-size: 9px;
+        }
+
+        .view-button {
+            font-size: 10px;
+        }
+    }
+
+    /* =========================
+       VERY NARROW PHONES
+    ========================= */
+
+    @media (max-width: 340px) {
+        .items-page {
+            padding-right: 9px;
+            padding-left: 9px;
+        }
+
+        .items-grid {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 15px;
+        }
+
+        .item-image {
+            aspect-ratio: 4 / 3;
+        }
+
+        .item-body {
+            padding: 14px;
+        }
+
+        .item-title {
+            min-height: 0;
+            font-size: 16px;
+        }
+
+        .item-price {
+            font-size: 19px;
+        }
+
+        .item-location {
+            font-size: 12px;
+        }
+
+        .boost-button,
+        .feature-button,
+        .view-button {
+            font-size: 12px;
+        }
+    }
+
+    /* =========================
+       REDUCED MOTION
+    ========================= */
+
+    @media (prefers-reduced-motion: reduce) {
+        .items-page *,
+        .items-page *::before,
+        .items-page *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+</style>
+
+<div class="items-page">
+
+    <!-- HERO -->
+
+    <section class="items-hero">
+
+        <div class="items-hero-content">
+
+            <div class="items-hero-text">
+
+                <div class="items-eyebrow">
+                    🛍️ BusinessHub Marketplace
+                </div>
+
+                <h1>
+                    Find what you need.
+                </h1>
+
+                <p>
+                    Discover electronics, fashion, vehicles,
+                    furniture, games and more from people
+                    selling around you.
+                </p>
+
+                <a href="{% url 'sell_item' %}" class="sell-item-button">
+                    ＋ Sell an Item
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- SEARCH -->
+
+        <form
+            method="GET"
+            action="{% url 'items_marketplace' %}"
+            class="items-search"
+        >
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search for phones, laptops, clothes, cars..."
+                aria-label="Search items"
+            >
+
+            {% if selected_category %}
+                <input
+                    type="hidden"
+                    name="category"
+                    value="{{ selected_category }}"
+                >
+            {% endif %}
+
+            <button type="submit">
+                Search
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- CATEGORIES -->
+
+    <section class="items-category-section" aria-label="Item categories">
+
+        <div class="items-category-heading">
+            Browse categories
+        </div>
+
+        <nav class="items-category-row">
+
+            <a
+                href="{% url 'items_marketplace' %}"
+                class="{% if not selected_category %}active{% endif %}"
+            >
+                All Items
+            </a>
+
+            {% for value, label in categories %}
+                <a
+                    href="?category={{ value }}"
+                    class="{% if selected_category == value %}active{% endif %}"
+                >
+                    {{ label }}
+                </a>
+            {% endfor %}
+
+        </nav>
+
+    </section>
+
+    <!-- TOOLBAR -->
+
+    <div class="items-toolbar">
+
+        <div class="items-toolbar-heading">
+
+            <span class="items-toolbar-eyebrow">
+                BusinessHub Marketplace
+            </span>
+
+            <h2>
+
+                {% if selected_category %}
+
+                    {% for value, label in categories %}
+                        {% if value == selected_category %}
+                            {{ label }}
+                        {% endif %}
+                    {% endfor %}
+
+                {% elif query %}
+
+                    Search results
+
+                {% else %}
+
+                    Latest Items
+
+                {% endif %}
+
+            </h2>
+
+        </div>
+
+        <span class="items-count">
+            {{ items|length }}
+            item{{ items|length|pluralize }}
+        </span>
+
+    </div>
+
+    <!-- ITEMS -->
+
+    {% if items %}
+
+        <div class="items-grid">
+
+            {% for item in items %}
+
+                <article class="item-card">
+
+                    <div class="item-image">
+
+                        {% with image=item.images.all|first %}
+
+                            {% if image %}
+
+                                <img
+                                    src="{{ image.image.url }}"
+                                    alt="{{ item.title }}"
+                                    loading="lazy"
+                                >
+
+                            {% else %}
+
+                                <div class="no-image" aria-label="No image available">
+                                    📦
+                                </div>
+
+                            {% endif %}
+
+                        {% endwith %}
+
+                        <!-- OWNER-ONLY PROMOTION BADGES -->
+
+                        {% if item.seller == request.user %}
+
+                            {% if item.active_boost or item.active_featured %}
+
+                                <div class="promotion-badges">
+
+                                    {% if item.active_boost %}
+                                        <span class="promotion-badge boosted">
+                                            🚀 Boosted
+                                        </span>
+                                    {% endif %}
+
+                                    {% if item.active_featured %}
+                                        <span class="promotion-badge featured">
+                                            ⭐ Featured
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="item-body">
+
+                        <h3 class="item-title">
+                            {{ item.title }}
+                        </h3>
+
+                        <div class="item-price">
+                            {{ item.price|floatformat:0 }} FCFA
+                        </div>
+
+                        <div class="item-meta">
+
+                            <span class="badge">
+                                {{ item.get_condition_display }}
+                            </span>
+
+                            {% if item.negotiable %}
+                                <span class="badge">
+                                    Negotiable
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="item-location">
+                            <span aria-hidden="true">📍</span>
+                            <span>{{ item.location }}</span>
+                        </div>
+
+                        <!-- OWNER-ONLY PROMOTION CONTROLS -->
+
+                        {% if item.seller == request.user %}
+
+                            {% if item.active_featured %}
+
+                                <div class="featured-status">
+                                    ⭐ Featured until
+                                    {{ item.active_featured.expiry_date|date:"M d, Y H:i" }}
+                                </div>
+
+                            {% else %}
+
+                                {% if item.active_boost %}
+                                    <div class="boost-status">
+                                        🚀 Boosted until
+                                        {{ item.active_boost.expiry_date|date:"M d, Y H:i" }}
+                                    </div>
+                                {% endif %}
+
+                            {% endif %}
+
+                            {% if not item.active_boost %}
+
+                                <a
+                                    href="{% url 'boost_item' item.id %}"
+                                    class="boost-button"
+                                >
+                                    {% if free_launch %}
+                                        🚀 Boost Item — FREE
+                                    {% else %}
+                                        🚀 Boost Item — 100 XAF
+                                    {% endif %}
+                                </a>
+
+                            {% endif %}
+
+                            {% if not item.active_featured %}
+
+                                <a
+                                    href="{% url 'feature_item' item.id %}"
+                                    class="feature-button"
+                                >
+                                    {% if free_launch %}
+                                        ⭐ Feature Item — FREE
+                                    {% else %}
+                                        ⭐ Feature Item — 1,000 XAF
+                                    {% endif %}
+                                </a>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                        <a
+                            href="{% url 'item_detail' item.id %}"
+                            class="view-button"
+                        >
+                            View Item
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                🔎
+            </div>
+
+            <h3>
+                No items found
+            </h3>
+
+            <p>
+                Try another search or category to discover available items.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

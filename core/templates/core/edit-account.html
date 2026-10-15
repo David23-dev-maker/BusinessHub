@@ -1,0 +1,247 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}
+BusinessHub — Edit Profile
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/account-premium.css' %}"
+>
+{% endblock %}
+
+
+{% block content %}
+
+<section class="account-form-page">
+
+    <div class="account-form-container">
+
+
+        <a
+            href="{% url 'account' %}"
+            class="account-back-link"
+        >
+            ← Back to Account
+        </a>
+
+
+        <div class="account-form-header">
+
+            <span class="account-eyebrow">
+                Profile settings
+            </span>
+
+            <h1>
+                Edit your profile
+            </h1>
+
+            <p>
+                Update the information associated with your
+                BusinessHub account.
+            </p>
+
+        </div>
+
+
+        {% if error %}
+
+            <div class="account-form-error">
+
+                <span>!</span>
+
+                {{ error }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="account-form-card">
+
+
+            <div class="account-form-profile">
+
+                <div class="account-form-avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ user.username }}
+                    </strong>
+
+                    <span>
+                        BusinessHub account
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="account-form-divider"></div>
+
+
+            <form
+                method="POST"
+                class="profile-form"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="form-section-title">
+
+                    <span>
+                        Personal information
+                    </span>
+
+                    <small>
+                        This information appears on your account.
+                    </small>
+
+                </div>
+
+
+                <div class="form-row">
+
+
+                    <div class="account-form-group">
+
+                        <label for="first_name">
+                            First name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="first_name"
+                            name="first_name"
+                            value="{{ form_first_name|default:user.first_name }}"
+                            placeholder="Your first name"
+                        >
+
+                    </div>
+
+
+                    <div class="account-form-group">
+
+                        <label for="last_name">
+                            Last name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="last_name"
+                            name="last_name"
+                            value="{{ form_last_name|default:user.last_name }}"
+                            placeholder="Your last name"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="{{ form_username|default:user.username }}"
+                        autocomplete="username"
+                        required
+                    >
+
+                    <span class="form-help">
+                        Your username is used when you sign in.
+                    </span>
+
+                </div>
+
+
+                <div class="account-form-group">
+
+                    <label for="email">
+                        Email address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ form_email|default:user.email }}"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                    >
+
+                    <span class="form-help">
+                        We'll use this address for your BusinessHub account.
+                    </span>
+
+                </div>
+
+
+                <div class="account-form-actions">
+
+                    <a
+                        href="{% url 'account' %}"
+                        class="account-cancel-button"
+                    >
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="account-save-button"
+                    >
+                        Save Changes
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <div class="account-form-security">
+
+            <div class="security-small-icon">
+                🔒
+            </div>
+
+            <div>
+
+                <strong>
+                    Looking to change your password?
+                </strong>
+
+                <span>
+                    You can update your password separately
+                    without changing your profile information.
+                </span>
+
+            </div>
+
+            <a href="{% url 'change_password' %}">
+                Change Password →
+            </a>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+{% endblock %}
