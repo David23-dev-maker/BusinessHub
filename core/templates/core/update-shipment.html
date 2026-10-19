@@ -1,0 +1,65 @@
+{% extends "core/base.html" %}
+
+{% block title %}Update Shipment | BusinessHub{% endblock %}
+
+{% block content %}
+
+<div style="max-width:700px;margin:35px auto;padding:20px;">
+
+
+<h1>Update Shipment</h1>
+
+<p>
+    Tracking number:
+    <strong>{{ package.tracking_number }}</strong>
+</p>
+
+<p>
+    Receiver: {{ package.receiver_name }}<br>
+    Destination: {{ package.destination }}
+</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div style="margin-bottom:18px;">
+        <label for="status">Shipment status</label>
+
+        <select id="status"
+                name="status"
+                required
+                style="display:block;width:100%;padding:12px;margin-top:6px;">
+            {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if package.status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <label for="current_location">Current location</label>
+
+        <input id="current_location"
+               name="current_location"
+               type="text"
+               maxlength="255"
+               value="{{ package.current_location }}"
+               required
+               style="display:block;width:100%;box-sizing:border-box;padding:12px;margin-top:6px;">
+    </div>
+
+    <button type="submit"
+            style="background:#111827;color:white;border:0;padding:13px 20px;border-radius:8px;cursor:pointer;">
+        Save Update
+    </button>
+
+    <a href="{% url 'my_shipments' %}" style="margin-left:12px;">
+        Cancel
+    </a>
+</form>
+
+
+</div>
+{% endblock %}

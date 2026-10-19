@@ -1710,7 +1710,7 @@ display: none !important;
     const statusElement = document.getElementById("chatUserStatus");
     const updatePresenceUrl = "{% url 'update_presence' %}";
 
-    let presenceInterval = null;
+    
     let heartbeatInterval = null;
 
     // Read Django's CSRF cookie for authenticated POST requests.

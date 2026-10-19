@@ -1,0 +1,88 @@
+{% extends "core/base.html" %}
+
+{% block title %}Create Shipment | BusinessHub{% endblock %}
+
+{% block content %}
+<div style="max-width:700px;margin:35px auto;padding:20px;">
+
+    <h1>Create a Shipment</h1>
+    <p>Enter the shipment details to generate a tracking number.</p>
+
+    {% if errors %}
+        <div style="background:#fee2e2;color:#991b1b;padding:15px;border-radius:8px;margin:20px 0;">
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="margin-bottom:16px;">
+            <label for="sender_name">Sender's name</label>
+            <input id="sender_name"
+                   name="sender_name"
+                   type="text"
+                   maxlength="200"
+                   value="{{ form_data.sender_name|default:'' }}"
+                   required
+                   style="display:block;width:100%;box-sizing:border-box;padding:12px;margin-top:6px;">
+        </div>
+
+        <div style="margin-bottom:16px;">
+            <label for="receiver_name">Receiver's name</label>
+            <input id="receiver_name"
+                   name="receiver_name"
+                   type="text"
+                   maxlength="200"
+                   value="{{ form_data.receiver_name|default:'' }}"
+                   required
+                   style="display:block;width:100%;box-sizing:border-box;padding:12px;margin-top:6px;">
+        </div>
+
+        <div style="margin-bottom:16px;">
+            <label for="receiver_phone">Receiver's phone number</label>
+            <input id="receiver_phone"
+                   name="receiver_phone"
+                   type="tel"
+                   maxlength="50"
+                   value="{{ form_data.receiver_phone|default:'' }}"
+                   required
+                   style="display:block;width:100%;box-sizing:border-box;padding:12px;margin-top:6px;">
+        </div>
+
+        <div style="margin-bottom:16px;">
+            <label for="origin">Origin</label>
+            <input id="origin"
+                   name="origin"
+                   type="text"
+                   maxlength="255"
+                   value="{{ form_data.origin|default:'' }}"
+                   required
+                   style="display:block;width:100%;box-sizing:border-box;padding:12px;margin-top:6px;">
+        </div>
+
+        <div style="margin-bottom:20px;">
+            <label for="destination">Destination</label>
+            <input id="destination"
+                   name="destination"
+                   type="text"
+                   maxlength="255"
+                   value="{{ form_data.destination|default:'' }}"
+                   required
+                   style="display:block;width:100%;box-sizing:border-box;padding:12px;margin-top:6px;">
+        </div>
+
+        <button type="submit"
+                style="background:#111827;color:white;border:0;padding:13px 20px;border-radius:8px;cursor:pointer;">
+            Create Shipment
+        </button>
+
+        <a href="{% url 'my_shipments' %}" style="margin-left:12px;">
+            Cancel
+        </a>
+    </form>
+
+</div>
+{% endblock %}

@@ -30,6 +30,8 @@ from .models import (
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.utils.crypto import get_random_string
 from django.contrib.auth.models import User
 from django.contrib.auth import update_session_auth_hash
 from django.utils import timezone
@@ -4876,16 +4878,7 @@ def messages_inbox(request):
         | DOCUMENT_EXTENSIONS
     )
 
-    # ---------------------------------------------------------
-    # UPDATE CURRENT USER PRESENCE
-    # ---------------------------------------------------------
-    UserPresence.objects.update_or_create(
-        user=request.user,
-        defaults={
-            "is_online": True,
-            "last_seen": timezone.now(),
-        },
-    )
+    
 
     # ---------------------------------------------------------
     # GET CONVERSATIONS AVAILABLE TO THE CURRENT USER
@@ -5576,15 +5569,10 @@ def conversation_detail(
         }
     )
 
-
 @login_required
 def conversation_messages_api(request, conversation_id):
-    from django.db.models import Q
     from django.http import JsonResponse
 
-    # ---------------------------------------------------------
-    # FIND THE CONVERSATION
-    # ---------------------------------------------------------
     conversation = get_object_or_404(
         Conversation.objects.select_related(
             "business",
@@ -5596,9 +5584,7 @@ def conversation_messages_api(request, conversation_id):
         id=conversation_id,
     )
 
-    # ---------------------------------------------------------
-    # VERIFY CONVERSATION ACCESS
-    # ---------------------------------------------------------
+    # Verify conversation access.
     allowed = (
         conversation.customer_id == request.user.id
         or conversation.seller_id == request.user.id
@@ -5622,11 +5608,10 @@ def conversation_messages_api(request, conversation_id):
             status=403,
         )
 
-    # ---------------------------------------------------------
-    # LOAD MESSAGES
-    # ---------------------------------------------------------
+    # Load messages.
     messages_list = (
-        conversation.messages.select_related("sender")
+        conversation.messages
+        .select_related("sender")
         .order_by("created_at", "id")
     )
 
@@ -5647,20 +5632,16 @@ def conversation_messages_api(request, conversation_id):
             }
         )
 
-    # ---------------------------------------------------------
-    # MARK INCOMING MESSAGES AS READ
-    # ---------------------------------------------------------
-    conversation.messages.filter(
+    # Only update the database when unread incoming messages exist.
+    unread_messages = conversation.messages.filter(
         is_read=False
     ).exclude(
-        sender=request.user
-    ).update(
-        is_read=True
+        sender_id=request.user.id
     )
 
-    # ---------------------------------------------------------
-    # RETURN MESSAGES
-    # ---------------------------------------------------------
+    if unread_messages.exists():
+        unread_messages.update(is_read=True)
+
     return JsonResponse(
         {
             "success": True,
@@ -6088,3 +6069,310 @@ def message_attachment(request, message_id):
         )
 
     return response
+# ============================================================
+# SELLER SHIPMENT MANAGEMENT
+# ============================================================
+
+@login_required
+def my_shipments(request):
+    """
+    Display only the shipments created by the logged-in user.
+    """
+
+    packages = Package.objects.filter(
+        created_by=request.user
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "core/my-shipments.html",
+        {
+            "packages": packages,
+        }
+    )
+
+
+@login_required
+def create_shipment(request):
+ """
+ Allow a logged-in seller to create a shipment.
+ Automatically geocode origin, destination, and initial location.
+ """
+
+
+ if request.method == "POST":
+     sender_name = request.POST.get("sender_name", "").strip()
+     receiver_name = request.POST.get("receiver_name", "").strip()
+     receiver_phone = request.POST.get("receiver_phone", "").strip()
+     origin = request.POST.get("origin", "").strip()
+     destination = request.POST.get("destination", "").strip()
+
+     errors = []
+
+     if not sender_name:
+         errors.append("Enter the sender's name.")
+
+     if not receiver_name:
+         errors.append("Enter the receiver's name.")
+
+     if not receiver_phone:
+         errors.append("Enter the receiver's phone number.")
+
+     if not origin:
+         errors.append("Enter the shipment origin.")
+
+     if not destination:
+         errors.append("Enter the destination.")
+
+     if errors:
+         return render(
+             request,
+             "core/create-shipment.html",
+             {
+                 "errors": errors,
+                 "form_data": request.POST,
+             },
+         )
+
+     # Generate a unique tracking number.
+     for _ in range(10):
+         tracking_number = "BH-" + get_random_string(
+             8,
+             allowed_chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
+         )
+
+         if not Package.objects.filter(
+             tracking_number=tracking_number
+         ).exists():
+             break
+     else:
+         return render(
+             request,
+             "core/create-shipment.html",
+             {
+                 "errors": [
+                     "We could not generate a tracking number. "
+                     "Please try again."
+                 ],
+                 "form_data": request.POST,
+             },
+         )
+
+     # Convert an address into coordinates.
+     def geocode_address(address):
+         try:
+             geolocator = Nominatim(
+                 user_agent="businesshub_tracking",
+                 timeout=10,
+             )
+
+             location_data = geolocator.geocode(
+                 address,
+                 exactly_one=True,
+                 language="en",
+             )
+
+             if location_data:
+                 return (
+                     float(location_data.latitude),
+                     float(location_data.longitude),
+                 )
+
+         except Exception as error:
+             print(
+                 f"BusinessHub shipment geocoding error "
+                 f"for {address!r}: {error}"
+             )
+
+         return None, None
+
+     # Geocode the starting point and destination independently.
+     origin_latitude, origin_longitude = geocode_address(origin)
+     destination_latitude, destination_longitude = geocode_address(
+         destination
+     )
+
+     # Create the shipment even if a geocoding service is temporarily
+     # unavailable. Missing coordinates can be filled in later.
+     package = Package.objects.create(
+         tracking_number=tracking_number,
+         sender_name=sender_name,
+         receiver_name=receiver_name,
+         receiver_phone=receiver_phone,
+         origin=origin,
+         destination=destination,
+         status="received",
+         current_location=origin,
+         latitude=origin_latitude,
+         longitude=origin_longitude,
+         destination_latitude=destination_latitude,
+         destination_longitude=destination_longitude,
+         created_by=request.user,
+     )
+
+     # Record the initial tracking event with the origin coordinates.
+     TrackingUpdate.objects.create(
+         package=package,
+         status=package.status,
+         location=origin,
+         latitude=origin_latitude,
+         longitude=origin_longitude,
+         description=(
+             "Shipment created by its seller and registered "
+             "on BusinessHub."
+         ),
+     )
+
+     messages.success(
+         request,
+         f"Shipment created successfully. Tracking number: "
+         f"{package.tracking_number}",
+     )
+
+     return redirect("my_shipments")
+
+ return render(
+     request,
+     "core/create-shipment.html",
+     {"form_data": {}},
+ )
+
+
+@login_required
+def update_shipment(request, package_id):
+    package = get_object_or_404(
+        Package,
+        pk=package_id,
+        created_by=request.user,
+    )
+
+    if request.method == "POST":
+        status = request.POST.get("status", "").strip()
+        location = request.POST.get("current_location", "").strip()
+
+        valid_statuses = dict(Package.STATUS_CHOICES)
+        errors = []
+
+        if status not in valid_statuses:
+            errors.append("Please select a valid shipment status.")
+
+        if not location:
+            errors.append("Please enter the current shipment location.")
+
+        if errors:
+            return render(
+                request,
+                "core/update-shipment.html",
+                {
+                    "package": package,
+                    "status_choices": Package.STATUS_CHOICES,
+                    "errors": errors,
+                },
+            )
+
+        old_status = package.status
+        old_location = package.current_location
+
+        # Preserve existing coordinates unless the location changes.
+        latitude = package.latitude
+        longitude = package.longitude
+
+        if location != old_location:
+            try:
+                geolocator = Nominatim(
+                    user_agent="businesshub_tracking",
+                    timeout=10,
+                )
+
+                result = geolocator.geocode(
+                    location,
+                    exactly_one=True,
+                    language="en",
+                )
+
+                if result:
+                    latitude = float(result.latitude)
+                    longitude = float(result.longitude)
+
+            except Exception as error:
+                print(
+                    f"Shipment location geocoding error: {error}"
+                )
+
+        package.status = status
+        package.current_location = location
+        package.latitude = latitude
+        package.longitude = longitude
+
+        # Do not modify destination_latitude or destination_longitude.
+        package.save(
+            update_fields=[
+                "status",
+                "current_location",
+                "latitude",
+                "longitude",
+            ]
+        )
+
+        if old_status != package.status or old_location != package.current_location:
+            TrackingUpdate.objects.create(
+                package=package,
+                status=package.status,
+                location=package.current_location,
+                latitude=package.latitude,
+                longitude=package.longitude,
+                description=(
+                    f"Shipment updated by its seller. "
+                    f"Status: {package.get_status_display()}. "
+                    f"Location: {package.current_location}."
+                ),
+            )
+
+            if old_status != package.status:
+                create_tracking_notification(
+                    package,
+                    "Shipment status updated",
+                    (
+                        f"Shipment {package.tracking_number} is now "
+                        f"{package.get_status_display()}."
+                    ),
+                )
+
+        messages.success(
+            request,
+            "Shipment updated successfully.",
+        )
+
+        return redirect("my_shipments")
+
+    return render(
+        request,
+        "core/update-shipment.html",
+        {
+            "package": package,
+            "status_choices": Package.STATUS_CHOICES,
+        },
+    )
+
+
+@login_required
+@require_POST
+def delete_shipment(request, package_id):
+    package = get_object_or_404(
+        Package,
+        pk=package_id,
+        created_by=request.user,
+    )
+
+    tracking_number = package.tracking_number
+    package.delete()
+
+    messages.success(
+        request,
+        f"Shipment {tracking_number} was deleted successfully.",
+    )
+
+    return redirect("my_shipments")
+
+
+

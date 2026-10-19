@@ -194,7 +194,30 @@ path(
     views.message_food_seller,
     name="message_food_seller",
 ),
+# ============================================================
+# SELLER SHIPMENT MANAGEMENT
+# ============================================================
 
+path(
+    "my-shipments/",
+    views.my_shipments,
+    name="my_shipments",
+),
+path(
+    "shipments/create/",
+    views.create_shipment,
+    name="create_shipment",
+),
+path(
+    "shipments/<int:package_id>/update/",
+    views.update_shipment,
+    name="update_shipment",
+),
+path(
+    "shipments/<int:package_id>/delete/",
+    views.delete_shipment,
+    name="delete_shipment",
+),
 # ============================================================
 # TRACKING APIs
 # ============================================================

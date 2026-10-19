@@ -1,0 +1,96 @@
+{% extends "core/base.html" %}
+
+{% block title %}My Shipments | BusinessHub{% endblock %}
+
+{% block content %}
+<div style="max-width:1100px;margin:35px auto;padding:20px;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;">
+        <div>
+            <h1>My Shipments</h1>
+            <p>Manage your deliveries and tracking numbers.</p>
+        </div>
+
+        <a href="{% url 'create_shipment' %}"
+           style="background:#111827;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;">
+            + Create Shipment
+        </a>
+    </div>
+
+    {% if packages %}
+        <div style="overflow-x:auto;margin-top:25px;">
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="text-align:left;background:#f3f4f6;">
+                        <th style="padding:12px;">Tracking Number</th>
+                        <th style="padding:12px;">Receiver</th>
+                        <th style="padding:12px;">Destination</th>
+                        <th style="padding:12px;">Status</th>
+                        <th style="padding:12px;">Created</th>
+                        <th style="padding:12px;">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for package in packages %}
+                        <tr style="border-bottom:1px solid #e5e7eb;">
+                            <td style="padding:12px;">
+                                <strong>{{ package.tracking_number }}</strong>
+                            </td>
+
+                            <td style="padding:12px;">
+                                {{ package.receiver_name }}
+                            </td>
+
+                            <td style="padding:12px;">
+                                {{ package.destination }}
+                            </td>
+
+                            <td style="padding:12px;">
+                                {{ package.get_status_display }}
+                            </td>
+
+                            <td style="padding:12px;">
+                                {{ package.created_at|date:"d M Y" }}
+                            </td>
+
+                            <td style="padding:12px;">
+                                <a href="{% url 'tracking' %}?tracking_number={{ package.tracking_number }}">
+                                    Track
+                                </a>
+
+                                |
+
+                                <a href="{% url 'update_shipment' package.id %}">
+                                    Update
+                                </a>
+
+                                <form method="post"
+                                      action="{% url 'delete_shipment' package.id %}"
+                                      style="margin-top:8px;"
+                                      onsubmit="return confirm('Delete this shipment? Its tracking history will also be deleted.');">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            style="background:#b91c1c;color:white;border:0;padding:6px 10px;border-radius:5px;cursor:pointer;">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="margin-top:30px;padding:25px;background:#f9fafb;border-radius:12px;">
+            <h3>No shipments yet</h3>
+            <p>Create your first shipment to generate a BusinessHub tracking number.</p>
+
+            <a href="{% url 'create_shipment' %}">
+                Create your first shipment
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

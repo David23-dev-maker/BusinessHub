@@ -4,7 +4,7 @@ import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
+from core.storage import MessageAttachmentCloudinaryStorage
 
 # ============================================================
 # BUSINESSHUB UPLOAD CONFIGURATION
@@ -149,7 +149,14 @@ class Package(models.Model):
         blank=True,
         related_name="tracked_packages"
     )
-
+    created_by = models.ForeignKey(
+    User,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name="created_packages",
+    help_text="The user who created this shipment."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -283,6 +290,7 @@ class Message(models.Model):
 
     attachment = models.FileField(
         upload_to=message_attachment_upload_path,
+        storage=MessageAttachmentCloudinaryStorage(),
         blank=True,
         null=True,
         validators=[validate_message_attachment_size]
@@ -323,7 +331,10 @@ class Message(models.Model):
                 "A message must contain text or an attachment."
             )
 
-        if self.attachment and self.attachment.size > MESSAGE_ATTACHMENT_MAX_SIZE:
+        if (
+            self.attachment
+            and self.attachment.size > MESSAGE_ATTACHMENT_MAX_SIZE
+        ):
             raise ValidationError({
                 "attachment": "Attachments cannot exceed 50 MB."
             })
@@ -337,7 +348,6 @@ class Message(models.Model):
             preview = "Attachment"
 
         return f"{self.sender.username}: {preview}"
-
 
 # ============================================================
 # USER PRESENCE
